@@ -20,12 +20,11 @@ import java.util.UUID;
  */
 
 public class BluetoothConnectionService {
-    private static final String TAG = "BluetoothConnectionServ";
+    private static final String TAG = "BTConnectionService";
 
     private static final String appName = "MYAPP";
 
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    UUID uuid;
 
     private final BluetoothAdapter mBluetoothAdapter;
     Context mContext;
@@ -39,8 +38,9 @@ public class BluetoothConnectionService {
 
     private ConnectedThread mConnectedThread;
 
-    public BluetoothConnectionService(Context context) {
+    public BluetoothConnectionService(Context context, UUID myUUID) {
         mContext = context;
+        uuid =  myUUID;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         start();
     }
@@ -60,9 +60,9 @@ public class BluetoothConnectionService {
 
             // Create a new listening server socket
             try{
-                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, MY_UUID_INSECURE);
+                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, uuid);
 
-                Log.d(TAG, "AcceptThread: Setting up Server using: " + MY_UUID_INSECURE);
+                Log.d(TAG, "AcceptThread: Setting up Server using: " + uuid);
             }catch (IOException e){
                 Log.e(TAG, "AcceptThread: IOException: " + e.getMessage() );
             }
@@ -128,8 +128,7 @@ public class BluetoothConnectionService {
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
             try {
-                Log.d(TAG, "ConnectThread: Trying to create InsecureRfcommSocket using UUID: "
-                        +MY_UUID_INSECURE );
+                Log.d(TAG, "ConnectThread: Trying to create InsecureRfcommSocket using UUID: " + uuid );
                 tmp = mmDevice.createRfcommSocketToServiceRecord(deviceUUID);
             } catch (IOException e) {
                 Log.e(TAG, "ConnectThread: Could not create InsecureRfcommSocket " + e.getMessage());
@@ -156,7 +155,7 @@ public class BluetoothConnectionService {
                 } catch (IOException e1) {
                     Log.e(TAG, "mConnectThread: run: Unable to close connection in socket " + e1.getMessage());
                 }
-                Log.d(TAG, "run: ConnectThread: Could not connect to UUID: " + MY_UUID_INSECURE );
+                Log.d(TAG, "run: ConnectThread: Could not connect to UUID: " + uuid );
             }
 
             //will talk about this in the 3rd video
@@ -229,7 +228,6 @@ public class BluetoothConnectionService {
                 e.printStackTrace();
             }
 
-
             try {
                 tmpIn = mmSocket.getInputStream();
                 tmpOut = mmSocket.getOutputStream();
@@ -261,11 +259,11 @@ public class BluetoothConnectionService {
         }
 
         //Call this from the main activity to send data to the remote device
-        public void write(byte[] bytes) {
-            String text = new String(bytes, Charset.defaultCharset());
-            Log.d(TAG, "write: Writing to outputstream: " + text);
+        public void write(int mode) {
+            String text = new String (String.valueOf(mode));
+            Log.d(TAG, "write: Writing to outputstream: Entering Mode " + text);
             try {
-                mmOutStream.write(bytes);
+                mmOutStream.write(mode);
             } catch (IOException e) {
                 Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
             }
@@ -291,9 +289,9 @@ public class BluetoothConnectionService {
      * Write to the ConnectedThread in an unsynchronized manner
      *
      * @param out The bytes to write
-     * @see ConnectedThread#write(byte[])
+     * @see ConnectedThread#write(int)
      */
-    public void write(byte[] out) {
+    public void write(int out) {
         // Create temporary object
         ConnectedThread r;
 
