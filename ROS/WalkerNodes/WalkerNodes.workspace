@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="WalkerNodes" Database="" Version="10.0.0">
+  <Project Name="wheelController" Path="wheelController/wheelController.project" Active="Yes"/>
+  <Project Name="UltrasoundSensor" Path="IrSensorNode/IrSensorNode.project"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="wheelController" ConfigName="Debug"/>
+      <Project Name="UltrasoundSensor" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="wheelController" ConfigName="Release"/>
+      <Project Name="UltrasoundSensor" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
