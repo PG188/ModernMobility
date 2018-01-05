@@ -1,0 +1,5 @@
+<launch>
+	<node name="ultrasound_sensor_cloud" pkg="node_test_1" type="US_pub" /> 
+	<node name="r_wheelController" pkg="node_test_1" type="r_wheelController" />
+	<node name="l_wheelController" pkg="node_test_1" type="l_wheelController" />
+</launch>
