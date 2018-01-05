@@ -1,6 +1,13 @@
 Current files:
-node_test_1 is a package that contains the incomplete implementations for the nodes that will perform motor control and communication with the arduino connected to the ultrasound sensors
+- Differential_drive is the prebuilt package that converts the velocity command from the navigation stack into individual motor torque commands to be executed by the motor controller
+- node_test_1 is a package that contains the incomplete implementations for the nodes that will perform motor control and communication with the arduino connected to the ultrasound sensors. It also launches the differential_drive package, which interacts with the aforementioned nodes to create a complete control loop. 
 
+Trying node_test_1: To try these, you must copy both the differential_drive and node_test_1 folders in your catkin workspace. You must then build them by running catkin_make in your catkin workspace directory. You must then run the launch file in the node_test_1 package using roslaunch. 
+
+You may receive an error about 'Pyside'. To remedy this, execute the following commands which will install the correct files you need:
+sudo add-apt-repository ppa:pyside
+sudo apt-get update
+sudo apt-get install python-pyside
 
 This directory is for files related for ROS applications.
 
