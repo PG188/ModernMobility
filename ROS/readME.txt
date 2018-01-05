@@ -1,6 +1,11 @@
+Current files:
+node_test_1 is a package that contains the incomplete implementations for the nodes that will perform motor control and communication with the arduino connected to the ultrasound sensors
+
+
 This directory is for files related for ROS applications.
 
 
+ROS PI SETUP:
 Set up
 1) Download SD Card Formatter:https://www.sdcard.org/downloads/formatter_4/
 2) Download Win32DiskImager: https://sourceforge.net/projects/win32diskimager/
