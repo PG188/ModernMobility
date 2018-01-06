@@ -19,7 +19,14 @@ Add to the bottom of config:
 	sudo nano /bootconfig.txt
 
 	dtparam=i2c1=on
-	dtparam=i2c+arm=on 
+	dtparam=i2c_arm=on 
+
+Add to the botom of modules:
+	sudo nano /etc/modules
+	
+	isnd-bcm2835
+	ipv6
+	i2c-dev
 
 reboot and test i2c line with:
 	ls /dev/*i2c*
