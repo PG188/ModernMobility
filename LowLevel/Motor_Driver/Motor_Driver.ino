@@ -1,6 +1,6 @@
 //ma'fuck pins
 #include <Wire.h>
-
+#include <stdint.h>
 #define SLAVE_ADDRESS 0x04 //ar grn A4         yellow A5        brn GRND
                            //pi green gpoio8   yellow gpoio9     brn gpoio6
 int DIR1 = 6; //digitial
@@ -10,7 +10,7 @@ int PWM2 = 3;
 
 int Power=0;
 
-int number = 0;
+uint32_t number = 0;
 int state = 0;
 
 //ma'fuck setup///////////////////////////////////////////////////////////////////////////
@@ -57,10 +57,10 @@ void receiveData(int byteCount) {   //read data
   int num1 = (number / 10000) % 10; 
   int num0 = (number / 100000) % 10; 
   
-  // left forward half    = 001-005
-  // right forwards full  = 010-090
-  // both backwards full  = 000-099
-  // both forwards quarter= 011-022
+  // left forward half    = 101-005
+  // right forwards full  = 110-090
+  // both backwards full  = 100-099
+  // both forwards quarter= 111-022
   
   leftDrive(num2, num5);
   rightDrive(num1, num4); 
