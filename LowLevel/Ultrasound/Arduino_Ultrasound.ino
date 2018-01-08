@@ -44,8 +44,8 @@ void loop() {
     }
     //Sends the distances over serial. Integers should be two bytes
     for (int i=0; i<numOfUS; i++) {
-        Serial.write(byte(distance_cm[i] & 0x0F));
-        Serial.write(byte((distance_cm[i] >> 8) & 0x0F));
+        Serial.write(byte(distance_cm[i] & 0x00FF));
+        Serial.write(byte((distance_cm[i] >> 8) & 0x00FF));
     }
     delay(10); //Loop operates every 10 milliseconds
 }
