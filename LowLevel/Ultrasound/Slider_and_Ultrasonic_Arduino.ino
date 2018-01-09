@@ -17,12 +17,12 @@ long duration = 0; //Holds propogation time of ultrasonic signal in microseconds
 int distance_cm[numOfUS] = {0};
 
 //Defines pins for sliders
-const int slider1Pin = 0;
-const int slider2Pin = 1;
+const int leftSliderPin = 0;
+const int rightSliderPin = 1;
 
 //Stores analog slider readings
-int slider1Val = 0;
-int slider2Val = 0;
+int leftSliderVal = 0;
+int rightSliderVal = 0;
 
 void setup() {
     Serial.begin(19200); // Starts the serial communication at 57600 baud (this is fast enough)
@@ -33,8 +33,8 @@ void setup() {
 }
 void loop() {
     //First we read the analog values for the sliders
-    slider1Val = analogRead(slider1Pin);
-    slider2Val = analogRead(slider2Pin);
+    leftSliderVal = analogRead(leftSliderPin);
+    rightSliderVal = analogRead(rightSliderPin);
 
     for (int i=0; i<numOfUS; i++) {
         // Clears the trigPin
@@ -52,10 +52,10 @@ void loop() {
     }
 
     //Sends the slider values over serial. Two bytes per int, which are 16-bits on the arduino
-    Serial.write(byte(slider1Val & 0x00FF));
-    Serial.write(byte((slider1Val >> 8) & 0x00FF));
-    Serial.write(byte(slider2Val & 0x00FF));
-    Serial.write(byte((slider2Val >> 8) & 0x00FF));
+    Serial.write(byte(leftSliderVal & 0x00FF));
+    Serial.write(byte((leftSliderVal >> 8) & 0x00FF));
+    Serial.write(byte(rightSliderVal & 0x00FF));
+    Serial.write(byte((rightSliderVal >> 8) & 0x00FF));
 
     //Sends the distances over serial. Integers should be two bytes
     for (int i=0; i<numOfUS; i++) {
