@@ -1,10 +1,6 @@
 /*
-This software reads the value from each of the ultrasonic sensors and 
-sends it back to the Raspberry Pi. The strategy is to send out the pulse
-and detect the response of one sensor, then move on to the next. This will
-reduce interference and seems to be the best way to meet the timing requirements
-of the sensors.The time needed to cycle through one sensor is very small so this 
-shouldn't be an issue
+This software reads the value from each of the ultrasonic sensors and manual slider.
+Every 10ms these values are sent back to the Raspberry Pi for processing 
 */
 
 #include <Arduino.h>
@@ -16,18 +12,30 @@ shouldn't be an issue
 const int trigPin[numOfUS] = {10,12,14,16};
 const int echoPin[numOfUS] = {11,13,15,17};
 
-// defines variables
+// defines US variables
 long duration = 0; //Holds propogation time of ultrasonic signal in microseconds
 int distance_cm[numOfUS] = {0};
 
+//Defines pins for sliders
+const int slider1Pin = 0;
+const int slider2Pin = 1;
+
+//Stores analog slider readings
+int slider1Val = 0;
+int slider2Val = 0;
+
 void setup() {
-    Serial.begin(19200); // Starts the serial communication at 19200 baud (this is fast enough)
+    Serial.begin(19200); // Starts the serial communication at 57600 baud (this is fast enough)
     for (int i=0; i<numOfUS; i++) {
         pinMode(trigPin[i], OUTPUT); // Sets the trigPin as an Output
         pinMode(echoPin[i], INPUT); // Sets the echoPin as an Input   
     }
 }
 void loop() {
+    //First we read the analog values for the sliders
+    slider1Val = analogRead(slider1Pin);
+    slider2Val = analogRead(slider2Pin);
+
     for (int i=0; i<numOfUS; i++) {
         // Clears the trigPin
         digitalWrite(trigPin[i], LOW);
@@ -42,10 +50,18 @@ void loop() {
         // The distance will be converted into meters on the Pi
         distance_cm[i]= duration*0.034/2;
     }
+
+    //Sends the slider values over serial. Two bytes per int, which are 16-bits on the arduino
+    Serial.write(byte(slider1Val & 0x00FF));
+    Serial.write(byte((slider1Val >> 8) & 0x00FF));
+    Serial.write(byte(slider2Val & 0x00FF));
+    Serial.write(byte((slider2Val >> 8) & 0x00FF));
+
     //Sends the distances over serial. Integers should be two bytes
     for (int i=0; i<numOfUS; i++) {
         Serial.write(byte(distance_cm[i] & 0x00FF));
         Serial.write(byte((distance_cm[i] >> 8) & 0x00FF));
     }
+
     delay(10); //Loop operates every 10 milliseconds
 }
