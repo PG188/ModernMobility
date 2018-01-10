@@ -1,26 +1,37 @@
 #include <Arduino.h>
 #include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 
+/*
+//PINS
+const byte 
+*/
+
+
 //Constants
 const double K_P = 1, 
              K_I = 1,   //K values must be >= 0
              K_D = 1,
-             OUT_MIN = 0,    //-99 (+ 99)
-             OUT_MAX = 198;  //+99 (+ 99)
+             OUT_MIN = 0,    
+             OUT_MAX = 99;
 
-const int SAMPLE_TIME = 200; 
+const int SAMPLE_TIME = 200;
+
+enum MOTOR_CMD_DIR { POS = 200, NEG = 100 };
 
 //Variables
-double Input = 0,    //The variable we are trying to control
-       Output = 0,   //The variable that will be adjusted by the PID
-       SetPoint = 0; //The value we are trying to get to or maintain
+double Input,     //The variable we are trying to control
+       Output,    //The variable that will be adjusted by the PID
+       SetPoint;  //The value we are trying to get to or maintain
 
 float currentVel = 0, 
-      targetVel = 0; 
-      
+      targetVel = 0;    
 
-//PID Object
-//PID(&double, &double, &double, double, double, double, Direction)
+/*  PID Object
+ *  
+ *  
+ * PID(&double, &double, &double, double, double, double, Direction)
+ */
+
 PID MotorPID(&Input, &Output, &SetPoint, K_P, K_I, K_D, DIRECT);
 
 /**************************************************************/
@@ -60,4 +71,11 @@ float doPID(float input, float setpoint){
     }
 }
 
+int SendMotorCmd(){    
+    int sign, mag;
+    sign = (Input >= 0) ? POS : NEG;
+    mag = (Output > OUT_MAX) ? OUT_MAX : Output;    
+    
+    return sign + mag;  //Instead of returning, we need to send this out (analogWrite?)
+}
 
