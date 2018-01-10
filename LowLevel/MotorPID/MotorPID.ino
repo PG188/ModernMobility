@@ -10,49 +10,49 @@ const double K_P = 1,
              K_I = 0.25,   //K values must be >= 0
              K_D = 0,
              OUT_MIN = 0,    //-99 (+ 99) 0
-             OUT_MAX = 99;  //+99 (+ 99) 198
-
+             OUT_MAX = 255;  //+99 (+ 99) 198
+             MAG_MAX = 99;
 const int SAMPLE_TIME = 20; 
 
+//Enums
 enum MOTOR_CMD_DIR { POS = 200, NEG = 100 };
 
 //Variables
-double Input,     //The variable we are trying to control
-       Output,    //The variable that will be adjusted by the PID
-       SetPoint;  //The value we are trying to get to or maintain
-  
+float SetPoint_float;      //The value we are trying to get to or maintain (from ROS node)
+double Input,              //The variable we are trying to control (from Motor Module)
+       Output,             //The variable that will be adjusted by the PID
+       SetPoint_double;
+int MotorCmd;
 
-/*  PID Object
- *  
- *  
- * PID(&double, &double, &double, double, double, double, Direction)
- */
-
-PID MotorPID(&Input, &Output, &SetPoint, K_P, K_I, K_D, DIRECT);
+//Creating PID
+PID MotorPID(&Input, &Output, &SetPoint_double, K_P, K_I, K_D, DIRECT);
 
 /**************************************************************/
 
 void setup(){
     Serial.begin(9600);
     initPID();
-    Input = 10; //Testing purposes 
+    //Input = 10; //Testing purposes 
 }
 
 void loop(){
   //Input = analogRead(InputPin);
-  SetPoint = 20;  //SetPoint = analogRead(SetPointPin); 
+  //SetPoint_float = analogRead(SetPointPin);
+  //SetPoint_double = (double) SetPoint_float;
+  //SetPoint_double = 20.0; //Testing purposes  
   doPID();
-  Serial.println(Input);
-  Serial.print(" ");
-  //Serial.println(SetPoint);
   // For testing without motors:
-  if (Input < SetPoint) {
+  /*if (Input < SetPoint_double) {
     Input = Input + Output*2.0/99.0;
   }
-  else if (Input > SetPoint) {
+  else if (Input > SetPoint_double) {
     Input = Input - Output*2.0/99.0;
-  }
-  //analogWrite(#, Output);
+  }*/
+  MotorCmd = DetermineMotorCmd(Input, Output);
+  //Serial.print("Motor Command = "); 
+  Serial.println(MotorCmd);
+  Serial.print(" ");
+  //analogWrite(OutputPin, MotorCmd);
 }
 
 /**************************************************************/
@@ -71,16 +71,12 @@ void doPID(){
     if (!MotorPID.Compute()) {
         //Serial.println("PID returned false");
     }
-    else {
-      //Serial.print("Output Velocity = "); Serial.println(Output);
-    }
 }
-
-int SendMotorCmd(){    
+int DetermineMotorCmd( double Input, double Output){
+    double ratio = MAG_MAX/OUT_MAX;
     int sign, mag;
     sign = (Input >= 0) ? POS : NEG;
-    mag = (Output > OUT_MAX) ? OUT_MAX : Output;    
-    
-    return sign + mag;  //Instead of returning, we need to send this out (analogWrite?)
+    mag = (Output >= OUT_MAX) ? OUT_MAX*ratio : (Output < OUT_MIN) ? OUT_MIN : round(Output*ratio);    
+    return sign + mag;
 }
 
