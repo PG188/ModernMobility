@@ -30,6 +30,8 @@ void setup() {
         pinMode(trigPin[i], OUTPUT); // Sets the trigPin as an Output
         pinMode(echoPin[i], INPUT); // Sets the echoPin as an Input   
     }
+    pinMode(leftSliderPin, INPUT);
+    pinMode(rightSliderPin, INPUT);
 }
 void loop() {
     //First we read the analog values for the sliders
@@ -50,6 +52,10 @@ void loop() {
         // The distance will be converted into meters on the Pi
         distance_cm[i]= duration*0.034/2;
     }
+
+    /*
+     * Any slider filter/amplification if necessary.
+     */
 
     //Sends the slider values over serial. Two bytes per int, which are 16-bits on the arduino
     Serial.write(byte(leftSliderVal & 0x00FF));
