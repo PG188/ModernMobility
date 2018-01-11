@@ -2,6 +2,7 @@
 #include <math.h>
 #include <sensor_msgs/PointCloud.h>
 #include <std_msgs/UInt16.h>
+#include <wiringSerial.h>
 
 int main(int argc, char** argv){
 	int readTemp = 0;
@@ -40,16 +41,16 @@ int main(int argc, char** argv){
 
 	//Sets up serial interface
 	//First parameter is not correct, must be set to refer to correct arduino
-	arduinoSerialPort = serialOpen ("/dev/ttyAMA0", 19200);
+	int arduinoSerialPort = serialOpen("/dev/ttyAMA0", 19200);
 
 	while(n.ok()){
 		//If four magnitude values available to be read, initiate the read, and store
 		//the values in the magnitude array. Magnitude should be in METERS
 		if (serialDataAvail(arduinoSerialPort) >= 12) {
 			readTemp  = serialGetchar(arduinoSerialPort);
-			lslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8)
+			lslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8);
 			readTemp  = serialGetchar(arduinoSerialPort);
-			rslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8)
+			rslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8);
 
 			//Reads in ultrasonic mangitude values and converts them to meters
 			for(unsigned int i = 0; i < numOfUSSensors; ++i) {
