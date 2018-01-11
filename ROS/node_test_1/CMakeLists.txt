@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -198,11 +199,18 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(US_pub src/US_pub.cpp)
-target_link_libraries(US_pub ${catkin_LIBRARIES})
+add_executable(Ultrasonic_and_slider_pub src/Ultrasonic_and_slider_pub.cpp)
+target_link_libraries(Ultrasonic_and_slider_pub ${catkin_LIBRARIES})
+
+# May not work?
+find_library(wiringPi_LIB wiringPi)
+target_link_libraries(Ultrasonic_and_slider_pub ${wiringPi_LIB})
+#
 
 add_executable(r_wheelController src/r_wheelController.cpp)
 target_link_libraries(r_wheelController ${catkin_LIBRARIES})
+target_link_libraries(r_wheelController ${wiringPi_LIB})
 
 add_executable(l_wheelController src/l_wheelController.cpp)
 target_link_libraries(l_wheelController ${catkin_LIBRARIES})
+target_link_libraries(l_wheelController ${wiringPi_LIB})

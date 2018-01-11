@@ -1,0 +1,5 @@
+{
+    "port": "COM3",
+    "board": "arduino:avr:unowifi",
+    "sketch": "Slider_and_Ultrasonic_Arduino.ino"
+}
