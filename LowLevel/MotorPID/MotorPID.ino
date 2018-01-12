@@ -45,6 +45,12 @@ void loop(){
   Input = Input + (Output - 128)*2.0/255.0;
   /*Serial.println(Input);
   Serial.print(" "); //For plotting purposes*/
+
+  int MTRSpd = (MotorCmd % 100);  //last two digits
+  int MTRdir = (MotorCmd / 100) % 10; // first digit
+  Serial.println(MTRSpd);
+  Serial.println(MTRdir);
+  leftDrive(MTRdir, MTRSpd);        //assuming this is the left motor arduino (change to rightDrive)
 }
 
 /**************************************************************/
@@ -74,5 +80,28 @@ int DetermineMotorCmd( double Input, double Output){
     else if (shiftedVal >= 0) { return ((int)POS + shiftedVal); }
     else if (shiftedVal >= -MAG_MAX) { return ((int)NEG + abs(shiftedVal)); }
     else { return (NEG + MAG_MAX); }
+}
+
+void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);    //scale 0 99 to 0 to 255
+  if (dir == 2){
+    digitalWrite(DIR1, HIGH); 
+  }  
+  if (dir == 1){
+    digitalWrite(DIR1, LOW); 
+  }
+  analogWrite(PWM1, x);   //speed scale speed here with input from pi
+}
+
+
+void rightDrive(int dir, int vel){       //RIGHT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);    //scale 0 99 to 255
+  if (dir == 2){
+    digitalWrite(DIR1, HIGH); 
+  }  
+  if (dir == 1){
+    digitalWrite(DIR1, LOW); 
+  }
+  analogWrite(PWM2, x);   //speed scale speed here with input from pi
 }
 
