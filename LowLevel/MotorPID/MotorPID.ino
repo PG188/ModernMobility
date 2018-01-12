@@ -5,6 +5,12 @@
 #define SetPointPin 1
 #define OutputPin 3
 
+//Pins
+int DIR1 = 6; //PINOUT digitial pin
+int PWM1 = 5; //left spd
+int DIR2 = 4;
+int PWM2 = 3; //right spd
+
 //Constants
 const double K_P = 5, 
              K_I = 2,   //K values must be >= 0
@@ -33,6 +39,16 @@ void setup(){
     Serial.begin(9600);
     initPID();
     Input = 22.0; //Testing purposes 
+
+    pinMode(DIR1, OUTPUT); //motor outputs
+    pinMode(PWM1, OUTPUT);
+    pinMode(DIR2, OUTPUT);
+    pinMode(PWM2, OUTPUT);
+
+    digitalWrite(DIR1, 0); //direcitons  
+    digitalWrite(DIR2, 0);
+    analogWrite(PWM1, 0);   //speed scale speed here with input from pi
+    analogWrite(PWM2, 0);
 }
 
 void loop(){
