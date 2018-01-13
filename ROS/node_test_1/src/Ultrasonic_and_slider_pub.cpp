@@ -1,8 +1,10 @@
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <math.h>
 #include <sensor_msgs/PointCloud.h>
 #include <std_msgs/UInt16.h>
 #include <wiringSerial.h>
+#include <wiringPi.h>
 
 int main(int argc, char** argv){
 	int readTemp = 0;
@@ -27,7 +29,7 @@ int main(int argc, char** argv){
 	ros::Publisher cloud_pub = n.advertise<sensor_msgs::PointCloud>("US_cloud", 50);
 	ros::Publisher lslider_pos = n.advertise<std_msgs::UInt16>("lslider_pos", 50);
 	ros::Publisher rslider_pos = n.advertise<std_msgs::UInt16>("rslider_pos", 50);
-	ros::Rate r(1.0);
+	ros::Rate r(10);
 	
 	//Cloud setup
 	cloud.header.frame_id = "US_frame";
@@ -38,14 +40,16 @@ int main(int argc, char** argv){
 	for (unsigned int i = 0; i < numOfUSSensors; ++i) {
 		cloud.channels[0].values[i] = 100;
 	}
-
+	
 	//Sets up serial interface
 	//First parameter is not correct, must be set to refer to correct arduino
-	int arduinoSerialPort = serialOpen("/dev/ttyAMA0", 19200);
+	wiringPiSetup();
+	int arduinoSerialPort = serialOpen("/dev/ttyACM0", 19200);
 
 	while(n.ok()){
 		//If four magnitude values available to be read, initiate the read, and store
 		//the values in the magnitude array. Magnitude should be in METERS
+		ROS_DEBUG("DataAvail: %d", serialDataAvail(arduinoSerialPort));
 		if (serialDataAvail(arduinoSerialPort) >= 12) {
 			readTemp  = serialGetchar(arduinoSerialPort);
 			lslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8);
