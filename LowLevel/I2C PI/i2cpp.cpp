@@ -40,10 +40,35 @@ build with:
 
 using namespace std;
 
+int Ard1 = wiringPiI2CSetup(0x04);
+
+int motorDir = 0;										//1 = left 				10 = right 
+int speedRight = 0;										//0 - 9 
+int speedLeft = 0;										//0 - 9  
+int data = 100000
 
 int main(){
-	int Ard1 = wiringPiI2CSetup(0x04);
-	int data = 255; //values from 0 to 255 (8bit)
-	cout << "Data: "<< data << endl;
-	int output = wiringPiI2CWrite(Ard1, data);
+	
+	data = data + (motorDir*100) + (speedRight*10) + speedLeft
+
+	int data1 = data  
+
+	if (send_signal = true)
+	cout << "Output: "<< data << endl;
+	int output = wiringPiI2CWrite(Ard1, data);			//send data
+
+		
+	int input = wiringPiI2CRead (Ard1);
+	cout << "Intput: "<< input << endl;					//recive data
 }
+
+
+
+
+
+
+
+
+
+
+

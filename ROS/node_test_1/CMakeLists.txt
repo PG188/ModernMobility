@@ -214,3 +214,10 @@ target_link_libraries(r_wheelController ${wiringPi_LIB})
 add_executable(l_wheelController src/l_wheelController.cpp)
 target_link_libraries(l_wheelController ${catkin_LIBRARIES})
 target_link_libraries(l_wheelController ${wiringPi_LIB})
+
+add_executable(leftVelocitySelection src/leftVelocitySelection.cpp)
+target_link_libraries(leftVelocitySelection ${catkin_LIBRARIES})
+
+add_executable(rightVelocitySelection src/rightVelocitySelection.cpp)
+target_link_libraries(rightVelocitySelection ${catkin_LIBRARIES})
+

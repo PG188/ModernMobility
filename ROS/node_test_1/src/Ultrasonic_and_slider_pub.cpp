@@ -1,78 +1,78 @@
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <math.h>
 #include <sensor_msgs/PointCloud.h>
 #include <std_msgs/UInt16.h>
-#include <wiringSerial.h>
+#include <std_msgs/String.h>
 
-int main(int argc, char** argv){
-	int readTemp = 0;
-	int numOfUSSensors = 4;
-	sensor_msgs::PointCloud cloud;
-	std_msgs::UInt16 lslider_pos_value;
-	std_msgs::UInt16 rslider_pos_value;
-	double magnitude[4] = {0}; //Holds values from sensors
-	/*Format: {x,y,z,theta}
-	 * x,y,z are in meters
-	 * Theta is in radians */
-	double const US_frames[4][4] = {
-		{0,0,0,0}, //Should be left as zero
-		{0,0,0,0},
-		{0,0,0,0},
-		{0,0,0,0}
-	};
-	
-	//Publisher initialization
-	ros::init(argc, argv, "Ultrasonic_and_slider_pub");
-	ros::NodeHandle n;
-	ros::Publisher cloud_pub = n.advertise<sensor_msgs::PointCloud>("US_cloud", 50);
-	ros::Publisher lslider_pos = n.advertise<std_msgs::UInt16>("lslider_pos", 50);
-	ros::Publisher rslider_pos = n.advertise<std_msgs::UInt16>("rslider_pos", 50);
-	ros::Rate r(1.0);
-	
-	//Cloud setup
-	cloud.header.frame_id = "US_frame";
-	cloud.points.resize(numOfUSSensors);
-	cloud.channels.resize(1);
-	cloud.channels[0].name = "intensities";
-	cloud.channels[0].values.resize(numOfUSSensors);
-	for (unsigned int i = 0; i < numOfUSSensors; ++i) {
-		cloud.channels[0].values[i] = 100;
-	}
-
-	//Sets up serial interface
-	//First parameter is not correct, must be set to refer to correct arduino
-	int arduinoSerialPort = serialOpen("/dev/ttyAMA0", 19200);
-
-	while(n.ok()){
-		//If four magnitude values available to be read, initiate the read, and store
-		//the values in the magnitude array. Magnitude should be in METERS
-		if (serialDataAvail(arduinoSerialPort) >= 12) {
-			readTemp  = serialGetchar(arduinoSerialPort);
-			lslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8);
-			readTemp  = serialGetchar(arduinoSerialPort);
-			rslider_pos_value.data = readTemp | (serialGetchar(arduinoSerialPort) << 8);
-
-			//Reads in ultrasonic mangitude values and converts them to meters
-			for(unsigned int i = 0; i < numOfUSSensors; ++i) {
-				readTemp  = serialGetchar(arduinoSerialPort);
-				magnitude[i] = double((readTemp | (serialGetchar(arduinoSerialPort) << 8)))/100;
+class UltrasonicSlider_Pub {	
+	public:
+		UltrasonicSlider_Pub() {
+			numOfUSSensors = 4;
+			cloud_pub = n.advertise<sensor_msgs::PointCloud>("US_cloud", 50);
+			lslider_pos = n.advertise<std_msgs::UInt16>("lslider_pos", 50);
+			rslider_pos = n.advertise<std_msgs::UInt16>("rslider_pos", 50);
+			lslider_sub = nh.subscribe("SerialIn", 1, serial_callback);
+			//Cloud setup
+			cloud.header.frame_id = "US_frame";
+			cloud.points.resize(numOfUSSensors);
+			cloud.channels.resize(1);
+			cloud.channels[0].name = "intensities";
+			cloud.channels[0].values.resize(numOfUSSensors);
+			for (unsigned int i = 0; i < numOfUSSensors; ++i) {
+				cloud.channels[0].values[i] = 100;
 			}
-			
+		}
+		
+		void serial_callback(const std_msgs::String::ConstPtr& receiveSerial) {
+			serialIn = (receiveSerial->data).data();
+			lslider_pos_value.data = (serialIn[1] << 8) | serialIn[0];
+			rslider_pos_value.data = (serialIn[3] << 8) | serialIn[2];
+			mag[0] = double((serialIn[5] << 8) | serialIn[4])/100;
+			mag[1] = double((serialIn[7] << 8) | serialIn[6])/100;
+			mag[2] = double((serialIn[9] << 8) | serialIn[8])/100;
+			mag[3] = double((serialIn[11] << 8) | serialIn[10])/100;
 			/*Transforms the magnitude values from each 
 			 *sensor into a point (x,y,z) in the point cloud
 			 *using the coordinate frame of each sensor. */
 			for(unsigned int i = 0; i < numOfUSSensors; ++i) {
-				cloud.points[i].x = float(US_frames[i][0] + magnitude[i]*cos(US_frames[i][3]));
-				cloud.points[i].y = float(US_frames[i][1] + magnitude[i]*sin(US_frames[i][3]));
+				cloud.points[i].x = float(US_frames[i][0] + mag[i]*cos(US_frames[i][3]));
+				cloud.points[i].y = float(US_frames[i][1] + mag[i]*sin(US_frames[i][3]));
 				cloud.points[i].z = float(US_frames[i][2]);
 			}
 			cloud.header.stamp = ros::Time::now();
 			cloud_pub.publish(cloud);
-
 			lslider_pos.publish(lslider_pos_value);
 			rslider_pos.publish(rslider_pos_value);
-
-			r.sleep();
 		}
-	}
+		
+	private:
+		/*Format: {x,y,z,theta}
+		 * x,y,z are in meters
+		 * Theta is in radians */
+		double const US_frames[4][4] = {
+				{0,0,0,0}, //Should be left as zero
+				{0,0,0,0},
+				{0,0,0,0},
+				{0,0,0,0}
+		};
+		int numOfUSSensors;
+		const char *serialIn;
+		double mag[4] = {0};
+		sensor_msgs::PointCloud cloud;
+		std_msgs::UInt16 lslider_pos_value;
+		std_msgs::UInt16 rslider_pos_value;
+		ros::Subscriber lslider_sub;
+		ros::Publisher cloud_pub;
+		ros::Publisher lslider_pos;
+		ros::Publisher rslider_pos;
+		ros::NodeHandle n;
+}
+
+int main(int argc, char** argv){
+	//Publisher initialization
+	ros::init(argc, argv, "Ultrasonic_and_slider_pub");
+	UltrasonicSlider_Pub Ultrsound_because_fuck_you;
+	ros::spin();
+	return 0;
 }
