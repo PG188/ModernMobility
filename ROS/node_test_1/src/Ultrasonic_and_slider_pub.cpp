@@ -4,6 +4,7 @@
 #include <sensor_msgs/PointCloud.h>
 #include <std_msgs/UInt16.h>
 #include <std_msgs/String.h>
+#include <stdlib.h>
 
 class UltrasonicSlider_Pub {	
 	public:
@@ -12,15 +13,21 @@ class UltrasonicSlider_Pub {
 			cloud_pub = n.advertise<sensor_msgs::PointCloud>("US_cloud", 50);
 			lslider_pos = n.advertise<std_msgs::UInt16>("lslider_pos", 50);
 			rslider_pos = n.advertise<std_msgs::UInt16>("rslider_pos", 50);
-			lslider_sub = nh.subscribe("SerialIn", 1, serial_callback);
+			lslider_sub = n.subscribe("SerialIn", 1, &UltrasonicSlider_Pub::serial_callback, this);
 			//Cloud setup
 			cloud.header.frame_id = "US_frame";
 			cloud.points.resize(numOfUSSensors);
 			cloud.channels.resize(1);
 			cloud.channels[0].name = "intensities";
 			cloud.channels[0].values.resize(numOfUSSensors);
+			//Initializes arrays
 			for (unsigned int i = 0; i < numOfUSSensors; ++i) {
 				cloud.channels[0].values[i] = 100;
+			}
+			for (unsigned int i = 0; i < numOfUSSensors; ++i) {
+				for (unsigned int j = 0; j < numOfUSSensors; ++j)
+					US_frames[i][j] = 0;
+				mag[i] = 0;
 			}
 		}
 		
@@ -47,18 +54,10 @@ class UltrasonicSlider_Pub {
 		}
 		
 	private:
-		/*Format: {x,y,z,theta}
-		 * x,y,z are in meters
-		 * Theta is in radians */
-		double const US_frames[4][4] = {
-				{0,0,0,0}, //Should be left as zero
-				{0,0,0,0},
-				{0,0,0,0},
-				{0,0,0,0}
-		};
+		double US_frames[4][4];
 		int numOfUSSensors;
 		const char *serialIn;
-		double mag[4] = {0};
+		double mag[4];
 		sensor_msgs::PointCloud cloud;
 		std_msgs::UInt16 lslider_pos_value;
 		std_msgs::UInt16 rslider_pos_value;
@@ -67,7 +66,7 @@ class UltrasonicSlider_Pub {
 		ros::Publisher lslider_pos;
 		ros::Publisher rslider_pos;
 		ros::NodeHandle n;
-}
+};
 
 int main(int argc, char** argv){
 	//Publisher initialization

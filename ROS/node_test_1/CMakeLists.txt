@@ -103,7 +103,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+catkin_package( CATKIN_DEPENDS std_msgs rospy
 #  INCLUDE_DIRS include
 #  LIBRARIES node_test_1
 #  CATKIN_DEPENDS libfreenect roscpp rospy std_msgs
