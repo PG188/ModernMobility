@@ -26,19 +26,20 @@ int rightSliderVal = 0;
 
 void setup() {
     Serial.begin(19200); // Starts the serial communication at 57600 baud (this is fast enough)
-    for (int i=0; i<numOfUS; i++) {
+    /*for (int i=0; i<numOfUS; i++) {
         pinMode(trigPin[i], OUTPUT); // Sets the trigPin as an Output
         pinMode(echoPin[i], INPUT); // Sets the echoPin as an Input   
     }
     pinMode(leftSliderPin, INPUT);
-    pinMode(rightSliderPin, INPUT);
+    pinMode(rightSliderPin, INPUT);*/
 }
 void loop() {
     //First we read the analog values for the sliders
-    leftSliderVal = analogRead(leftSliderPin);
-    rightSliderVal = analogRead(rightSliderPin);
-
-    for (int i=0; i<numOfUS; i++) {
+    /*leftSliderVal = analogRead(leftSliderPin);
+    rightSliderVal = analogRead(rightSliderPin);*/
+    leftSliderVal = 512;
+    rightSliderVal = 513;
+    /*for (int i=0; i<numOfUS; i++) {
         // Clears the trigPin
         digitalWrite(trigPin[i], LOW);
         delayMicroseconds(2);
@@ -51,8 +52,11 @@ void loop() {
         // Calculates the distance in centimeters.
         // The distance will be converted into meters on the Pi
         distance_cm[i]= duration*0.034/2;
-    }
-
+    }*/
+    distance_cm[0] = 100;
+    distance_cm[1] = 200;
+    distance_cm[2] = 300;
+    distance_cm[3] = 400;
     /*
      * Any slider filter/amplification if necessary.
      */

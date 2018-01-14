@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 
-#define InputPin 0
-#define SetPointPin 1
-#define OutputPin 3
+#define velocityInPin 0
+#define velocitySetPointPin 1
+#define velocityOutPin 3
+#define BrakePin 4
 
 //Pins
 int DIR1 = 6; //PINOUT digitial pin
@@ -36,9 +37,8 @@ PID MotorPID(&Input, &Output, &SetPoint_double, K_P, K_I, K_D, DIRECT);
 /**************************************************************/
 
 void setup(){
-    Serial.begin(9600);
+    Serial.begin(19200);
     initPID();
-    Input = 22.0; //Testing purposes 
 
     pinMode(DIR1, OUTPUT); //motor outputs
     pinMode(PWM1, OUTPUT);
@@ -52,13 +52,24 @@ void setup(){
 }
 
 void loop(){
-  //Input = analogRead(InputPin);
-  //SetPoint_float = analogRead(SetPointPin);
-  //SetPoint_double = (double) SetPoint_float;
-  SetPoint_double = 20.0; //Testing purposes  
-  MotorCmd = doPID();
-  // For testing without motors:
-  Input = Input + (Output - 128)*2.0/255.0;
+  //SetPoint_double = 20.0; //Testing purposes 
+  Input = analogRead(velocityInPin);
+  SetPoint_float = analogRead(velocitySetPointPin);
+  SetPoint_double = (double) SetPoint_float;
+  if (SetPoint_double == 999) { //Ramp-down speed
+    if (Input != 0) {
+      digitalWrite(BrakePin, 0); //Disengage clutch
+      SetPoint_double = 0;      //Set the Set Point to 0
+      MotorCmd = doPID();
+    }
+    else {
+      delay(2000);
+      analogWrite(BrakePin, 1); //Engage clutch
+    }
+  }
+  else { 
+    MotorCmd = doPID();
+  }
   /*Serial.println(Input);
   Serial.print(" "); //For plotting purposes*/
 
