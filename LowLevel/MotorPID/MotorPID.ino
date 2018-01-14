@@ -6,6 +6,12 @@
 #define velocityOutPin 3
 #define BrakePin 4
 
+//Pins
+int DIR1 = 6; //PINOUT digitial pin
+int PWM1 = 5; //left spd
+int DIR2 = 4;
+int PWM2 = 3; //right spd
+
 //Constants
 const double K_P = 5, 
              K_I = 2,   //K values must be >= 0
@@ -33,20 +39,28 @@ PID MotorPID(&Input, &Output, &SetPoint_double, K_P, K_I, K_D, DIRECT);
 void setup(){
     Serial.begin(19200);
     initPID();
-    Input = 22.0; //Testing purposes 
+
+    pinMode(DIR1, OUTPUT); //motor outputs
+    pinMode(PWM1, OUTPUT);
+    pinMode(DIR2, OUTPUT);
+    pinMode(PWM2, OUTPUT);
+
+    digitalWrite(DIR1, 0); //direcitons  
+    digitalWrite(DIR2, 0);
+    analogWrite(PWM1, 0);   //speed scale speed here with input from pi
+    analogWrite(PWM2, 0);
 }
 
 void loop(){
-  SetPoint_double = 20.0; //Testing purposes 
-  //Input = analogRead(velocityInPin);
-  //SetPoint_float = analogRead(velocitySetPointPin);
-  //SetPoint_double = (double) SetPoint_float;
-  if (SetPoint_double == 999) { //
+  //SetPoint_double = 20.0; //Testing purposes 
+  Input = analogRead(velocityInPin);
+  SetPoint_float = analogRead(velocitySetPointPin);
+  SetPoint_double = (double) SetPoint_float;
+  if (SetPoint_double == 999) { //Ramp-down speed
     if (Input != 0) {
       digitalWrite(BrakePin, 0); //Disengage clutch
       SetPoint_double = 0;      //Set the Set Point to 0
       MotorCmd = doPID();
-      analogWrite(velocityOutPin, MotorCmd);
     }
     else {
       delay(2000);
@@ -54,13 +68,16 @@ void loop(){
     }
   }
   else { 
-  MotorCmd = doPID();
-  // For testing without motors:
-  Input = Input + (Output - 128)*2.0/255.0;
-  Serial.println(Input);
-  Serial.print(" "); //For plotting purposes
-  //analogWrite(velocityOutPin, MotorCmd); //Send command to wheel motor
+    MotorCmd = doPID();
   }
+  /*Serial.println(Input);
+  Serial.print(" "); //For plotting purposes*/
+
+  int MTRSpd = (MotorCmd % 100);  //last two digits
+  int MTRdir = (MotorCmd / 100) % 10; // first digit
+  Serial.println(MTRSpd);
+  Serial.println(MTRdir);
+  leftDrive(MTRdir, MTRSpd);        //assuming this is the left motor arduino (change to rightDrive)
 }
 
 /**************************************************************/
@@ -90,5 +107,28 @@ int DetermineMotorCmd( double Input, double Output){
     else if (shiftedVal >= 0) { return ((int)POS + shiftedVal); }
     else if (shiftedVal >= -MAG_MAX) { return ((int)NEG + abs(shiftedVal)); }
     else { return (NEG + MAG_MAX); }
+}
+
+void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);    //scale 0 99 to 0 to 255
+  if (dir == 2){
+    digitalWrite(DIR1, HIGH); 
+  }  
+  if (dir == 1){
+    digitalWrite(DIR1, LOW); 
+  }
+  analogWrite(PWM1, x);   //speed scale speed here with input from pi
+}
+
+
+void rightDrive(int dir, int vel){       //RIGHT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);    //scale 0 99 to 255
+  if (dir == 2){
+    digitalWrite(DIR1, HIGH); 
+  }  
+  if (dir == 1){
+    digitalWrite(DIR1, LOW); 
+  }
+  analogWrite(PWM2, x);   //speed scale speed here with input from pi
 }
 
