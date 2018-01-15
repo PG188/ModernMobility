@@ -8,9 +8,9 @@
 
 //Pins
 int DIR1 = 6; //PINOUT digitial pin
-int PWM1 = 5; //left spd
+int PWM_L = 5; //left spd
 int DIR2 = 4;
-int PWM2 = 3; //right spd
+int PWM_R = 3; //right spd
 
 //Constants
 const double K_P = 5, 
@@ -41,14 +41,14 @@ void setup(){
     initPID();
 
     pinMode(DIR1, OUTPUT); //motor outputs
-    pinMode(PWM1, OUTPUT);
+    pinMode(PWM_L, OUTPUT);
     pinMode(DIR2, OUTPUT);
-    pinMode(PWM2, OUTPUT);
+    pinMode(PWM_R, OUTPUT);
 
     digitalWrite(DIR1, 0); //direcitons  
     digitalWrite(DIR2, 0);
-    analogWrite(PWM1, 0);   //speed scale speed here with input from pi
-    analogWrite(PWM2, 0);
+    analogWrite(PWM_L, 0);   //speed scale speed here with input from pi
+    analogWrite(PWM_R, 0);
 }
 
 void loop(){
@@ -77,7 +77,7 @@ void loop(){
   int MTRdir = (MotorCmd / 100) % 10; // first digit
   Serial.println(MTRSpd);
   Serial.println(MTRdir);
-  leftDrive(MTRdir, MTRSpd);        //assuming this is the left motor arduino (change to rightDrive)
+  drive(MTRdir, MTRSpd, PWM_L); //3rd param is PWM_L for left motor arduino & PWM_R for right
 }
 
 /**************************************************************/
@@ -96,19 +96,31 @@ int doPID(){
      */
     if (!MotorPID.Compute()) {
         //Serial.println("PID returned false");
+        return NULL;  //Send invalid value when nothing computed
     }
     else {
-      return DetermineMotorCmd( Input, Output); 
+      return DetermineMotorCmd(Input, Output); 
     }
 }
 int DetermineMotorCmd( double Input, double Output){
     int shiftedVal = int(Output - MAG_MAX);
     if (shiftedVal > MAG_MAX){ return ((int)POS + (int)MAG_MAX); }
     else if (shiftedVal >= 0) { return ((int)POS + shiftedVal); }
-    else if (shiftedVal >= -MAG_MAX) { return ((int)NEG + abs(shiftedVal)); }
+    else if (shiftedVal >= -1*MAG_MAX) { return ((int)NEG + abs(shiftedVal)); }
     else { return (NEG + MAG_MAX); }
 }
 
+void drive(int dir, int vel, int PWM){       //RIGHT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);    //scale 0 99 to 255
+  switch (dir){
+    case 2: digitalWrite(DIR1, HIGH); break;
+    case 1: digitalWrite(DIR1, LOW); break;
+    default: break;
+  }
+  analogWrite(PWM, x);   //speed scale speed here with input from pi
+}
+
+/*
 void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
   int x = map(vel,0,99,0,255);    //scale 0 99 to 0 to 255
   if (dir == 2){
@@ -117,9 +129,8 @@ void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
   if (dir == 1){
     digitalWrite(DIR1, LOW); 
   }
-  analogWrite(PWM1, x);   //speed scale speed here with input from pi
+  analogWrite(PWM_L, x);   //speed scale speed here with input from pi
 }
-
 
 void rightDrive(int dir, int vel){       //RIGHT MOTOR DRIVE
   int x = map(vel,0,99,0,255);    //scale 0 99 to 255
@@ -129,6 +140,9 @@ void rightDrive(int dir, int vel){       //RIGHT MOTOR DRIVE
   if (dir == 1){
     digitalWrite(DIR1, LOW); 
   }
-  analogWrite(PWM2, x);   //speed scale speed here with input from pi
+  analogWrite(PWM_R, x);   //speed scale speed here with input from pi
 }
+*/
+
+
 
