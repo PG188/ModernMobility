@@ -33,13 +33,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private OutputStream outputStream;
-    private InputStream inStream;
+    private InputStream inStream; //May need later
 
-    int position = 0;
-
-    Button btnSend;
     Button btnConnect;
+    Button btnToMe;
+    Button btnPark;
+    Button btnStop;
+    Button btnResume;
+    Button btnCancel;
 
+    int position = 0;   //first paired device
+
+    String PhoneData;
 
     //=================================================================================
 
@@ -50,13 +55,17 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.d(TAG,"onCreate: created");
         btnConnect = findViewById(R.id.btnConnect);
-        btnSend = findViewById(R.id.btnSend);
+        btnToMe = findViewById(R.id.btnToMe);
+        btnPark = findViewById(R.id.btnPark);
+        btnStop = findViewById(R.id.btnStop);
+        btnResume = findViewById(R.id.btnResume);
+        btnCancel = findViewById(R.id.btnCancel);
 
-        /**Connect button clicked!*/
+        /**btnConnect clicked!*/
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Log.d(TAG,"onCreate: onClick: Connect button clicked");
+                //Log.d(TAG,"onCreate: onClick: btnConnect clicked");
 
                 Runnable r = new Runnable() {
                     @Override
@@ -69,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 };
+
                 /**Create new thread (Runnable r)*/
                 Thread BTConnectionThread = new Thread(r);
                 //Log.d(TAG,"onCreate: onClick: BTConnectionThread started.");
@@ -77,15 +87,75 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**Send button clicked!*/
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        /** btnToMe clicked!*/
+        btnToMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Log.d(TAG,"onCreate: onClick: Send button clicked");
-                String s = "Hello from G5";     /**INIT AT TOP LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+                //Log.d(TAG,"onCreate: onClick: btnToMe clicked");
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    write(s);
+                    PhoneData = "0";
+                    write(PhoneData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnPark clicked!*/
+        btnPark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnPark clicked");
+                try {
+                    //Log.d(TAG,"onCreate: onClick: Message written");
+                    PhoneData = "1";
+                    write(PhoneData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnStop clicked!*/
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnStop clicked");
+                try {
+                    //Log.d(TAG,"onCreate: onClick: Message written");
+                    PhoneData = "2";
+                    write(PhoneData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnResume clicked!*/
+        btnResume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnResume clicked");
+                try {
+                    //Log.d(TAG,"onCreate: onClick: Message written");
+                    PhoneData = "3";
+                    write(PhoneData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnCancel clicked!*/
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnCancel clicked");
+                try {
+                    //Log.d(TAG,"onCreate: onClick: Message written");
+                    PhoneData = "4";
+                    write(PhoneData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -126,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
 
     //=================================================================================
 
-    public void write(String s) throws IOException {
+    public void write(String PhoneData) throws IOException {
         Log.d(TAG,"Write: Message sent");
-        outputStream.write(s.getBytes());   /**Writes to server*/
+        outputStream.write(PhoneData.getBytes());   /**Writes to server*/
     }
 
 
