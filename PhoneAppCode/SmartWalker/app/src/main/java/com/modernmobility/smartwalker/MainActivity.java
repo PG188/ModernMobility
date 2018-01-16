@@ -5,12 +5,15 @@ package com.modernmobility.smartwalker;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private OutputStream outputStream;
     private InputStream inStream; //May need later
 
+    TextView txtCmd;
     Button btnConnect;
     Button btnToMe;
     Button btnPark;
@@ -44,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     int position = 0;   //first paired device
 
-    String PhoneData;
+    byte PhoneData;
 
     //=================================================================================
 
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        BTConnectTxt.sendEmptyMessage(0);
                     }
                 };
 
@@ -94,8 +99,9 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"onCreate: onClick: btnToMe clicked");
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = "0";
+                    PhoneData = 0;
                     write(PhoneData);
+                    UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -109,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"onCreate: onClick: btnPark clicked");
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = "1";
+                    PhoneData = 1;
                     write(PhoneData);
+                    UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -124,8 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"onCreate: onClick: btnStop clicked");
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = "2";
+                    PhoneData = 2;
                     write(PhoneData);
+                    UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -139,8 +147,9 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"onCreate: onClick: btnResume clicked");
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = "3";
+                    PhoneData = 3;
                     write(PhoneData);
+                    UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -154,8 +163,9 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"onCreate: onClick: btnCancel clicked");
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = "4";
+                    PhoneData = 4;
                     write(PhoneData);
+                    UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -196,9 +206,41 @@ public class MainActivity extends AppCompatActivity {
 
     //=================================================================================
 
-    public void write(String PhoneData) throws IOException {
-        Log.d(TAG,"Write: Message sent");
-        outputStream.write(PhoneData.getBytes());   /**Writes to server*/
+    Handler BTConnectTxt = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            txtCmd = findViewById(R.id.txtCmd);
+            txtCmd.setText("Bluetooth connection successful!");
+
+        }
+    };
+
+    //=================================================================================
+
+    public void write(byte PhoneData) throws IOException {
+        //Log.d(TAG,"Write: Message sent");
+        outputStream.write(PhoneData);   /**Writes to server*/
+    }
+
+    //=================================================================================
+    public void UpdateCommandTxt(byte PhoneData) {
+        switch (PhoneData){
+            case 0: //btnToMe clicked!
+                txtCmd.setText("SmartWalker is Navigating towards the the user.");
+                //Log.d(TAG,"UpdateCommandTxt: ToMe");
+            case 1: //btnPark clicked!
+                txtCmd.setText("SmartWalker is Parking.");
+                //Log.d(TAG,"UpdateCommandTxt: Park");
+            case 2: //btnStop clicked!
+                txtCmd.setText("SmartWalker is has stopped.");
+                //Log.d(TAG,"UpdateCommandTxt: Stop");
+            case 3: //btnResume clicked!
+                txtCmd.setText("SmartWalker is resuming.");
+                //Log.d(TAG,"UpdateCommandTxt: Resume");
+            case 4: //btnCancel clicked!
+                txtCmd.setText("SmartWalker is Navigating towards the the user.");
+                //Log.d(TAG,"UpdateCommandTxt: Cancel");
+        }
     }
 
 
