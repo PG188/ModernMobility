@@ -132,8 +132,8 @@ void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
   analogWrite(PWM_L, x);   //speed scale speed here with input from pi
 }
 
-void rightDrive(int dir, int vel){       //RIGHT MOTOR DRIVE
-  int x = map(vel,0,99,0,255);    //scale 0 99 to 255
+void rightDrive(int dir, int vel){  //RIGHT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);      //scale 0 99 to 255
   if (dir == 2){
     digitalWrite(DIR1, HIGH); 
   }  
