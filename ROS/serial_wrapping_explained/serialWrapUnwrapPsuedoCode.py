@@ -1,7 +1,7 @@
 START_FLAG = 0x7E
 STOP_FLAG = 0x7E
 ESCAPE_FLAG = 0x7D
-TWO_IN_HEX = 0x02
+ESCAPE_CHAR = 0x20
 
 
 #Unencapsulates the bytes from the serial wrapping
@@ -41,12 +41,14 @@ def serialWrap(byteArray):
 		#If any of the data is the same as a flag, escape the data, and insert the escape flag 
 		if ((byteVal == START_FLAG) or (byteVal == STOP_FLAG) or (byteVal == ESCAPE_FLAG)):
 			newByteArray.append(ESCAPE_FLAG)
-			newByteArray.append(escapeByte(byteVal)
+			newByteArray.append(escapeByte(byteVal))
+			
 		#Otherwise just add the byte to the array
 		else:
 			newByteArray.append(byteVal)
-	
-	return newByteArray.append(STOP_FLAG)
+		
+	newByteArray.append(STOP_FLAG)
+	return newByteArray
 	
 
 	
@@ -54,6 +56,6 @@ def serialWrap(byteArray):
 def escapeByte(byteVal):
 	#To "escape" a value simply do a bitwise xor operation of the value with 0x02
 	#The xor operation can undo itself if xor'd again, so it is used to escape, and unescape
-	return (byteVal ^ TWO_IN_HEX)
+	return (byteVal ^ ESCAPE_CHAR)
 	
 			
