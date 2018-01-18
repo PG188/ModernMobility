@@ -139,8 +139,8 @@ include_directories(
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -221,3 +221,6 @@ target_link_libraries(leftVelocitySelection ${catkin_LIBRARIES})
 add_executable(rightVelocitySelection src/rightVelocitySelection.cpp)
 target_link_libraries(rightVelocitySelection ${catkin_LIBRARIES})
 
+#TYLER ADDED THIS, I HOPE IT DOESN'T CAUSE ISSUES
+add_executable(SerialWrapper src/SerialWrapper.cpp)
+target_link_libraries(SerialWrapper ${catkin_LIBRARIES})
