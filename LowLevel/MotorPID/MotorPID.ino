@@ -1,12 +1,25 @@
 #include <Arduino.h>
 #include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 
+<<<<<<< HEAD
 //Motor Pins
 #define DIR1 6
 #define PWM1 5
 #define DIR2 4
 #define PWM2 3
 #define velocityInPin 1
+=======
+#define velocityInPin 0
+#define velocitySetPointPin 1
+#define velocityOutPin 3
+#define BrakePin 4
+
+//Pins
+int DIR1 = 6; //PINOUT digitial pin
+int PWM_L = 5; //left spd
+int DIR2 = 4;
+int PWM_R = 3; //right spd
+>>>>>>> 1904633e30af013a137cb15d5128c98cfaf70302
 
 //Constants
 const double K_P = 5, 
@@ -38,6 +51,7 @@ void setup(){
     Serial.begin(9600);
     initPID();
 
+<<<<<<< HEAD
     //Encoder Input
     pinMode(velocityInPin, INPUT);
 
@@ -46,11 +60,22 @@ void setup(){
     pinMode(PWM1, OUTPUT);  //Wheel motor PWM
     pinMode(DIR2, OUTPUT);  //Brake motor direction
     pinMode(PWM2, OUTPUT);  //Brake motor PWM
+=======
+    pinMode(DIR1, OUTPUT); //motor outputs
+    pinMode(PWM_L, OUTPUT);
+    pinMode(DIR2, OUTPUT);
+    pinMode(PWM_R, OUTPUT);
+>>>>>>> 1904633e30af013a137cb15d5128c98cfaf70302
 
     digitalWrite(DIR1, initMotorCmd); //direcitons  
     digitalWrite(DIR2, 0);
+<<<<<<< HEAD
     analogWrite(PWM1, initMotorCmd);   //speed scale speed here with input from pi
     analogWrite(PWM2, 0);
+=======
+    analogWrite(PWM_L, 0);   //speed scale speed here with input from pi
+    analogWrite(PWM_R, 0);
+>>>>>>> 1904633e30af013a137cb15d5128c98cfaf70302
 }
 
 void loop(){
@@ -78,7 +103,16 @@ void loop(){
   
   /*Serial.println(Input);
   Serial.print(" "); //For plotting purposes*/
+<<<<<<< HEAD
   //leftDrive(MTRdir, MTRSpd);        //assuming this is the left motor arduino (change to rightDrive)
+=======
+
+  int MTRSpd = (MotorCmd % 100);  //last two digits
+  int MTRdir = (MotorCmd / 100) % 10; // first digit
+  Serial.println(MTRSpd);
+  Serial.println(MTRdir);
+  drive(MTRdir, MTRSpd, PWM_L); //3rd param is PWM_L for left motor arduino & PWM_R for right
+>>>>>>> 1904633e30af013a137cb15d5128c98cfaf70302
 }
 
 /**************************************************************/
@@ -106,9 +140,14 @@ int doPID(int previousMotorCmd){
      */
     if (!MotorPID.Compute()) {
         //Serial.println("PID returned false");
+        return NULL;  //Send invalid value when nothing computed
     }
     else {
+<<<<<<< HEAD
       return (previousMotorCmd - (int)Output);
+=======
+      return DetermineMotorCmd(Input, Output); 
+>>>>>>> 1904633e30af013a137cb15d5128c98cfaf70302
     }
 }
 
@@ -121,10 +160,21 @@ bool signPos(int value) {
     int shiftedVal = int(Output - MAG_MAX);
     if (shiftedVal > MAG_MAX){ return ((int)POS + (int)MAG_MAX); }
     else if (shiftedVal >= 0) { return ((int)POS + shiftedVal); }
-    else if (shiftedVal >= -MAG_MAX) { return ((int)NEG + abs(shiftedVal)); }
+    else if (shiftedVal >= -1*MAG_MAX) { return ((int)NEG + abs(shiftedVal)); }
     else { return (NEG + MAG_MAX); }
 }
 
+void drive(int dir, int vel, int PWM){       //RIGHT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);    //scale 0 99 to 255
+  switch (dir){
+    case 2: digitalWrite(DIR1, HIGH); break;
+    case 1: digitalWrite(DIR1, LOW); break;
+    default: break;
+  }
+  analogWrite(PWM, x);   //speed scale speed here with input from pi
+}
+
+/*
 void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
   int x = map(vel,0,99,0,255);    //scale 0 99 to 0 to 255
   if (dir == 2){
@@ -133,8 +183,26 @@ void leftDrive(int dir, int vel) {        // LEFT MOTOR DRIVE
   if (dir == 1){
     digitalWrite(DIR1, LOW); 
   }
+<<<<<<< HEAD
   analogWrite(PWM1, x);   //speed scale speed here with input from pi
 }*/
 
+=======
+  analogWrite(PWM_L, x);   //speed scale speed here with input from pi
+}
+
+void rightDrive(int dir, int vel){  //RIGHT MOTOR DRIVE
+  int x = map(vel,0,99,0,255);      //scale 0 99 to 255
+  if (dir == 2){
+    digitalWrite(DIR1, HIGH); 
+  }  
+  if (dir == 1){
+    digitalWrite(DIR1, LOW); 
+  }
+  analogWrite(PWM_R, x);   //speed scale speed here with input from pi
+}
+*/
+
+>>>>>>> 1904633e30af013a137cb15d5128c98cfaf70302
 
 
