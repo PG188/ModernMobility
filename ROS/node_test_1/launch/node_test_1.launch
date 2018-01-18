@@ -5,6 +5,9 @@
 	<node name="rightVelocitySelection" pkg="node_test_1" type="rightVelocitySelection" />
 	<node name="r_wheelController" pkg="node_test_1" type="r_wheelController" />
 	<node name="l_wheelController" pkg="node_test_1" type="l_wheelController" />
+	
+	<!--TYLER ADDED THIS, HOPEFULLY IT DOESN'T CAUSE ISSUES -->
+	<node name="SerialWrapper" pkg="node_test_1" type="SerialWrapper" />
 	 
    <node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen">
      <rosparam param="base_width">0.245</rosparam>
