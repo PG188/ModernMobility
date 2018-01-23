@@ -19,12 +19,11 @@ long duration = 0; //Holds propogation time of ultrasonic signal in microseconds
 int distance_cm[numOfUS] = {0};
 
 //Defines pins for sliders
-const int leftSliderPin = 0;
-const int rightSliderPin = 1;
+const int leftSliderPin = 1;
+const int rightSliderPin = 2;
 
 //Stores analog slider readings
 int leftSliderVal = 0;
-int leftSliderVal_in;
 int rightSliderVal = 0;
 
 byte ValArray[(numOfUS + numOfSlider)*2] = {0};
@@ -33,16 +32,20 @@ byte ValArray[(numOfUS + numOfSlider)*2] = {0};
 int serial_start_flag = 0;
 int readByte;
 
-//LPF variables
-float filterFrequency = 2;
-FilterOnePole lowPassFilter(LOWPASS, filterFrequency); 
+//Low Pass Filter variables
+float filterFrequency_slider = 2;
+FilterOnePole lowPassFilter_slider(LOWPASS, filterFrequency_slider);
+float filterFrequency_ultrasonic = 6;
+FilterOnePole lowPassFilter_ultrasonic(LOWPASS, filterFrequency_ultrasonic);
+
+
 
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
-    /*for (int i=0; i<numOfUS; i++) {
+    for (int i=0; i<numOfUS; i++) {
         pinMode(trigPin[i], OUTPUT); // Sets the trigPin as an Output
         pinMode(echoPin[i], INPUT); // Sets the echoPin as an Input   
-    }*/
+    }
     // create a one pole (RC) lowpass filter
     pinMode(leftSliderPin, INPUT);
     pinMode(rightSliderPin, INPUT);
@@ -51,27 +54,33 @@ void setup() {
 void loop() {
   
     //First we read the analog values for the sliders
-    lowPassFilter.input(analogRead(leftSliderPin));
+    lowPassFilter_slider.input(analogRead(leftSliderPin));
     //rightSliderVal = analogRead(rightSliderPin);
-    /*for (int i=0; i<numOfUS; i++) {
+    //for (int i=0; i<numOfUS; i++) {
         // Clears the trigPin
-        digitalWrite(trigPin[i], LOW);
+        digitalWrite(trigPin[1], LOW);
         delayMicroseconds(2);
         // Sets the trigPin on HIGH state for 10 micro seconds
-        digitalWrite(trigPin[i], HIGH);
+        digitalWrite(trigPin[1], HIGH);
         delayMicroseconds(10);
-        digitalWrite(trigPin[i], LOW);
+        digitalWrite(trigPin[1], LOW);
         // Reads the echoPin, returns the sound wave travel time in microseconds
-        duration = pulseIn(echoPin[i], HIGH);
-        // Calculates the distance in centimeters.
+        duration = pulseIn(echoPin[1], HIGH);
+       // Calculates the distance in centimeters.
         // The distance will be converted into meters on the Pi
-        distance_cm[i]= duration*0.034/2;
-    }*/
+        lowPassFilter_ultrasonic.input(duration*0.034/2);
+        if (lowPassFilter_ultrasonic.output() <= 400){
+          distance_cm[1]= lowPassFilter_ultrasonic.output();
+        }
+        
+    //}
   
-    leftSliderVal = (int) lowPassFilter.output();
+    leftSliderVal = (int) lowPassFilter_slider.output();
+    //Serial.println(leftSliderVal);
+    //leftSliderVal = 512;
     rightSliderVal = 513;
     distance_cm[0] = 100;
-    distance_cm[1] = 200;
+    //distance_cm[1] = 200;
     distance_cm[2] = 300;
     distance_cm[3] = 400;
     

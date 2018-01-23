@@ -14,16 +14,15 @@ def SerialOutCallback(msg):
 
 def serialNode():
 	ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0)
+	time.sleep(2)
 	rospy.init_node('serialNode', anonymous=True)
 	#Define Publisher
 	pub = rospy.Publisher('SerialIn', String, queue_size = 1000)
 	#Define Subscriber
 	sub = rospy.Subscriber('SerialOut', String, SerialOutCallback)
-	rate = rospy.Rate(1000)
+	rate = rospy.Rate(100)
 	bytecount = 0
-	readserial = String()
-	writeserial = String()
-	writeserial.data = ''
+	writeserial = b''
 	NotStartFlag = True;
 	readByte = 0;
 	ser.write(b'Z') #Stop command
@@ -36,12 +35,11 @@ def serialNode():
 	ser.write(b'A')#Start command
 	while not rospy.is_shutdown():
 		while ser.in_waiting:
-			writeserial.data += str(ser.read(1))
-			bytecount += 1
-			if bytecount >= 12:
-				pub.publish(writeserial)
+			writeserial+= ser.read(1)
+			if len(writeserial) == 12:
+				pub.publish(str(writeserial))
 				bytecount = 0
-				writeserial.data = ''
+				writeserial = b''
 			msg_str = "ser.in_waiting = %d" %ser.in_waiting
 			rospy.loginfo(msg_str)
 		rate.sleep()
