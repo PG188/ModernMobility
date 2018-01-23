@@ -24,7 +24,6 @@ import java.util.Set;
 
 /**READ ME
 * Currently app acts only as a Bluetooth client
-* Current button setup and data being sent is not correct (Easy to do, will correct soon)
 * CAN establish a connection with a Bluetooth server
 * CAN send data to server once Bluetooth connected
 * CANNOT enable devices' Bluetooth
@@ -36,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private OutputStream outputStream;
-    private InputStream inStream; //May need later
+    //private InputStream inStream; //May need later
 
+    //Widgets
     TextView txtCmd;
     Button btnConnect;
     Button btnToMe;
@@ -45,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
     Button btnStop;
     Button btnResume;
     Button btnCancel;
+    Button btnDisconnect;
 
-    int position = 0;   //first paired device
+    //first paired device
+    int position = 0;
 
     byte PhoneData;
 
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         btnStop = findViewById(R.id.btnStop);
         btnResume = findViewById(R.id.btnResume);
         btnCancel = findViewById(R.id.btnCancel);
+        btnDisconnect = findViewById(R.id.btnDisconnect);
 
         /**btnConnect clicked!*/
         btnConnect.setOnClickListener(new View.OnClickListener() {
@@ -97,9 +100,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnToMe clicked");
+                PhoneData = 0;
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = 0;
+
                     write(PhoneData);
                     UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
@@ -113,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnPark clicked");
+                PhoneData = 1;
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
                     PhoneData = 1;
@@ -129,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnStop clicked");
+                PhoneData = 2;
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = 2;
                     write(PhoneData);
                     UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
@@ -145,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnResume clicked");
+                PhoneData = 3;
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = 3;
                     write(PhoneData);
                     UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
@@ -161,9 +166,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnCancel clicked");
+                PhoneData = 4;
                 try {
                     //Log.d(TAG,"onCreate: onClick: Message written");
-                    PhoneData = 4;
+                    write(PhoneData);
+                    UpdateCommandTxt(PhoneData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnDisconnect clicked!*/
+        btnDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
+                PhoneData = 9;
+                try {
+                    //Log.d(TAG,"onCreate: onClick: Message written");
                     write(PhoneData);
                     UpdateCommandTxt(PhoneData);
                 } catch (IOException e) {
@@ -187,15 +208,15 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"init: BT adapter is enabled");
                 Set<BluetoothDevice> bondedDevices = blueAdapter.getBondedDevices();    /**Gets all currently paired devices*/
 
-                if(bondedDevices.size() > 0) {
+                if(bondedDevices.size() > 0) {      /**More than zerodevices paired*/
                     //Log.d(TAG,"init: Bonded devices greater than zero");
                     Object[] devices = (Object []) bondedDevices.toArray();
                     BluetoothDevice device = (BluetoothDevice) devices[position];
                     ParcelUuid[] uuids = device.getUuids(); /**Gets the UUID of device to establish a connection*/
-                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[0].getUuid());
+                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[0].getUuid());  /**Create socket using correct UUID*/
                     socket.connect();
                     outputStream = socket.getOutputStream();
-                    inStream = socket.getInputStream();
+                    //inStream = socket.getInputStream();
                 }
                 //Log.e("error", "No appropriate paired devices.");
             } else {
@@ -242,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG,"UpdateCommandTxt: Cancel");
         }
     }
-
 
    /* //=================================================================================
    //May need this later

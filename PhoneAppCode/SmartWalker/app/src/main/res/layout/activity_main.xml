@@ -8,11 +8,11 @@
 
     <TextView
         android:id="@+id/txtCmd"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:text="Press connect to begin."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,74 +22,85 @@
         android:id="@+id/btnConnect"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
         android:text="Connect"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtCmd" />
+        app:layout_constraintTop_toBottomOf="@+id/txtCmd"
+        android:layout_marginLeft="50dp" />
 
     <Button
         android:id="@+id/btnToMe"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="90dp"
+        android:backgroundTint="@android:color/holo_green_dark"
         android:text="Come to me"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnConnect" />
+        app:layout_constraintTop_toBottomOf="@+id/txtCmd"
+        android:layout_marginLeft="132dp" />
 
     <Button
         android:id="@+id/btnPark"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
         android:text="Park"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnToMe" />
+        app:layout_constraintTop_toBottomOf="@+id/btnToMe"
+        android:layout_marginLeft="132dp" />
 
     <Button
         android:id="@+id/btnStop"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
         android:text="Stop"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPark" />
+        app:layout_constraintTop_toBottomOf="@+id/btnPark"
+        android:layout_marginLeft="132dp" />
 
     <Button
         android:id="@+id/btnResume"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
         android:text="Resume"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnStop" />
+        app:layout_constraintTop_toBottomOf="@+id/btnStop"
+        android:layout_marginLeft="132dp" />
 
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
         android:text="Cancel"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnResume" />
+        app:layout_constraintTop_toBottomOf="@+id/btnResume"
+        android:layout_marginLeft="132dp" />
 
+    <Button
+        android:id="@+id/btnDisconnect"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Disconnect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCmd"
+        android:layout_marginRight="50dp" />
 
 
 </android.support.constraint.ConstraintLayout>
