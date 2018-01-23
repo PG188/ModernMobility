@@ -4,6 +4,7 @@ Every 10ms these values are sent back to the Raspberry Pi for processing
 */
 
 #include <Arduino.h>
+#include <Filters.h>
 
 #define numOfUS 4
 #define numOfSlider 2
@@ -23,6 +24,7 @@ const int rightSliderPin = 1;
 
 //Stores analog slider readings
 int leftSliderVal = 0;
+int leftSliderVal_in;
 int rightSliderVal = 0;
 
 byte ValArray[(numOfUS + numOfSlider)*2] = {0};
@@ -30,21 +32,27 @@ byte ValArray[(numOfUS + numOfSlider)*2] = {0};
 //Serial variables
 int serial_start_flag = 0;
 int readByte;
+
+//LPF variables
+float filterFrequency = 2;
+FilterOnePole lowPassFilter(LOWPASS, filterFrequency); 
+
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
     /*for (int i=0; i<numOfUS; i++) {
         pinMode(trigPin[i], OUTPUT); // Sets the trigPin as an Output
         pinMode(echoPin[i], INPUT); // Sets the echoPin as an Input   
-    }
+    }*/
+    // create a one pole (RC) lowpass filter
     pinMode(leftSliderPin, INPUT);
-    pinMode(rightSliderPin, INPUT);*/
+    pinMode(rightSliderPin, INPUT);
     
 }
 void loop() {
   
     //First we read the analog values for the sliders
-    /*leftSliderVal = analogRead(leftSliderPin);
-    rightSliderVal = analogRead(rightSliderPin);*/
+    lowPassFilter.input(analogRead(leftSliderPin));
+    //rightSliderVal = analogRead(rightSliderPin);
     /*for (int i=0; i<numOfUS; i++) {
         // Clears the trigPin
         digitalWrite(trigPin[i], LOW);
@@ -60,7 +68,7 @@ void loop() {
         distance_cm[i]= duration*0.034/2;
     }*/
   
-    leftSliderVal = 512;
+    leftSliderVal = (int) lowPassFilter.output();
     rightSliderVal = 513;
     distance_cm[0] = 100;
     distance_cm[1] = 200;
