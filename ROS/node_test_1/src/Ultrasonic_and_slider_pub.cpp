@@ -6,6 +6,11 @@
 #include <std_msgs/String.h>
 #include <stdlib.h>
 
+double US_frames[4][4] = {{0,0,0,0},
+						  {0,0,1,0},
+						  {0,0,0,0},
+						  {0,0,0,0}};
+
 class UltrasonicSlider_Pub {	
 	public:
 		UltrasonicSlider_Pub() {
@@ -25,8 +30,6 @@ class UltrasonicSlider_Pub {
 				cloud.channels[0].values[i] = 100;
 			}
 			for (unsigned int i = 0; i < numOfUSSensors; ++i) {
-				for (unsigned int j = 0; j < numOfUSSensors; ++j)
-					US_frames[i][j] = 0;
 				mag[i] = 0;
 			}
 		}
@@ -39,12 +42,13 @@ class UltrasonicSlider_Pub {
 			mag[1] = double((serialIn[7] << 8) | serialIn[6])/100;
 			mag[2] = double((serialIn[9] << 8) | serialIn[8])/100;
 			mag[3] = double((serialIn[11] << 8) | serialIn[10])/100;
+			
 			/*Transforms the magnitude values from each 
 			 *sensor into a point (x,y,z) in the point cloud
 			 *using the coordinate frame of each sensor. */
 			for(unsigned int i = 0; i < numOfUSSensors; ++i) {
 				cloud.points[i].x = float(US_frames[i][0] + mag[i]*cos(US_frames[i][3]));
-				cloud.points[i].y = float(US_frames[i][1] + mag[i]*sin(US_frames[i][3]));
+				cloud.points[i].y = float(US_frames[i][1] + mag[i]*sin(US_frames[i][3]));				
 				cloud.points[i].z = float(US_frames[i][2]);
 			}
 			cloud.header.stamp = ros::Time::now();
@@ -54,7 +58,6 @@ class UltrasonicSlider_Pub {
 		}
 		
 	private:
-		double US_frames[4][4];
 		int numOfUSSensors;
 		const char *serialIn;
 		double mag[4];
