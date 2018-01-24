@@ -19,8 +19,8 @@ long duration = 0; //Holds propogation time of ultrasonic signal in microseconds
 int distance_cm[numOfUS] = {0};
 
 //Defines pins for sliders
-const int leftSliderPin = 1;
-const int rightSliderPin = 2;
+const int leftSliderPin = 3;
+const int rightSliderPin = 4;
 
 //Stores analog slider readings
 int leftSliderVal = 0;
@@ -65,7 +65,7 @@ void loop() {
         delayMicroseconds(10);
         digitalWrite(trigPin[1], LOW);
         // Reads the echoPin, returns the sound wave travel time in microseconds
-        duration = pulseIn(echoPin[1], HIGH);
+        //duration = pulseIn(echoPin[1], HIGH);
        // Calculates the distance in centimeters.
         // The distance will be converted into meters on the Pi
         lowPassFilter_ultrasonic.input(duration*0.034/2);
