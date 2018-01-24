@@ -93,35 +93,14 @@ void loop() {
       }
      }
     
-    //DO PID
-    //SetPoint_double = 20.0; //Testing purposes 
-    //Input = analogRead(velocityInPin);  //Encoder value
-    //SetPoint_double = (double) motorVelCmd;
-    //Ramp-down algorithm
-    /*if (SetPoint_double == RAMP_DOWN_CMD) { 
-      if (Input != 0) {                     //Check if encoders are reading wheels have stopped
-        analogWrite(PWM2, 0);               //Disengage clutch
-        SetPoint_double = 0;                //Set the target velocity to 0
-        MotorCmd = doPID(initMotorCmd);
-      }
-      else {
-        delay(2000);
-        analogWrite(PWM2, 255);             //Engage clutch
-      }
-    }
-    else { */
-      /*MotorCmd = doPID(initMotorCmd);
-      if (Input > 0) {
-        Input = Input + MotorCmd/255.0;
-      }
-      else {
-        Input = Input - MotorCmd/255.0;
-      }*/
-    //}
-    
     //initMotorCmd = MotorCmd;                              //Set previous motor command to current motor command
-    MotorCmd = motorVelCmd*10;
-    digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
+    MotorCmd = motorVelCmd*255;
+    if (signPos(MotorCmd)){
+      digitalWrite(DIR1, HIGH);   //Assigning appropriate motor direction
+    }
+    if (signNeg(MotorCmd)){
+      digitalWrite(DIR1, LOW);
+    }
     analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   
     /*Serial.println(Input);
@@ -135,29 +114,10 @@ void loop() {
     delay(30);
 }
 
-void initPID(){
-    MotorPID.SetMode(AUTOMATIC);                //Turns the PID on, default is off (MANUAL)
-    MotorPID.SetOutputLimits(OUT_MIN, OUT_MAX); //By default this is (0, 255)
-    MotorPID.SetSampleTime(SAMPLE_TIME);        //By default this is 200ms
-    MotorPID.SetControllerDirection(DIRECT);
-}
-
-int doPID(int previousMotorCmd){
-    /*
-     * MotorPID.Compute() computes the PID and returns true, 
-     * if it does not compute anything it will return false
-     */
-     if (!MotorPID.Compute()){
-      //return NULL
-     }
-     //else {
-      //Serial.println(Output);
-      //Serial.print(" ");
-    //(previousMotorCmd - (int)Output);
-     //}
-     //return MotorPID.Compute() ? (previousMotorCmd - (int)Output) : ;//NULL;
-}
-
 bool signPos(int value) {
   return (value >= 0); 
+}
+
+bool signNeg(int value) {
+  return (value < 0); 
 }
