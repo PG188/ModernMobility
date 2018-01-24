@@ -41,13 +41,13 @@ void encoder_callback(const std_msgs::String::ConstPtr& encoderCount_str) {
 }
 
 int main(int argc, char **argv) {
-	ros::init(argc, argv, "l_wheelController");   //Starts ROS for the node wheelController
+	ros::init(argc, argv, "r_wheelController");   //Starts ROS for the node wheelController
 	ros::NodeHandle n;   //Creates a node handle and actually initializes the node
-	encoderSub = n.subscribe("leftEncoder_SerialIn", 1000, encoder_callback);
-	velCommandSub = n.subscribe("lwheel_vel_master", 1000, velocity_cmd_callback);
+	encoderSub = n.subscribe("rightEncoder_SerialIn", 1000, encoder_callback);
+	velCommandSub = n.subscribe("rwheel_vel_master", 1000, velocity_cmd_callback);
 	//Adds a publisher that publishes a String message on the different_chatter topic, with a buffer size of 1000
-	encoderPub = n.advertise<std_msgs::Int16>("leftEncoder", 1000);
-	velCommandPub = n.advertise<std_msgs::String>("leftMotorVel_SerialOut", 1000);
+	encoderPub = n.advertise<std_msgs::Int16>("rightEncoder", 1000);
+	velCommandPub = n.advertise<std_msgs::String>("rightMotorVel_SerialOut", 1000);
 	encoderCount.data = 0;
 	ros::spin();
 	return 0;

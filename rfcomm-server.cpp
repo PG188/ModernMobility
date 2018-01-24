@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 	bool connected = true;
 	
 	//Raspberry Pi's Bluetooth Address
-	char address[18] = "B8:27:EB:F0:3C:27";
+	char address[18] = "B8:27:EB:14:85:B5";
 
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buf[1024] = { 0 };
