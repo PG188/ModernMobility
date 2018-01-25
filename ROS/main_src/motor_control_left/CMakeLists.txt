@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(bluetooth_node)
+project(motor_control_left)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -185,9 +185,11 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-add_executable(bluetooth_node src/bluetoothNode.cpp)
-target_link_libraries(bluetooth_node ${catkin_LIBRARIES})
-target_link_libraries(bluetooth_node bluetooth)
+add_executable(l_wheelController src/l_wheelController.cpp)
+target_link_libraries(l_wheelController ${catkin_LIBRARIES})
+
+add_executable(leftVelocitySelection src/leftVelocitySelection.cpp)
+target_link_libraries(leftVelocitySelection ${catkin_LIBRARIES})
 
 #############
 ## Testing ##
