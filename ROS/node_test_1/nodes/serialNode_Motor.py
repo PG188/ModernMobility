@@ -7,7 +7,8 @@ from std_msgs.msg import String
 import serial
 import struct
 
-ser = serial.Serial('/dev/ttyACM1', baudrate=115200, timeout=0)
+ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0)
+ready_to_read = True
 
 def SerialOutCallback(msg):
 	global ser
@@ -20,6 +21,10 @@ def serialNode():
 	pub = rospy.Publisher('leftEncoder_SerialIn', String, queue_size = 1000)
 	sub = rospy.Subscriber('leftMotorVel_SerialOut', String, SerialOutCallback)
 	rospy.init_node('serialNode_Motor', anonymous=True)
+	bytecount = 0
+	writeserial = String()
+	writeserial.data = ''
+	NotStartFlag = True
 	StartVal = struct.pack("b",127)
 	StopVal =  struct.pack("b",126)
 	StopValReturn = bytes(struct.pack("h", 32767))

@@ -17,9 +17,9 @@ def SerialOutCallback(msg):
 def serialNode():
 	global ser
 	time.sleep(2) #Delay to allow serial comms to open up
-	pub = rospy.Publisher('leftEncoder_SerialIn', String, queue_size = 1000)
-	sub = rospy.Subscriber('leftMotorVel_SerialOut', String, SerialOutCallback)
-	rospy.init_node('serialNode_Motor', anonymous=True)
+	pub = rospy.Publisher('rightEncoder_SerialIn', String, queue_size = 1000)
+	sub = rospy.Subscriber('rightMotorVel_SerialOut', String, SerialOutCallback)
+	rospy.init_node('serialNode_motor_right', anonymous=True)
 	StartVal = struct.pack("b",127)
 	StopVal =  struct.pack("b",126)
 	StopValReturn = bytes(struct.pack("h", 32767))

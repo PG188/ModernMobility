@@ -1,0 +1,11 @@
+<launch>
+
+	<include file="$(find freenect_launch)/launch/freenect.launch" />
+
+	<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" > 
+	  <remap from="image" to="/camera/depth/image_raw"/>
+	  <remap from="camera_info" to="/camera/depth/camera_info"/>
+	</node>
+
+	<node name="scan_sub" pkg="kinect_proof" type="scan_sub" />
+</launch>

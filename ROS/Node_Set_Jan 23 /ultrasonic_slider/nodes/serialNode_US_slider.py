@@ -15,7 +15,7 @@ def SerialOutCallback(msg):
 def serialNode():
 	ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0)
 	time.sleep(2)
-	rospy.init_node('serialNode', anonymous=True)
+	rospy.init_node('serialNode_US_slider', anonymous=True)
 	#Define Publisher
 	pub = rospy.Publisher('SerialIn', String, queue_size = 1000)
 	#Define Subscriber

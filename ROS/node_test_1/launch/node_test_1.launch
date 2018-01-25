@@ -1,0 +1,17 @@
+<launch>
+	<node name="serialNode" pkg="node_test_1" type="serialNode.py" output="screen"/>
+	<node name="Ultrasonic_and_slider_pub" pkg="node_test_1" type="Ultrasonic_and_slider_pub" output="screen" /> 
+    <node name="leftVelocitySelection" pkg="node_test_1" type="leftVelocitySelection" />
+	<node name="rightVelocitySelection" pkg="node_test_1" type="rightVelocitySelection" />
+	<node name="r_wheelController" pkg="node_test_1" type="r_wheelController" />
+	<node name="l_wheelController" pkg="node_test_1" type="l_wheelController" />
+	
+	<!--TYLER ADDED THIS, HOPEFULLY IT DOESN'T CAUSE ISSUES -->
+	<node name="SerialWrapper" pkg="node_test_1" type="SerialWrapper" />
+	 
+   <node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen">
+     <rosparam param="base_width">0.245</rosparam>
+   </node>
+
+   <node pkg="differential_drive" type="virtual_joystick.py" name="virtual_joystick" output="screen"/>
+</launch>
