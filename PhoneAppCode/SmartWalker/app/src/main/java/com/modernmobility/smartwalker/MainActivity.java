@@ -54,15 +54,32 @@ public class MainActivity extends AppCompatActivity {
     byte[] PhoneData = new byte[1];
 
     //Test sending floats
-    Button btnTest;
-    double TestX = 1.543;
-    double TestY = 3.816;
-    double TestO = 2.591;
+    Button btnTest0;
+    Button btnTest1;
+    Button btnTest2;
+    Button btnTest3;
+    Button btnTest4;
+
+    double TestX = 1.5;
+    double TestY = 1.3;
+    double TestO = 2;
+    double TestX1 = 0.3;
+    double TestY1 = 0.8;
+    double TestO1 = 0;
+    double TestX2 = -0.5;
+    double TestY2 = 0.2;
+    double TestO2 = 0.7;
+    double TestX3 = -0.9;
+    double TestY3 = -0.3;
+    double TestO3 = 3.5;
+    double TestX4 = -1.2;
+    double TestY4 = -1.2;
+    double TestO4 = 4.2;
     float floatValue;
     byte [] x;
     byte [] y;
     byte [] o;
-    byte[] pose;
+    byte [] pose;
     byte [] bytes4 = new byte[4];
     byte [] bytes12 = new byte[12];
     ByteBuffer buffer;
@@ -83,7 +100,16 @@ public class MainActivity extends AppCompatActivity {
         btnResume = findViewById(R.id.btnResume);
         btnCancel = findViewById(R.id.btnCancel);
         btnDisconnect = findViewById(R.id.btnDisconnect);
-        btnTest = findViewById(R.id.btnTest);   //Test sending floats
+
+        //============================================================================
+
+        btnTest0 = findViewById(R.id.btnTest0);   //Test sending floats
+        btnTest1 = findViewById(R.id.btnTest1);   //Test sending floats
+        btnTest2 = findViewById(R.id.btnTest2);   //Test sending floats
+        btnTest3 = findViewById(R.id.btnTest3);   //Test sending floats
+        btnTest4 = findViewById(R.id.btnTest4);   //Test sending floats
+
+        //============================================================================
 
         /**btnConnect clicked!*/
         btnConnect.setOnClickListener(new View.OnClickListener() {
@@ -213,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         //================TEST=============================================================
 
         /**btnTest clicked!*/
-        btnTest.setOnClickListener(new View.OnClickListener() {
+        btnTest0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
@@ -224,7 +250,86 @@ public class MainActivity extends AppCompatActivity {
                     y = ToByteArray(TestY);
                     o = ToByteArray(TestO);
                     pose = Pose(x, y, o);
-                    //for (int i = 0, )
+                    write(pose);
+                    UpdateCommandTxt(PhoneData[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnTest1 clicked!*/
+        btnTest1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
+                try {
+                    Log.d(TAG,"onCreate:  onClick: TEST BUTTON CLICKED!");
+                    PhoneData[0] = 10;
+                    x = ToByteArray(TestX1);
+                    y = ToByteArray(TestY1);
+                    o = ToByteArray(TestO1);
+                    pose = Pose(x, y, o);
+                    write(pose);
+                    UpdateCommandTxt(PhoneData[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnTest2 clicked!*/
+        btnTest2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
+                try {
+                    Log.d(TAG,"onCreate:  onClick: TEST BUTTON CLICKED!");
+                    PhoneData[0] = 10;
+                    x = ToByteArray(TestX2);
+                    y = ToByteArray(TestY2);
+                    o = ToByteArray(TestO2);
+                    pose = Pose(x, y, o);
+                    write(pose);
+                    UpdateCommandTxt(PhoneData[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnTest3 clicked!*/
+        btnTest3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
+                try {
+                    Log.d(TAG,"onCreate:  onClick: TEST BUTTON CLICKED!");
+                    PhoneData[0] = 10;
+                    x = ToByteArray(TestX3);
+                    y = ToByteArray(TestY3);
+                    o = ToByteArray(TestO3);
+                    pose = Pose(x, y, o);
+                    write(pose);
+                    UpdateCommandTxt(PhoneData[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**btnTest4 clicked!*/
+        btnTest4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
+                try {
+                    Log.d(TAG,"onCreate:  onClick: TEST BUTTON CLICKED!");
+                    PhoneData[0] = 10;
+                    x = ToByteArray(TestX4);
+                    y = ToByteArray(TestY4);
+                    o = ToByteArray(TestO4);
+                    pose = Pose(x, y, o);
                     write(pose);
                     UpdateCommandTxt(PhoneData[0]);
                 } catch (IOException e) {
@@ -255,7 +360,6 @@ public class MainActivity extends AppCompatActivity {
                     ParcelUuid[] uuids = device.getUuids(); /**Gets the UUID of device to establish a connection*/
                     BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuids[position].getUuid());  /**Create socket using correct UUID*/
                     socket.connect();
-                    Log.d(TAG,"HELLO!");
                     outputStream = socket.getOutputStream();
                     inStream = socket.getInputStream();
                 }
@@ -311,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
     //=================================================================================
 
     public byte[] ToByteArray(double value){
-        Log.d(TAG,"ToByteArray");
+        //Log.d(TAG,"ToByteArray");
         floatValue = (float)value;
         buffer = ByteBuffer.allocate(bytes4.length);
         buffer.putFloat(floatValue);
@@ -321,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
     //=================================================================================
 
     public byte[] Pose (byte[] x, byte[] y, byte[] o){
-        Log.d(TAG,"Pose");
+        //Log.d(TAG,"Pose");
         buffer = ByteBuffer.allocate(bytes12.length);
         buffer.put(x).put(y).put(o);
         return buffer.array();
