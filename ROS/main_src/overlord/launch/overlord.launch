@@ -27,7 +27,8 @@
 	<node name="tf_kinect_broadcaster" pkg="transform" type="tf_kinect_broadcaster"/>
 	<node name="tf_US_broadcaster" pkg="transform" type="tf_kinect_broadcaster"/>
 
-	<node name="bluetoothNode" pkg="bluetooth_node" type="bluetooth_node" output="screen" /> 
+	<node name="bluetoothNode" pkg="hmi_pkg" type="bluetoothNode" output="screen" />
+ 	<node name="HMINode" pkg="hmi_pkg" type="HMINode" output="screen" /> 
 
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 		<rosparam file="$(find overlord)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />

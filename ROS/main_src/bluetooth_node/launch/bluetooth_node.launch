@@ -1,5 +1,0 @@
-<launch>
-
-  	<node name="bluetoothNode" pkg="bluetooth_node" type="bluetooth_node" output="screen" /> 
-
-</launch>
