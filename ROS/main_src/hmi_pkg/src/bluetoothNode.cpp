@@ -11,7 +11,7 @@
 //ROS stuff
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include <std_msgs/Int32.h>
+#include <std_msgs/UInt16.h>
 #include <sstream>
 
 float S, E, M, num, x, y, o;
@@ -33,7 +33,7 @@ int interpretCmd(char *buf){
 	
 //=====ROS================================================
 	int cmd;
-	std_msgs::Int32 msg;
+	std_msgs::UInt16 msg;
 		
 //=====BLUETOOTH STUFF====================================
 
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 
 	ros::init(argc, argv, "talker");
 	ros::NodeHandle bluetooth;
-	bluetalk_pub = bluetooth.advertise<std_msgs::Int32>("bluetalk", 1000);
+	bluetalk_pub = bluetooth.advertise<std_msgs::UInt16>("bluetalk", 1000);
 	
 
 //=====BLUETOOTH STUFF====================================
