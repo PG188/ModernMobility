@@ -10,13 +10,16 @@
 
 //ROS stuff
 #include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <geometry_msgs/Point32.h>
 #include <std_msgs/Int32.h>
 #include <sstream>
 
 float S, E, M, num, x, y, o;
 
-ros::Publisher bluetalk_pub;
+ros::Publisher blue_pose_pub;
+ros::Publisher blue_cmd_pub;
+geometry_msgs::Point32 pose;
+std_msgs::Int32 cmd;
 
 float toFloatNum(char b0, char b1, char b2, char b3){
 	
@@ -32,8 +35,8 @@ float toFloatNum(char b0, char b1, char b2, char b3){
 int interpretCmd(char *buf){
 	
 //=====ROS================================================
-	int cmd;
-	std_msgs::Int32 msg;
+	//geometry_msgs::Point32 pose;
+	//std_msgs::Int32 cmd;
 		
 //=====BLUETOOTH STUFF====================================
 
@@ -44,9 +47,7 @@ int interpretCmd(char *buf){
 		case (char)0:
 			printf("SmartWalker is navigating towards the user\n");
 			//call ROS function
-			msg.data = 0;
-			bluetalk_pub.publish(msg);
-			ROS_INFO("%d",msg.data);
+			cmd.data = 0;
 			
 			return 0;
 		break;
@@ -54,9 +55,7 @@ int interpretCmd(char *buf){
 		case (char)1:
 			printf("SmartWalker is parking\n");
 			//call ROS function
-			msg.data = 1;
-			bluetalk_pub.publish(msg);
-			ROS_INFO("%d",msg.data);
+			cmd.data = 1;
 
 			return 0;
 		break;
@@ -64,9 +63,7 @@ int interpretCmd(char *buf){
 		case (char)2:
 			printf("SmartWalker has stopped\n");
 			//call ROS function
-			msg.data = 2;
-			bluetalk_pub.publish(msg);
-			ROS_INFO("%d",msg.data);
+			cmd.data = 2;
 			
 			return 0;
 		break;
@@ -74,9 +71,7 @@ int interpretCmd(char *buf){
 		case (char)3:
 			printf("Smartwalker is resuming\n");
 			//call ROS function
-			msg.data = 3;
-			bluetalk_pub.publish(msg);
-			ROS_INFO("%d",msg.data);
+			cmd.data = 3;
 			
 			return 0;
 		break;
@@ -84,9 +79,7 @@ int interpretCmd(char *buf){
 		case (char)4:
 			printf("Command cancelled\n");
 			//call ROS function
-			msg.data = 4;
-			bluetalk_pub.publish(msg);
-			ROS_INFO("%d",msg.data);
+			cmd.data = 4;
 			
 			return 0;
 		break;
@@ -105,20 +98,24 @@ int interpretPose(char *buf){
 	
 	printf("float:\tx: %f, y: %f, o: %f\n\n", x, y, o);
 	
+	pose.x = x;
+	pose.y = y;
+	pose.z = o;
 	return 0;
 }
 
 //REFERENCE: https://people.csail.mit.edu/albert/bluez-intro/x502.html
 //REFERENCE: https://raspberrypi.stackexchange.com/questions/55850/rpi-bluetooth-headless-communication-with-android-phone-no-pairing/55884
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
 
 //=====ROS================================================
 
 	ros::init(argc, argv, "talker");
 	ros::NodeHandle bluetooth;
-	bluetalk_pub = bluetooth.advertise<std_msgs::Int32>("bluetalk", 1000);
+	
+	blue_cmd_pub = bluetooth.advertise<std_msgs::Int32>("blue_cmd", 1000);
+	blue_pose_pub = bluetooth.advertise<geometry_msgs::Point32>("blue_pose", 1000);
 	
 
 //=====BLUETOOTH STUFF====================================
@@ -169,10 +166,14 @@ int main(int argc, char **argv)
 				printf("connection terminated\n");
 			}
 			//printf("received [%s]\n", buf);
+			blue_cmd_pub.publish(cmd);
+			ROS_INFO("%d",cmd.data);
 		}
 		else{
 			if(bytes_read == 12){
 				interpretPose(buf);
+				blue_pose_pub.publish(pose);
+				ROS_INFO("%3.2f, %3.2f, %3.2f", pose.x, pose.y, pose.z);
 			}
 		}
 		loop_rate.sleep();

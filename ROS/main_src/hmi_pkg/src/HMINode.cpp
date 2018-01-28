@@ -26,7 +26,8 @@ int main(int argc, char** argv){
 
 	//Suscriber initialization
 	//Adds subscriber that subscribes to bluetooth phone commands on the appropriate topic, reads with callback
-	ros::Subscriber phoneCommandSub = nh.subscribe("bluetalk", 1, phone_cmd_callback);
+	ros::Subscriber phoneCommandSub = nh.subscribe("blue_cmd", 1, phone_cmd_callback);
+	//ros::Subscriber phonePoseSub = nh.subscribe("blue_pose", 1, phone_cmd_callback);
 
 	//Publisher initialization
 	//Adds publisher that publishes walker mode on the appropriate topic, with a buffer size of 1000	
@@ -43,15 +44,15 @@ int main(int argc, char** argv){
 				break;
 			case manual_assisted:
 				walkerModePub.publish(state);
-				ROS_INFO("State = manual_assisted");
+				//ROS_INFO("State = manual_assisted");
 				break;
 			case auto_go_user:
 				walkerModePub.publish(state);
-				ROS_INFO("State = auto_go_user");
+				//ROS_INFO("State = auto_go_user");
 				break;	
 			case auto_go_park:
 				walkerModePub.publish(state);
-				ROS_INFO("State = auto_go_park");
+				//ROS_INFO("State = auto_go_park");
 				break;
 		}
 		loop_rate.sleep();
