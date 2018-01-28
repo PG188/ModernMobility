@@ -7,10 +7,10 @@ int main(int argc, char** argv){
 
   ros::Rate r(100);
 
-  tf::TransformBroadcaster broadcaster;
+  tf::TransformBroadcaster k_broadcaster;
 
   while(n.ok()){
-    broadcaster.sendTransform(
+    k_broadcaster.sendTransform(
       tf::StampedTransform(
         //EDIT BASE POINT HERE
         tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.1, 0.0, 0.2)),
