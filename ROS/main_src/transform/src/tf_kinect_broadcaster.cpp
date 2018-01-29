@@ -2,15 +2,15 @@
 #include <tf/transform_broadcaster.h>
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "robot_tf_publisher");
+  ros::init(argc, argv, "tf_kinect_broadcaster");
   ros::NodeHandle n;
 
   ros::Rate r(100);
 
-  tf::TransformBroadcaster broadcaster;
+  tf::TransformBroadcaster k_broadcaster;
 
   while(n.ok()){
-    broadcaster.sendTransform(
+    k_broadcaster.sendTransform(
       tf::StampedTransform(
         //EDIT BASE POINT HERE
         tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.1, 0.0, 0.2)),
