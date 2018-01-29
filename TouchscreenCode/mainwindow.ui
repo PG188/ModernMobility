@@ -26,10 +26,10 @@
    <widget class="QPushButton" name="BrakeModeBtn">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>240</y>
-      <width>99</width>
-      <height>28</height>
+      <x>390</x>
+      <y>200</y>
+      <width>161</width>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
@@ -50,10 +50,10 @@
    <widget class="QPushButton" name="FreeRollingBtn">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>274</y>
-      <width>135</width>
-      <height>28</height>
+      <x>180</x>
+      <y>200</y>
+      <width>151</width>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
@@ -71,26 +71,6 @@
      <string>Set Free Rolling Mode</string>
     </property>
    </widget>
-   <widget class="QTimeEdit" name="timeEdit">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>10</y>
-      <width>118</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QDateEdit" name="dateEdit">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>40</y>
-      <width>110</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -104,7 +84,44 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../../Pictures/logoresized.png</pixmap>
+     <pixmap>logoresized.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="dateEdit">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>50</y>
+      <width>110</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="dateTime">
+     <datetime>
+      <hour>0</hour>
+      <minute>3</minute>
+      <second>0</second>
+      <year>1997</year>
+      <month>1</month>
+      <day>1</day>
+     </datetime>
+    </property>
+    <property name="time">
+     <time>
+      <hour>0</hour>
+      <minute>3</minute>
+      <second>0</second>
+     </time>
+    </property>
+   </widget>
+   <widget class="QTimeEdit" name="timeEdit">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>20</y>
+      <width>118</width>
+      <height>22</height>
+     </rect>
     </property>
    </widget>
   </widget>
