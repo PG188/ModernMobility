@@ -15,7 +15,7 @@ const int trigPin[numOfUS] = {10,12,14,16};
 const int echoPin[numOfUS] = {11,13,15,17};
 
 // defines US variables
-long duration = 0; //Holds propogation time of ultrasonic signal in microseconds
+long duration[numOfUS] = {0,0,0,0}; //Holds propogation time of ultrasonic signal in microseconds
 int distance_cm[numOfUS] = {0};
 
 //Defines pins for sliders
@@ -35,10 +35,8 @@ int readByte;
 //Low Pass Filter variables
 float filterFrequency_slider = 2;
 FilterOnePole lowPassFilter_slider(LOWPASS, filterFrequency_slider);
-float filterFrequency_ultrasonic = 6;
+float filterFrequency_ultrasonic = 4;
 FilterOnePole lowPassFilter_ultrasonic(LOWPASS, filterFrequency_ultrasonic);
-
-
 
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
@@ -56,31 +54,32 @@ void loop() {
     //First we read the analog values for the sliders
     lowPassFilter_slider.input(analogRead(leftSliderPin));
     //rightSliderVal = analogRead(rightSliderPin);
-    //for (int i=0; i<numOfUS; i++) {
+    for (int i=0; i<2; i++) {  //Change boundary to numOfUS
         // Clears the trigPin
-        digitalWrite(trigPin[1], LOW);
+        digitalWrite(trigPin[i], LOW);
         delayMicroseconds(2);
         // Sets the trigPin on HIGH state for 10 micro seconds
-        digitalWrite(trigPin[1], HIGH);
+        digitalWrite(trigPin[i], HIGH);
         delayMicroseconds(10);
-        digitalWrite(trigPin[1], LOW);
+        digitalWrite(trigPin[i], LOW);
         // Reads the echoPin, returns the sound wave travel time in microseconds
-        //duration = pulseIn(echoPin[1], HIGH);
-       // Calculates the distance in centimeters.
+        duration[i] = pulseIn(echoPin[i], HIGH);
+        //distance_cm[i] = duration[i]*0.034/2;
+        // Calculates the distance in centimeters.
         // The distance will be converted into meters on the Pi
-        lowPassFilter_ultrasonic.input(duration*0.034/2);
+        lowPassFilter_ultrasonic.input(duration[i]*0.034/2);
         if (lowPassFilter_ultrasonic.output() <= 400){
-          distance_cm[1]= lowPassFilter_ultrasonic.output();
+          distance_cm[i]= lowPassFilter_ultrasonic.output();
         }
-        
-    //}
+        //delay(1);
+    }
   
     leftSliderVal = (int) lowPassFilter_slider.output();
     //Serial.println(leftSliderVal);
     //leftSliderVal = 512;
     rightSliderVal = 513;
-    distance_cm[0] = 100;
-    distance_cm[1] = 200;
+    //distance_cm[0] = 100;
+    //distance_cm[1] = 200;
     distance_cm[2] = 300;
     distance_cm[3] = 400;
     
