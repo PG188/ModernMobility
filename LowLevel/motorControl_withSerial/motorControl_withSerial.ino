@@ -11,13 +11,22 @@ first block of code with the Serial.available check. How can we make it so this 
 
 #include <Arduino.h>
 #include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
+#include <Encoder.h>
+#define ENCODER_OPTIMIZE_INTERRUPTS
 
 //Motor Pins
 #define DIR1 6
 #define PWM1 5
-#define DIR2 4
-#define PWM2 3
-#define velocityInPin 1
+#define DIR2 7
+#define PWM2 8
+
+//Encoder Pins
+#define ENC1 3
+#define ENC2 4
+
+//Encoder Parameters
+#define SAMPLE_DELAY (10)
+#define PULSES_PER_TURN (512)
 
 //Constants
 const double K_P = 5, 
@@ -41,18 +50,22 @@ int MotorCmd,
 byte LSB,
      byteRead = 0,
      sendEncoder = 0;
+unsigned int lastTime; 
+long lastPosition = 0;
+float rpm;
+long encoderVal;
+long encPosition  = -999;
+
 
 //Creating PID
 PID MotorPID(&Input, &Output, &SetPoint_double, K_P, K_I, K_D, DIRECT);
+Encoder myEncoder(ENC1, ENC2);
 
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
     delay(2000);
 
     initPID();
-
-    //Encoder Input
-    pinMode(velocityInPin, INPUT);
 
     //Motor Outputs
     pinMode(DIR1, OUTPUT);  //Wheel motor direction
@@ -68,7 +81,17 @@ void setup() {
 
 void loop() {
     //UPDATE ENCODER
-    int encoder = 100;  //ENCODER CODE GOES HERE
+    encoderVal = myEncoder.read();
+    //int encoder = 100;  //ENCODER CODE GOES HERE
+    encPosition = encoderVal;
+    if ((unsigned int)millis() - lastTime >= SAMPLE_DELAY)  
+      {
+           rpm = ((encPosition-lastPosition) * (60000.f / ((unsigned int)millis() - lastTime))) / PULSES_PER_TURN;
+           //Serial.print("RPM = "); Serial.print(rpm);Serial.print(" positionLeft = ");Serial.print(positionLeft);Serial.print(" lastPosition = ");Serial.println(lastPosition);
+           lastTime = (unsigned int)millis();
+           lastPosition = encPosition;
+           encPosition = 0;
+      }
     
     // Receive new motor command or stop/start
     if (Serial.available()) {
@@ -93,11 +116,11 @@ void loop() {
     
     //DO PID
     //SetPoint_double = 20.0; //Testing purposes 
-    Input = analogRead(velocityInPin);  //Encoder value
+    //Input = analogRead(velocityInPin);  //Encoder value
     SetPoint_double = (double) motorVelCmd;
     //Ramp-down algorithm
     if (SetPoint_double == RAMP_DOWN_CMD) { 
-      if (Input != 0) {                     //Check if encoders are reading wheels have stopped
+      /*if (Input != 0) {                     //Check if encoders are reading wheels have stopped
         analogWrite(PWM2, 0);               //Disengage clutch
         SetPoint_double = 0;                //Set the target velocity to 0
         MotorCmd = doPID(initMotorCmd);
@@ -105,7 +128,7 @@ void loop() {
       else {
         delay(2000);
         analogWrite(PWM2, 255);             //Engage clutch
-      }
+      }*/
     }
     else { 
       MotorCmd = doPID(initMotorCmd);
@@ -120,8 +143,8 @@ void loop() {
      
     //Send updated encoder value
     if (sendEncoder == 1) {
-      Serial.write(byte(encoder & 0x00FF)); 
-      Serial.write(byte((encoder >> 8) & 0x00FF));
+      Serial.write(byte(encoderVal & 0x00FF)); 
+      Serial.write(byte((encoderVal >> 8) & 0x00FF));
     }
     delay(30);
 }
@@ -138,7 +161,7 @@ int doPID(int previousMotorCmd){
      * MotorPID.Compute() computes the PID and returns true, 
      * if it does not compute anything it will return false
      */
-     return MotorPID.Compute() ? (previousMotorCmd - (int)Output) : NULL;
+     //return MotorPID.Compute() ? (previousMotorCmd - (int)Output) : NULL;
 }
 
 bool signPos(int value) {
