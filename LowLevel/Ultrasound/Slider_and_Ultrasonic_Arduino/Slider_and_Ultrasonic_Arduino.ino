@@ -76,7 +76,6 @@ void loop() {
   
     leftSliderVal = (int) lowPassFilter_slider.output();
     //Serial.println(leftSliderVal);
-
     //leftSliderVal = 512;
     rightSliderVal = 513;
     distance_cm[0] = 100;
