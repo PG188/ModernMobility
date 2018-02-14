@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.btnCancel);
         btnDisconnect = findViewById(R.id.btnDisconnect);
 
+        final BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
+
         //============================================================================
 
         btnTest0 = findViewById(R.id.btnTest0);   //Test sending floats
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         try {
                            // Log.d(TAG,"onCreate: onClick: Run: Run called.");
-                            init();
+                            init(blueAdapter);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -344,9 +346,8 @@ public class MainActivity extends AppCompatActivity {
 
     //This is running on its own thread to avoid slowing down the Main Activity (called from run in the btnConnect onClickListener)
 
-    private void init() throws IOException {
+    private void init(BluetoothAdapter blueAdapter) throws IOException {
         Log.d(TAG,"init: called");
-        BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (blueAdapter != null) {      /**Bluetooth Adapter exists*/
            Log.d(TAG,"init: BT adapter not null");
             if (blueAdapter.isEnabled()) {      /**Bluetooth enabled*/
