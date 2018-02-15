@@ -11,24 +11,25 @@ import mainwindow_auto
 class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
  # access variables inside of the UI's file
 
- 
+ # getter method for brkmode
+ def getBrakeMode(self):
+     return self.brkmode
  
  ### functions for the buttons to call
  def BrakeMode(self):
-     print ("Brake Mode On!")
-     brkmode = 0;
-     print (brkmode)
-     return brkmode
+     #print ("Brake Mode On!")
+     self.brkmode = 0;
+     #print (self.brkmode)
  
  def FreeRolling(self):
-     print ("Free Rolling Mode On!")
-     brkmode = 1;
-     print (brkmode)
-     return brkmode
+     #print ("Free Rolling Mode On!")
+     self.brkmode = 1;
+     #print (self.brkmode)
  
  def __init__(self):
      super(self.__class__, self).__init__()
      self.setupUi(self) # gets defined in the UI file
+     self.brkmode = 1
  
  ### Hooks for buttons
      self.BrakeModeBtn.clicked.connect(lambda: self.BrakeMode())
@@ -40,6 +41,9 @@ def main():
  app = QApplication(sys.argv)
  form = MainWindow()
  form.show()
+
+ print(form.getBrakeMode())
+ 
  # without this, the script exits immediately.
  sys.exit(app.exec_())
  
