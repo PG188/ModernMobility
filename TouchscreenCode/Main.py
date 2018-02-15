@@ -10,29 +10,28 @@ import mainwindow_auto
 # create class for our Raspberry Pi GUI
 class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
  # access variables inside of the UI's file
-
- 
+ brkmode = ""
  
  ### functions for the buttons to call
- def BrakeMode(self):
-     print ("Brake Mode On!")
-     brkmode = 0;
-     print (brkmode)
-     return brkmode
+ def BrakeMode(self, brkmode):
+     #print ("Brake Mode On!")
+     self.brkmode = "brake";
+     print (self.brkmode)
+     #return brkmode
  
- def FreeRolling(self):
-     print ("Free Rolling Mode On!")
-     brkmode = 1;
-     print (brkmode)
-     return brkmode
+ def FreeRolling(self, brkmode):
+     #print ("Free Rolling Mode On!")
+     self.brkmode = "freeroll";
+     print (self.brkmode)
+     #return brkmode
  
  def __init__(self):
      super(self.__class__, self).__init__()
      self.setupUi(self) # gets defined in the UI file
- 
+     
  ### Hooks for buttons
-     self.BrakeModeBtn.clicked.connect(lambda: self.BrakeMode())
-     self.FreeRollingBtn.clicked.connect(lambda: self.FreeRolling())
+     self.BrakeModeBtn.clicked.connect(lambda: self.BrakeMode(self.brkmode))
+     self.FreeRollingBtn.clicked.connect(lambda: self.FreeRolling(self.brkmode))
  
 
 def main():
