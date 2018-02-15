@@ -32,10 +32,9 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
      self.brkmode = 1
  
  ### Hooks for buttons
-     self.BrakeModeBtn.clicked.connect(lambda: self.BrakeMode())
-     self.FreeRollingBtn.clicked.connect(lambda: self.FreeRolling())
+     self.BrakeModeBtn.clicked.connect(lambda: self.BrakeMode(self.brkmode))
+     self.FreeRollingBtn.clicked.connect(lambda: self.FreeRolling(self.brkmode))
  
-
 def main():
  # a new app instance
  app = QApplication(sys.argv)

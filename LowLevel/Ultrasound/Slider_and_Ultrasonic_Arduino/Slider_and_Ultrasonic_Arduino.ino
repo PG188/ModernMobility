@@ -47,14 +47,13 @@ void setup() {
     // create a one pole (RC) lowpass filter
     pinMode(leftSliderPin, INPUT);
     pinMode(rightSliderPin, INPUT);
-    
 }
 void loop() {
   
     //First we read the analog values for the sliders
-    lowPassFilter_slider.input(analogRead(leftSliderPin));
+    //lowPassFilter_slider.input(analogRead(leftSliderPin));
     //rightSliderVal = analogRead(rightSliderPin);
-    /*for (int i=0; i<2; i++) {  //Change boundary to numOfUS
+    for (int i=0; i<1; i++) {  //Change boundary to numOfUS
         // Clears the trigPin
         digitalWrite(trigPin[i], LOW);
         delayMicroseconds(2);
@@ -67,18 +66,18 @@ void loop() {
         //distance_cm[i] = duration[i]*0.034/2;
         // Calculates the distance in centimeters.
         // The distance will be converted into meters on the Pi
-        lowPassFilter_ultrasonic.input(duration[i]*0.034/2);
+        lowPassFilter_ultrasonic.input(duration[i]*0.034613/2);
         if (lowPassFilter_ultrasonic.output() <= 400){
           distance_cm[i]= lowPassFilter_ultrasonic.output();
         }
-        //delay(1);*/
-    //}
+        //delay(1);
+    }
   
-    leftSliderVal = (int) lowPassFilter_slider.output();
+    //leftSliderVal = (int) lowPassFilter_slider.output();
     //Serial.println(leftSliderVal);
-    //leftSliderVal = 512;
+    leftSliderVal = 512;
     rightSliderVal = 513;
-    distance_cm[0] = 100;
+    //distance_cm[0] = 100;
     distance_cm[1] = 200;
     distance_cm[2] = 300;
     distance_cm[3] = 400;

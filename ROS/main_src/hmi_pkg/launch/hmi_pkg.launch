@@ -2,5 +2,5 @@
 
   	<node name="bluetoothNode" pkg="hmi_pkg" type="bluetoothNode" output="screen" />
  	<node name="HMINode" pkg="hmi_pkg" type="HMINode" output="screen" />
-
+	<node name="TouchScreen" pkg="hmi_pkg" type="TouchScreen.py" output="screen" />
 </launch>
