@@ -79,7 +79,11 @@ void setup() {
     analogWrite(PWM2, 0);
 }
 
-void loop() {  
+void loop() {
+    //=== THIS BLOCK IS FOR TESTING PURPOSES ONLY ===//
+    if (Serial.available() > 0){ test_cmd = Serial.read(); }
+    //=== THIS BLOCK IS FOR TESTING PURPOSES ONLY ===//
+  
     //UPDATE ENCODER
     encoderVal = myEncoder.read();
     //int encoder = 100;  //ENCODER CODE GOES HERE
@@ -134,7 +138,7 @@ void loop() {
       //MotorCmd = doPID(initMotorCmd);
     }
 
-    MotorCmd = 50;
+    MotorCmd = test_cmd;
     
     initMotorCmd = MotorCmd;                              //Set previous motor command to current motor command
     digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
