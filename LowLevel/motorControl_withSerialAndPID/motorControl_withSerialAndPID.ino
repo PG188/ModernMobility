@@ -29,8 +29,8 @@ first block of code with the Serial.available check. How can we make it so this 
 #define PULSES_PER_TURN (512)
 
 //Constants
-const double K_P = 5, 
-             K_I = 2,   //K values must be >= 0
+const double K_P = 100, 
+             K_I = 0,   //K values must be >= 0
              K_D = 0,
              OUT_MIN = -255,  
              OUT_MAX = 255,
@@ -77,8 +77,8 @@ void setup() {
 
     digitalWrite(DIR1, initMotorCmd); //direcitons  
     digitalWrite(DIR2, 0);
-    analogWrite(PWM1, initMotorCmd);   //speed scale speed here with input from pi
-    analogWrite(PWM2, 0);
+    digitalWrite(PWM1, initMotorCmd);   //speed scale speed here with input from pi
+    digitalWrite(PWM2, 0);
 }
 
 void loop() {  
@@ -89,7 +89,8 @@ void loop() {
     if ((unsigned int) millis() - lastTime >= SAMPLE_DELAY) {
            rpm = ((lastPosition-encPosition) * (60000.f / ((unsigned int)millis() - lastTime))) / PULSES_PER_TURN/4;
            wheelVel = convertToLinearVel(rpm);
-           Serial.print("RPM = "); Serial.print(rpm);Serial.print("\tLinear Vel = ");Serial.print(wheelVel);//Serial.print(" lastPosition = ");Serial.println(lastPosition);
+           Serial.print("RPM = "); Serial.print(rpm);
+           Serial.print("\tLinear Vel = ");Serial.print(wheelVel);//Serial.print(" lastPosition = ");Serial.println(lastPosition);
            lastTime = (unsigned int) millis();
            lastPosition = encPosition;
            encPosition = 0;
@@ -100,7 +101,7 @@ void loop() {
     // Receive new motor command or stop/start
     digits = Serial.available();
     if (digits > 0) {
-      motorVelCmd = Serial.parseInt(); 
+      motorVelCmd = Serial.parseFloat(); //For testing
       
 //      byteRead = Serial.read();
 //      switch (byteRead){
@@ -123,7 +124,7 @@ void loop() {
     
     //DO PID
     //SetPoint_double = 1.0; //Testing purposes 
-    //Input = analogRead(velocityInPin);  //Encoder value
+    Input = wheelVel; //analogRead(velocityInPin);  //Encoder value
     SetPoint_double = (double) motorVelCmd;
     //Ramp-down algorithm
     if (SetPoint_double == RAMP_DOWN_CMD) { 
@@ -138,7 +139,7 @@ void loop() {
       }*/
     }
     else { 
-      MotorCmd = doPID(initMotorCmd);
+      doPID(initMotorCmd);
     }
     
     initMotorCmd = MotorCmd;                              //Set previous motor command to current motor command
@@ -165,12 +166,14 @@ void initPID(){
     MotorPID.SetControllerDirection(DIRECT);
 }
 
-int doPID(int previousMotorCmd){
+void doPID(int previousMotorCmd){
     /*
      * MotorPID.Compute() computes the PID and returns true, 
      * if it does not compute anything it will return false
      */
-     return MotorPID.Compute() ? (previousMotorCmd - (int)Output) : NULL;
+     //return MotorPID.Compute() ? (previousMotorCmd - (int)Output) : NULL;
+     MotorPID.Compute();
+     MotorCmd = Output;
 }
 
 bool signPos(int value) {
