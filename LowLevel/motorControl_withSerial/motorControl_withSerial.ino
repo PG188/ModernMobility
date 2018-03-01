@@ -38,6 +38,7 @@ const double K_P = 5,
 const int SAMPLE_TIME = 20; 
 const byte START_FLAG = 0x7F,
            STOP_FLAG = 0x7E;
+const float radius = 0.1143; //in meters
 
 //Variables
 double Input,              //The variable we are trying to control (from Motor Module)
@@ -52,7 +53,7 @@ byte LSB,
      sendEncoder = 0;
 unsigned int lastTime; 
 long lastPosition = 0;
-float rpm;
+float rpm, wheelVel;
 long encoderVal;
 long encPosition  = -999;
 
@@ -63,7 +64,6 @@ Encoder myEncoder(ENC1, ENC2);
 
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
-    delay(2000);
 
     initPID();
 
@@ -84,11 +84,11 @@ void loop() {
     encoderVal = myEncoder.read();
     //int encoder = 100;  //ENCODER CODE GOES HERE
     encPosition = encoderVal;
-    if ((unsigned int)millis() - lastTime >= SAMPLE_DELAY)  
-      {
-           rpm = ((encPosition-lastPosition) * (60000.f / ((unsigned int)millis() - lastTime))) / PULSES_PER_TURN;
-           //Serial.print("RPM = "); Serial.print(rpm);Serial.print(" positionLeft = ");Serial.print(positionLeft);Serial.print(" lastPosition = ");Serial.println(lastPosition);
-           lastTime = (unsigned int)millis();
+    if ((unsigned int) millis() - lastTime >= SAMPLE_DELAY) {
+           rpm = ((lastPosition-encPosition) * (60000.f / ((unsigned int)millis() - lastTime))) / PULSES_PER_TURN/4;
+           wheelVel = convertToLinearVel(rpm);
+           Serial.print("RPM = "); Serial.print(rpm);Serial.print(" Linear Vel = ");Serial.println(wheelVel);//Serial.print(" lastPosition = ");Serial.println(lastPosition);
+           lastTime = (unsigned int) millis();
            lastPosition = encPosition;
            encPosition = 0;
       }
@@ -131,8 +131,10 @@ void loop() {
       }*/
     }
     else { 
-      MotorCmd = doPID(initMotorCmd);
+      //MotorCmd = doPID(initMotorCmd);
     }
+
+    MotorCmd = 50;
     
     initMotorCmd = MotorCmd;                              //Set previous motor command to current motor command
     digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
@@ -167,3 +169,8 @@ int doPID(int previousMotorCmd){
 bool signPos(int value) {
   return (value >= 0); 
 }
+
+float convertToLinearVel(float rpm){
+  return rpm*(2*M_PI/60.0)*radius;
+}
+
