@@ -1,0 +1,5 @@
+<launch>
+	<rosparam param="ticks_meter">1426</rosparam>
+	<node pkg="diff_tf_test" type="diff_tf.py" name="diff_tf" output="screen"/>
+	<node name="diff_tf_test" pkg="diff_tf_test" type="diff_tf_test" output="screen"/>
+</launch>
