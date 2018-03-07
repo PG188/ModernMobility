@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
+print('Video Capture initiated')
 font = cv2.FONT_HERSHEY_SIMPLEX #font type
 
 while (cv2.waitKey(1) & 0xFF) != ord('q'):
@@ -41,12 +42,12 @@ while (cv2.waitKey(1) & 0xFF) != ord('q'):
             C = str(numCorners)
             cv2.putText(frame, 'Number of Corners: ' + C, (0,15), font, 0.5, (0,255,0), 1, cv2.LINE_AA) #(image, label, start text at, font, size of font, colour(BGR), line width, Anti-aliasing)
             
-            cv2.imshow('frame', frame)  #window for original image
-            cv2.imshow('gray and Canny', gray)    #window for grayscale image
+            #cv2.imshow('frame', frame)  #window for original image
+            #cv2.imshow('gray and Canny', gray)    #window for grayscale image
 
         else:
             print('Corners is NONE!')
-            cv2.imshow('frame', frame)  #window for original image
+            #cv2.imshow('frame', frame)  #window for original image
             
 
     except Exception as e:
