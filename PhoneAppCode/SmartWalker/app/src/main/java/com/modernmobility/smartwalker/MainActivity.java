@@ -55,9 +55,22 @@ public class MainActivity extends AppCompatActivity {
 
     //Test sending floats
     Button btnTest;
-    double TestX = 1.543;
-    double TestY = 3.816;
-    double TestO = 2.591;
+    double TestX = 2;
+    double TestY = 2;
+    double TestO = 1.57;
+    double TestX1 = -1;
+    double TestY1 = -1;
+    double TestO1 = 4.71;
+    double TestX2 = -0.5;
+    double TestY2 = 0.5;
+    double TestO2 = 1.85;
+    double TestX3 = 2.2;
+    double TestY3 = -0.9;
+    double TestO3 = 2.4;
+    double TestX4 = -0.23;
+    double TestY4 = 1.1;
+    double TestO4 = 3.1;
+    ///////////////////
     float floatValue;
     byte [] x;
     byte [] y;
@@ -218,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
                 try {
-                    Log.d(TAG,"onCreate:  onClick: TEST BUTTON CLICKED!");
                     PhoneData[0] = 10;
                     x = ToByteArray(TestX);
                     y = ToByteArray(TestY);
