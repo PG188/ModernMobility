@@ -44,13 +44,19 @@ def locate(l):
 while (cv2.waitKey(1) & 0xFF) != ord('q'):
     try:
         ret, inFrame = cap.read() #ret gets True or false (if an image is being returned), frame gets the image
+        #cv2.imshow('F', inFrame)
+
+        
         outFrame = cv2.cvtColor(inFrame, cv2.COLOR_BGR2GRAY)  #converts to grayscale
+        cv2.imshow('GrayScale', outFrame)
         outFrame  = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
+        cv2.imshow('NoiseReduced', outFrame)
         ret, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
         outFrame = cv2.bitwise_not(mask)
+        cv2.imshow('Masked', outFrame)
         outframe = cv2.Canny(outFrame, 50, 50)
 
-        corners = cv2.goodFeaturesToTrack(outframe, 100, 0.01, 60)  #(image, up to 100 corners, quality, minimum distance between corners)
+        corners = cv2.goodFeaturesToTrack(outframe, 100, 0.01, 25)  #(image, up to 100 corners, quality, minimum distance between corners)
     
         if not(corners is None):
             
