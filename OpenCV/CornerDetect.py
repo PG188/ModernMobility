@@ -3,7 +3,7 @@ import numpy as np
 
 #cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
 cap = cv2.VideoCapture(1)   #1 indicates second webcam in system
-print('Video Capture initiated')
+
 font = cv2.FONT_HERSHEY_SIMPLEX #font type
 
 blue = (255,0,0)
@@ -51,7 +51,7 @@ while (cv2.waitKey(1) & 0xFF) != ord('q'):
         outframe = cv2.Canny(outFrame, 50, 50)
 
         corners = cv2.goodFeaturesToTrack(outframe, 100, 0.01, 60)  #(image, up to 100 corners, quality, minimum distance between corners)
-        #print(corners)
+    
         if not(corners is None):
             
             corners = np.int0(corners)
@@ -76,19 +76,19 @@ while (cv2.waitKey(1) & 0xFF) != ord('q'):
             avX = avX/numCorners
             avY = avY/numCorners
 
-            if numCorners <= 2:
+            if numCorners <= 12:
                 pass
             
-            elif numCorners <= 10:
+            elif numCorners <= 24:
                 locate('1')
                 
-            elif numCorners <= 18:
+            elif numCorners <= 36:
                 locate('2')
 
-            elif numCorners <= 26:
+            elif numCorners <= 48:
                 locate('3')
 
-            elif numCorners <= 32:
+            elif numCorners <= 60:
                 locate('4')
 
             C = str(numCorners)
