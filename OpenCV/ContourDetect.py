@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import time
 
 def sumPoints(approx):
     x = 0
@@ -14,6 +15,9 @@ def sumPoints(approx):
 def main():
 
     cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
+
+    time.sleep(3)   #Give camera time to startup
+    print ('Ready for video capture\n')
 
     font = cv2.FONT_HERSHEY_SIMPLEX #font type
     E_COEFF = 0.01   #Coefficient for epsilon value
@@ -50,9 +54,13 @@ def main():
                 avgX /= SHAPE_CORNERS
                 avgY /= SHAPE_CORNERS
 
-                rows, cols, _ = inFrame.shapes()
-                #print(avgX, avgY)
-                #return (round(avgX - (rows/2),0), round(avgY - (cols/2),0))
+                rows, cols, _ = inFrame.shape
+                camX = cols/2
+                camY = rows/2
+                dx = round(avgX - camX, 0)
+                dy = round(avgY - camY, 0)
+
+                print('Delta in pixels: (%d, %d)' % (dx, dy))
                   
             cv2.imshow('inFrame', inFrame)
             cv2.imshow('outFrame', outFrame)
