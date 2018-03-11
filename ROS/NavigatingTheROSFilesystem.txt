@@ -1,3 +1,5 @@
+Some ROS tutorial notes (from Tyler)
+
 1) Using "rospack":
 (Used to get information about packages)
 Usage:		$ rospack [option] [package_name]
@@ -32,3 +34,4 @@ Terminal:	$ roscd turtle
 Example 3:	$ roscd turtle<<<PRESS TAB KEY>>>
 Returns:	turtle_actionlib/ turtlesim/	turtle_tf/	(<-- list of directories starting with 'turtle')
 Terminal:	$ roscd turtle					(<-- command line unaffected despite something being returned)
+
