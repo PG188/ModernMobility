@@ -43,6 +43,8 @@ def main():
             for cnt in contours:
                 approx = cv2.approxPolyDP(cnt,E_COEFF*cv2.arcLength(cnt,True),True)
                 length = len(approx)
+
+                cv2.drawContours(inFrame, [cnt], 0, red, -1)
                 
                 if length == SHAPE_CORNERS:
                     shapes += 1
