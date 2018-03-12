@@ -1,6 +1,23 @@
+#!/usr/bin/env python
+
 import cv2
 import numpy as np
 import time
+import rospy
+from std_msgs.msg import Int16
+
+def openCVNode():
+	atDock = True
+	rospy.init_node('openCVNode', anonymous=True)
+	deltax_pub = rospy.Publisher('delta_x', Int16, queue_size = 1)
+	deltay_pub = rospy.Publisher('delta_y', Int16, queue_size = 1)
+	rate = rospy.Rate(10)	#1Hz
+	while not rospy.is_shutdown():
+		if atDock:
+			deltax, deltay = main()
+			deltax_pub.publish(deltax)
+			deltay_pub.publish(deltay)
+			rate.sleep()
 
 def sumPoints(approx):
     x = 0
@@ -15,7 +32,7 @@ def sumPoints(approx):
 def main():
 
     cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
-
+    print('Starting video capture...')
     time.sleep(3)   #Give camera time to startup
     print ('Ready for video capture\n')
 
@@ -29,7 +46,9 @@ def main():
                 
     while (cv2.waitKey(1) & 0xFF) != ord('q'):
         try:
-            _, inFrame = cap.read() #ret gets True or false (if an image is being returned), frame gets the image
+            _, inFrame = cap.read() #get the video frame
+
+            print('still working...')
             outFrame = cv2.cvtColor(inFrame, cv2.COLOR_BGR2GRAY)  #converts to grayscale
             #outFrame = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
             _, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
@@ -53,19 +72,25 @@ def main():
                     avgY += y
 
             if shapes == 1:
-                avgX /= SHAPE_CORNERS
-                avgY /= SHAPE_CORNERS
+				cv2.drawContours(inFrame, [cnt], 0, red, -1)
+				avgX /= SHAPE_CORNERS
+				avgY /= SHAPE_CORNERS
 
-                rows, cols, _ = inFrame.shape
-                camX = cols/2
-                camY = rows/2
-                dx = round(avgX - camX, 0)
-                dy = round(avgY - camY, 0)
+				rows, cols, _ = inFrame.shape
+				camX = cols/2
+				camY = rows/2
+				dx = int(avgX - camX)
+				dy = int(avgY - camY)
 
-                print('Delta in pixels: (%d, %d)' % (dx, dy))
-                  
-            cv2.imshow('inFrame', inFrame)
-            cv2.imshow('outFrame', outFrame)
+				cv2.imshow('inFrame', inFrame)
+				cv2.imshow('outFrame', outFrame)
+
+				#print(dx, dy)
+				#cv2.imwrite('inFrame.png', inFrame)
+				
+				print('Delta in pixels: (%d, %d)' % (dx, dy))
+				return dx, dy
+
 
         except Exception as e:
             print('ERROR: ' + str(e))
@@ -74,6 +99,11 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    main()
+	try:
+		openCVNode()
+	except rospy.ROSInterruptException:
+		pass
+		print('ROS ERROR')
+    #main()
 
 
