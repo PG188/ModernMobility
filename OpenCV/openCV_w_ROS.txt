@@ -1,0 +1,15 @@
+Intended use:
+
+1)	When walker is in front of docking station a message* should be published to topic 'atDock'
+2)	openCVNode will subscribe to 'atDock', when a message is received openCV code will run
+3)	The code looks for a marker on the roof centered above the docking station
+4)	Once found, the distance between the centre of the marker and the cenre of the camera's field of view is calculated
+5)	The difference in pixels is published on two topics (one for the x direction and one for the y)
+6)	The deltas indicate how far** in the x and y directions the walker still needs to move
+7)	Once the walker has moved, repeat process from step 1 until deltas received are zero***
+
+Notes
+
+*	we'll use an integer value of 1 indicating we're at the docking station (0 otherwise)
+**	We will determine how pixels and meters relate experimentally
+***	Doesn't necessarily have to be zero, we'll likely need to have some tolerance
