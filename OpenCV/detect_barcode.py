@@ -31,7 +31,7 @@ while True:
 	box = simple_barcode_detection.detect(frame)
  
 	# if a barcode was found, draw a bounding box on the frame
-	cv2.drawContours(frame, [box], -1, (0, 255, 0), 2)
+	cv2.drawContours(frame, box, -1, (0, 255, 0), 3)
  
 	# show the frame and record if the user presses a key
 	cv2.imshow("Frame", frame)
