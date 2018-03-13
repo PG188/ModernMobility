@@ -2,6 +2,7 @@
 import simple_barcode_detection
 import argparse
 import cv2
+import numpy
  
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
