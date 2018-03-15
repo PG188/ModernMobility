@@ -12,7 +12,7 @@
 const double K_P = 5, 
              K_I = 2,   //K values must be >= 0
              K_D = 0,
-             OUT_MIN = -255,  
+             OUT_MIN = 0,  
              OUT_MAX = 255;   
              //MAG_MAX = 99;
 const int SAMPLE_TIME = 20; 
@@ -39,7 +39,7 @@ void setup(){
     initPID();
 
     //Encoder Input
-    pinMode(velocityInPin, INPUT);
+    //pinMode(velocityInPin, INPUT);
 
     //Motor Outputs
     pinMode(DIR1, OUTPUT);  //Wheel motor direction
@@ -54,27 +54,13 @@ void setup(){
 }
 
 void loop(){
-  //SetPoint_double = 20.0; //Testing purposes 
-  Input = analogRead(velocityInPin);  //Encoder value
-  LSB = Serial.read();
-  SetPoint_double = BitShiftCombine(Serial.read(),LSB);
-  if (SetPoint_double == 999) { //Ramp-down speed
-    if (Input != 0) {
-      analogWrite(PWM2, 0); //Disengage clutch
-      SetPoint_double = 0;      //Set the Set Point to 0
-      MotorCmd = doPID(initMotorCmd);
-    }
-    else {
-      delay(2000);
-      analogWrite(PWM2, 255); //Engage clutch
-    }
-  }
-  else { 
-    MotorCmd = doPID(initMotorCmd);
-  }
-  initMotorCmd = MotorCmd;
-  if (signPos(MotorCmd)) {digitalWrite(DIR1, HIGH);}
-  else {analogWrite(PWM1, abs(MotorCmd));}
+  SetPoint_double = -1.0; //Testing purposes 
+  Input = 1.0;  //Encoder value
+  MotorCmd = doPID();
+  Serial.print("Input = ");Serial.print(Input);Serial.print(" SetPoint_double = ");Serial.print(SetPoint_double);Serial.print(" Output = ");Serial.println(Output);
+  //initMotorCmd = MotorCmd;
+  //if (signPos(MotorCmd)) {digitalWrite(DIR1, HIGH);}
+  //else {analogWrite(PWM1, abs(MotorCmd));}
   
   /*Serial.println(Input);
   Serial.print(" "); //For plotting purposes*/
@@ -100,7 +86,7 @@ double BitShiftCombine( unsigned char x_high, unsigned char x_low)
   return (double) combined;
 }
 
-int doPID(int previousMotorCmd){
+int doPID(){
     /*
      * MotorPID.Compute() computes the PID and returns true, 
      * if it does not compute anything it will return false
@@ -110,7 +96,7 @@ int doPID(int previousMotorCmd){
         return NULL;  //Send invalid value when nothing computed
     }
     else {
-      return (previousMotorCmd - (int)Output);
+      return ((int)Output);
     }
 }
 

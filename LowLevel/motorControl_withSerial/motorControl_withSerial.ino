@@ -12,26 +12,28 @@ first block of code with the Serial.available check. How can we make it so this 
 #include <Arduino.h>
 #include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 #include <Encoder.h>
+#include <Filters.h>
+
 #define ENCODER_OPTIMIZE_INTERRUPTS
 
 //Motor Pins
 #define DIR1 6
 #define PWM1 5
-#define DIR2 7
-#define PWM2 8
+//#define DIR2 7
+//#define PWM2 8
 
 //Encoder Pins
-#define ENC1 3
-#define ENC2 4
+#define ENC1 9
+#define ENC2 10
 
 //Encoder Parameters
 #define SAMPLE_DELAY (10)
 #define PULSES_PER_TURN (512)
 
 //Constants
-const double K_P = 5, 
-             K_I = 2,   //K values must be >= 0
-             K_D = 0,
+const double K_P = 10, 
+             K_I = 10,   //K values must be >= 0
+             K_D = 0.1,
              OUT_MIN = -255,  
              OUT_MAX = 255,
              RAMP_DOWN_CMD = 100; 
@@ -41,27 +43,36 @@ const byte START_FLAG = 0x7F,
 const float radius = 0.1143; //in meters
 
 //Variables
-double Input,              //The variable we are trying to control (from Motor Module)
-       Output,             //The variable that will be adjusted by the PID
-       SetPoint_double;    //The value we are trying to get to or maintain (from ROS node)
+double PID_Input,              //The variable we are trying to control (from Motor Module)
+       PID_Output,             //The variable that will be adjusted by the PID
+       PID_SetPoint;    //The value we are trying to get to or maintain (from ROS node)
 float motorVelCmd = 0;
 int MotorCmd,
-    initMotorCmd = 0, 
-    initMotorDir = 0;
+    lastMotorCmd = 0, 
+    lastMotorDir = 0;
 byte LSB,
-     byteRead = 0,
      sendEncoder = 0;
-unsigned int lastTime; 
-long lastPosition = 0;
-float rpm, wheelVel;
+int byteRead = 0;
+unsigned int lastTime, currentTime; 
+int lastPosition = 0;
+float RPM, wheelVel;
 long encoderVal;
-long encPosition  = -999;
+long encPosition  = 0;
+
+int encoderCount = 0;
 
 
-//Creating PID
-PID MotorPID(&Input, &Output, &SetPoint_double, K_P, K_I, K_D, DIRECT);
+float filterFrequency_encoder = 0.05;
+FilterOnePole lowPassFilter_encoder(LOWPASS, filterFrequency_encoder);
+PID MotorPID(&PID_Input, &PID_Output, &PID_SetPoint, K_P, K_I, K_D, DIRECT);
 Encoder myEncoder(ENC1, ENC2);
 
+void initPID(){
+    MotorPID.SetMode(AUTOMATIC);                //Turns the PID on, default is off (MANUAL)
+    MotorPID.SetOutputLimits(OUT_MIN, OUT_MAX); //By default this is (0, 255)
+    MotorPID.SetSampleTime(SAMPLE_TIME);        //By default this is 200ms
+    MotorPID.SetControllerDirection(DIRECT);
+}
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
 
@@ -70,31 +81,20 @@ void setup() {
     //Motor Outputs
     pinMode(DIR1, OUTPUT);  //Wheel motor direction
     pinMode(PWM1, OUTPUT);  //Wheel motor PWM
-    pinMode(DIR2, OUTPUT);  //Brake motor direction
-    pinMode(PWM2, OUTPUT);  //Brake motor PWM
+    //pinMode(DIR2, OUTPUT);  //Brake motor direction
+    //pinMode(PWM2, OUTPUT);  //Brake motor PWM
+    //pinMode(0,INPUT);
 
-    digitalWrite(DIR1, initMotorCmd); //direcitons  
-    digitalWrite(DIR2, 0);
-    analogWrite(PWM1, initMotorCmd);   //speed scale speed here with input from pi
-    analogWrite(PWM2, 0);
+    //digitalWrite(DIR1, lastMotorDir); //direcitons  
+    //digitalWrite(DIR2, 0);
+    //digitalWrite(PWM1, lastMotorCmd);   //speed scale speed here with input from pi
+    //digitalWrite(PWM2, 0);
 }
 
 void loop() {  
-    //UPDATE ENCODER
-    encoderVal = myEncoder.read();
-    //int encoder = 100;  //ENCODER CODE GOES HERE
-    encPosition = encoderVal;
-    if ((unsigned int) millis() - lastTime >= SAMPLE_DELAY) {
-           rpm = ((lastPosition-encPosition) * (60000.f / ((unsigned int)millis() - lastTime))) / PULSES_PER_TURN/4;
-           wheelVel = convertToLinearVel(rpm);
-           Serial.print("RPM = "); Serial.print(rpm);Serial.print(" Linear Vel = ");Serial.println(wheelVel);//Serial.print(" lastPosition = ");Serial.println(lastPosition);
-           lastTime = (unsigned int) millis();
-           lastPosition = encPosition;
-           encPosition = 0;
-      }
-    
     // Receive new motor command or stop/start
-    if (Serial.available()) {
+    //sendFlag = 0;
+    /*if (Serial.available()) {
       byteRead = Serial.read();
       switch (byteRead){
         case START_FLAG: sendEncoder = 1; break;
@@ -106,64 +106,81 @@ void loop() {
           * Arduino think it is a positive number. We must set these bits to 1
           * (sign extension) to get it to recognize byteRead as negative.
           */
-          if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
+          /*if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
               byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
           }
           motorVelCmd = float(byteRead)/100; //Converts cm/s value to m/s
           break;
       }  
-    }
+    }*/
+    //motorVelCmd = 0;
+    MotorCmd = 100;
+    //UPDATE ENCODER
+    encoderVal = myEncoder.read();
+    //Serial.print("Encoder = ");Serial.print(encoderVal);
+    //lowPassFilter_encoder.input(encoderVal);
+    //encPosition = lowPassFilter_encoder.output();
+
+    //if (encoderCount >= 5){
+    currentTime = (unsigned int)millis();
+      //if (currentTime - lastTime >= SAMPLE_DELAY) {
+        Serial.print("lastPosition = ");Serial.print(lastPosition);Serial.print(" encoderVal = ");Serial.print(encoderVal);
+        Serial.print("  currentTime = ");Serial.print(currentTime);Serial.print("  lastTime = ");Serial.println(lastTime);
+        RPM = (60000.f * (lastPosition-encoderVal)) / ((currentTime-lastTime)*PULSES_PER_TURN);
+        wheelVel = convertToLinearVel(RPM);
+        lastTime = currentTime;
+        lastPosition = encoderVal;
+        encoderVal = 0;
+        //Serial.print(" RPM = ");Serial.println(RPM);
+      //}
+   //}
     
     //DO PID
-    //SetPoint_double = 20.0; //Testing purposes 
-    //Input = analogRead(velocityInPin);  //Encoder value
-    SetPoint_double = (double) motorVelCmd;
-    //Ramp-down algorithm
-    if (SetPoint_double == RAMP_DOWN_CMD) { 
-      /*if (Input != 0) {                     //Check if encoders are reading wheels have stopped
-        analogWrite(PWM2, 0);               //Disengage clutch
-        SetPoint_double = 0;                //Set the target velocity to 0
-        MotorCmd = doPID(initMotorCmd);
-      }
-      else {
-        delay(2000);
-        analogWrite(PWM2, 255);             //Engage clutch
-      }*/
-    }
-    else { 
-      //MotorCmd = doPID(initMotorCmd);
-    }
+    PID_Input = wheelVel;
+    PID_SetPoint = (double) motorVelCmd;
+    //MotorCmd = doPID(lastMotorCmd);
 
-    MotorCmd = 50;
+    lastMotorCmd = MotorCmd;                              //Set previous motor command to current motor command
     
-    initMotorCmd = MotorCmd;                              //Set previous motor command to current motor command
     digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
     analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
-  
-    /*Serial.println(Input);
+
+    /*
+    Serial.println(encPosition);
     Serial.print(" "); //For plotting purposes*/
      
     //Send updated encoder value
     if (sendEncoder == 1) {
       Serial.write(byte(encoderVal & 0x00FF)); 
       Serial.write(byte((encoderVal >> 8) & 0x00FF));
+      //Serial.write(0x0000);
     }
-    delay(30);
-}
-
-void initPID(){
-    MotorPID.SetMode(AUTOMATIC);                //Turns the PID on, default is off (MANUAL)
-    MotorPID.SetOutputLimits(OUT_MIN, OUT_MAX); //By default this is (0, 255)
-    MotorPID.SetSampleTime(SAMPLE_TIME);        //By default this is 200ms
-    MotorPID.SetControllerDirection(DIRECT);
+    delay(1);
 }
 
 int doPID(int previousMotorCmd){
+    int newMotorCmd;
     /*
      * MotorPID.Compute() computes the PID and returns true, 
      * if it does not compute anything it will return false
      */
+     if (!MotorPID.Compute()) {
+      MotorCmd = 0.0;  //Send invalid value when nothing computed
+     }
+     else {
+      newMotorCmd = (int)PID_Output;
+      //Serial.println(Output);
+      //Serial.print(" "); //For plotting purposes*/
+      if (newMotorCmd >= 255){
+        newMotorCmd = 255;
+      }else if (newMotorCmd < -255){
+        newMotorCmd = -255;
+      }
+     }
+     return MotorCmd = newMotorCmd;
      //return MotorPID.Compute() ? (previousMotorCmd - (int)Output) : NULL;
+     //MotorPID.Compute();
+     //MotorCmd = Output;
 }
 
 bool signPos(int value) {
@@ -173,4 +190,3 @@ bool signPos(int value) {
 float convertToLinearVel(float rpm){
   return rpm*(2*M_PI/60.0)*radius;
 }
-
