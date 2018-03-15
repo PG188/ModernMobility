@@ -1,4 +1,4 @@
-# ArUco Markers Localization #
+# ArUco Markers Localization
 
 Utilizing libraries based around ArUco markers, we can easily detect the presence of these markers in an image
 **along** with their orientation. This is all handled by library functions, making the processing itself very 
