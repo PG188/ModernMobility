@@ -14,7 +14,7 @@ HELP_TEXT = (
 """
 )
 
-def calcTheta(A_over_2, B, C):
+def _calcTheta(A_over_2, B, C):
     """
     Arguements:
         A = Angle adjacent to the SmartWalker (opposite side 'a')
@@ -48,13 +48,13 @@ def calcTargetPose(symbol_width, dist_to_left_side, dist_to_right_side):
     A_over_2 = 0.5*T1.get_A()
     B = T1.get_B()
     C = T1.get_C()
-    theta = calcTheta(A_over_2, B, C)
+    theta = _calcTheta(A_over_2, B, C)
 
     #Calculate x (The straight line distance to the symbol
     T2 = CLS.solve(A = A_over_2, a = 0.5*T1.get_a(), b = T1.get_b(), C = C)
-    x = T2.get_c()
+    r = T2.get_c()
 
-    return x, 0, theta
+    return r, theta
     
 
 

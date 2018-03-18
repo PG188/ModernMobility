@@ -153,12 +153,12 @@ class CosineLawSolver:
             self._iterations += 1
             if(self._iterations > 3):
                 self._iterations = 0
-                print "\nError:"
-                print "Solving the triangle is impossible given the inputs"
-                print "Please check that your inputs make sense\n"
+                print ("\nError:")
+                print ("Solving the triangle is impossible given the inputs")
+                print ("Please check that your inputs make sense\n")
                 return None
             
-            #print ("A=%s B=%s C=%s a=%s b=%s c=%s %s" % (A,B,C,a,b,c,Err))
+            print ("A=%s B=%s C=%s a=%s b=%s c=%s %s" % (A,B,C,a,b,c,Err))
             if(not(self._has_A)): A, Err = self._calc_A(A, B, C, a, b, c)
             if(not(self._has_B)): B, Err = self._calc_B(A, B, C, a, b, c)
             if(not(self._has_C)): C, Err = self._calc_C(A, B, C, a, b, c)
@@ -200,8 +200,8 @@ class CosineLawSolver:
             self._reset()
 
         else:
-            print "\nNOT ENOUGH INFORMATION GIVEN FOR SOLUTION!\n"
-            print "CosineLawSolver.py usage give below:"+HELP_TEXT+"\n\n"
+            print ("\nNOT ENOUGH INFORMATION GIVEN FOR SOLUTION!\n")
+            print ("CosineLawSolver.py usage give below:"+HELP_TEXT+"\n\n")
             
 ##===============TRIANGLE=CLASS===============##
 class Triangle():
