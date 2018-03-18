@@ -115,7 +115,7 @@ int main(int argc, char **argv){
 	ros::NodeHandle bluetooth;
 	
 	blue_cmd_pub = bluetooth.advertise<std_msgs::UInt16>("blue_cmd", 1000);
-	blue_pose_pub = bluetooth.advertise<geometry_msgs::Point32>("blue_pose", 1000);
+	blue_pose_pub = bluetooth.advertise<geometry_msgs::Point32>("nav_goal", 1000);
 	
 
 //=====BLUETOOTH STUFF====================================

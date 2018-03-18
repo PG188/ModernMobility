@@ -7,7 +7,14 @@ import math
 import TriangulatePosition as tp
 import getLR
 
-IRL_SYM_WIDTH = 0.2032 #meters (0.2032m = 8 inches)
+
+IRL_SYM_WIDTH = 0.2032*100 #meters (0.2032m = 8 inches)
+
+class pose():
+    def __init__(self, x, y, theta):
+        self.x = x
+        self.y = y
+        self.theta = theta
 
 #input Parameters
 ##image = np.ones((480,640,3), np.uint8)
@@ -38,6 +45,15 @@ def atDock(kinect_image, kinect_depth):
 ##    print('Starting video capture...')
 ##    time.sleep(3)   #Give camera time to startup
 ##    print ('Ready for video capture\n')
+    # print(type(kinect_image_ros))
+    # print(type(kinect_depth_ros))
+
+    #TESTING
+    kinect_image = cv2.imread('Picture4.jpg', 0)
+    cv2.imshow('kinect_image', kinect_image)
+    cv2.waitKey(0)
+    outFrame = kinect_image
+    #TESTING   
 
     font = cv2.FONT_HERSHEY_SIMPLEX #font type
     E_COEFF = 0.01   #Coefficient for epsilon value
@@ -52,7 +68,7 @@ def atDock(kinect_image, kinect_depth):
         #_, inFrame = cap.read() #get the video frame
 
         print('still working...')
-        outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_BGR2GRAY)  #converts to grayscale
+        #outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_RGB2BGR)  #converts to grayscale
         #outFrame = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
         _, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
         outFrame = cv2.bitwise_not(mask)
@@ -121,11 +137,17 @@ def atDock(kinect_image, kinect_depth):
             dx = int(symX - camX)
             dz = int(symZ - camZ)
 
-            cv2.imshow('kinect_image', kinect_image)
-            cv2.imshow('outFrame', outFrame)
+            #cv2.imshow('kinect_image', kinect_image)
+            #cv2.imshow('outFrame', outFrame)
             
             print('Delta in pixels: (%f, %f, %f)' % (x, y, thetaCamera))
-            return x, y, thetaCamera        
+
+            return pose(x, y, thetaCamera)        
+        else:
+            cv2.imshow('kinect_image', kinect_image)
+            cv2.imshow('outFrame', outFrame)
+            cv2.waitKey(0)
+            return None
         
     except Exception as e:
         print('ERROR: ' + str(e))
