@@ -3,6 +3,10 @@
 import cv2
 import numpy as np
 import time
+import TriangulatePosition as TP
+
+image = np.ones((480,640), np.uint8)
+depth = np.ones((480,640), np.uint8)
 
 def sumPoints(approx):
     x = 0
@@ -12,17 +16,7 @@ def sumPoints(approx):
         x += i[0][0]
         y += i[0][1]
 
-    return x, y
-
-def getTheta():
-    
-
-
-def getTarget():
-    #get x and y
-    theta = getTheta()    
-    return [x, y, theta]
-        
+    return x, y 
 
 def atDock(kinect_image, kinect_depth):
     cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
@@ -90,6 +84,6 @@ def atDock(kinect_image, kinect_depth):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-        atDock()
+        atDock(image, depth)
 
 

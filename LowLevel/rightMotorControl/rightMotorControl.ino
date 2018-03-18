@@ -28,11 +28,11 @@ first block of code with the Serial.available check. How can we make it so this 
 
 /*  Constants */
 //PID Constants
-const double K_P = 100, 
+const double K_P = 0, 
              K_I = 100,
              K_D = 0,
-             OUT_MIN = -200,  
-             OUT_MAX = 200;
+             OUT_MIN = -255,  
+             OUT_MAX = 255;
 const int SAMPLE_TIME = 30;
 
 //Serial Constants   
@@ -111,16 +111,16 @@ void loop() {
       }
     }
 
-    /*if (count > 1000)
-      motorVelCmd = -0.5;
+    if (count > 1000)
+      motorVelCmd = 0.1;
     else
-      motorVelCmd = 0.5;*/
+      motorVelCmd = 0.1;
     
-    if (count >= 100){
+    /*if (count >= 100){
       if (motorVelCmd == lastMotorVelCmd)
         motorVelCmd = 0;
     }
-    else{
+    else{*/
       //UPDATE ENCODER
       encoderVal = myEncoder.read();
       encPosition = encoderVal;
@@ -138,8 +138,8 @@ void loop() {
       SetPoint_double = (double) motorVelCmd;
       MotorCmd = doPID(lastMotorCmd);
       lastMotorCmd = MotorCmd;
-      //Serial.print(Output);Serial.println(" ");
-    }
+      Serial.print(MotorCmd);Serial.println(" ");
+    //}
 
     lastMotorVelCmd = motorVelCmd;
     digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
@@ -165,7 +165,7 @@ void initPID(){
     MotorPID.SetOutputLimits(OUT_MIN, OUT_MAX); //By default this is (0, 255)
     MotorPID.SetSampleTime(SAMPLE_TIME);        //By default this is 200ms
     MotorPID.SetControllerDirection(DIRECT);
-    MotorPID.SetTunings(K_P, K_I, K_D, P_ON_M);
+    MotorPID.SetTunings(K_P, K_I, K_D, P_ON_E);
 }
 
 int doPID(int lastOutput){
@@ -177,19 +177,22 @@ int doPID(int lastOutput){
       return 0;  //Send invalid value when nothing computed
      }
      else {
-      if (signPos(lastOutput) && !signPos(Output)){
+      /*if (signPos(lastOutput) && !signPos(Output)){
         Output = -1;
         delay(10);
       }
       else if (!signPos(lastOutput) && signPos(Output)){
         Output = 0;
         delay(10);
-      }
-      if (Output > 0 && Output < 45){
-          Output = 46;
+      }*/
+      if (Output >= -20 && Output <= 20){
+          Output = 0;
         }
-      else if (Output < 0 && Output > -45){
-        Output = -46;
+      if (Output > 20 && Output <= 45){
+          Output = 50;
+        }
+      else if (Output < -20 && Output >= -45){
+        Output = -50;
       }
       return (int)Output;
      }
@@ -202,3 +205,4 @@ bool signPos(int value) {
 float convertToLinearVel(float rpm){
   return rpm*(2*M_PI/60.0)*radius;
 }
+

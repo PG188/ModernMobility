@@ -33,17 +33,19 @@ int serial_start_flag = 0;
 int readByte;
 
 //Low Pass Filter variables
-float filterFrequency_slider = 2;
-FilterOnePole lowPassFilter_slider(LOWPASS, filterFrequency_slider);
+float filterFrequency_lslider = 2;
+float filterFrequency_rslider = 2;
+FilterOnePole lowPassFilter_lslider(LOWPASS, filterFrequency_lslider);
+FilterOnePole lowPassFilter_rslider(LOWPASS, filterFrequency_rslider);
 float filterFrequency_ultrasonic = 4;
 FilterOnePole lowPassFilter_ultrasonic(LOWPASS, filterFrequency_ultrasonic);
 
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
-    for (int i=0; i<numOfUS; i++) {
+    /*for (int i=0; i<numOfUS; i++) {
         pinMode(trigPin[i], OUTPUT); // Sets the trigPin as an Output
         pinMode(echoPin[i], INPUT); // Sets the echoPin as an Input   
-    }
+    }*/
     // create a one pole (RC) lowpass filter
     pinMode(leftSliderPin, INPUT);
     pinMode(rightSliderPin, INPUT);
@@ -51,9 +53,9 @@ void setup() {
 void loop() {
   
     //First we read the analog values for the sliders
-    //lowPassFilter_slider.input(analogRead(leftSliderPin));
-    //rightSliderVal = analogRead(rightSliderPin);
-    for (int i=0; i<1; i++) {  //Change boundary to numOfUS
+    lowPassFilter_lslider.input(analogRead(leftSliderPin));
+    lowPassFilter_rslider.input(analogRead(rightSliderPin));
+    /*for (int i=0; i<1; i++) {  //Change boundary to numOfUS
         // Clears the trigPin
         digitalWrite(trigPin[i], LOW);
         delayMicroseconds(2);
@@ -71,12 +73,14 @@ void loop() {
           distance_cm[i]= lowPassFilter_ultrasonic.output();
         }
         //delay(1);
-    }
+    }*/
   
-    //leftSliderVal = (int) lowPassFilter_slider.output();
-    //Serial.println(leftSliderVal);
-    leftSliderVal = 512;
-    rightSliderVal = 513;
+    leftSliderVal = (int) lowPassFilter_lslider.output();
+    Serial.print("Left Slider Value = ");Serial.print(leftSliderVal);
+    rightSliderVal = (int) lowPassFilter_rslider.output();
+    Serial.print("\tRight Slider Value = ");Serial.println(rightSliderVal);
+    //leftSliderVal = 512;
+    //rightSliderVal = 513;
     //distance_cm[0] = 100;
     distance_cm[1] = 200;
     distance_cm[2] = 300;
@@ -94,7 +98,7 @@ void loop() {
      * Any slider filter/amplification if necessary.
      */
      //Serial.println(Serial.available());
-     if (Serial.available()) {
+     /*if (Serial.available()) {
        readByte = Serial.read();
        if (readByte == 'A') {
           serial_start_flag = 1; //Start serial communication
@@ -105,6 +109,6 @@ void loop() {
      }
      if (serial_start_flag) {
       Serial.write(ValArray,12);
-     }
+     }*/
      delay(30);
 }
