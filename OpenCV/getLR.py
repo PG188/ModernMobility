@@ -12,7 +12,7 @@ def getLR(approx):
 
         print ("getLR(): Showing iterative data:")
         for i in range(len(approx)):
-            print ("point = %s | L = %s | R = %s | lp = %s | rp = %s"
+            print ("\tpoint = %s | L = %s | R = %s | lp = %s | rp = %s"
                    % (point, L, R, lp, rp))
 
             point = [approx[i][0][0], approx[i][0][1]]
