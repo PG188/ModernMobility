@@ -45,6 +45,16 @@ Triangle.getTriangle()
 """
 )
 
+POSSIBLE_INPUT_ERRORS = (
+"""
+COSINELAWSOLVER 
+Triangle was deemed impossible given the inputs. Please ensure that
+the following is true regarding the inputs of the triangle:
+1) At least three sides are known or two sides and the angle between them.
+2) If three sides are known, no one given side is larger than the sum of the other two.
+"""
+)
+
 class CosineLawSolver:
     
     ##====================CONSTRUCTOR====================##
@@ -153,9 +163,11 @@ class CosineLawSolver:
             self._iterations += 1
             if(self._iterations > 3):
                 self._iterations = 0
-                print ("\nError:")
-                print ("Solving the triangle is impossible given the inputs")
-                print ("Please check that your inputs make sense\n")
+                has_all_sides = self._has_a and self._has_b and self._has_c
+                if(has_all_sides and ((a > b + c) or (b > a + c) or (c > a + b))):
+                    print (POSSIBLE_INPUT_ERRORS)
+                else:
+                    print ("Uknown Error occured in the CosineLawSolver")
                 return None
             
             print ("A=%s B=%s C=%s a=%s b=%s c=%s %s" % (A,B,C,a,b,c,Err))
