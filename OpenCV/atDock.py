@@ -49,9 +49,10 @@ def atDock(kinect_image, kinect_depth):
     # print(type(kinect_depth_ros))
 
     #TESTING
-    kinect_image = cv2.imread('Picture4.jpg', 0)
-    cv2.imshow('kinect_image', kinect_image)
-    cv2.waitKey(0)
+    kinect_image = cv2.imread('/home/josh/catkin_ws/Picture4.jpg', cv2.IMREAD_COLOR)
+    print(kinect_image.shape)
+    #cv2.imshow('kinect', kinect_image)
+    #cv2.waitKey(0)
     outFrame = kinect_image
     #TESTING   
 
@@ -68,7 +69,7 @@ def atDock(kinect_image, kinect_depth):
         #_, inFrame = cap.read() #get the video frame
 
         print('still working...')
-        #outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_RGB2BGR)  #converts to grayscale
+        outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_BGR2GRAY)  #converts to grayscale
         #outFrame = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
         _, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
         outFrame = cv2.bitwise_not(mask)
@@ -92,7 +93,12 @@ def atDock(kinect_image, kinect_depth):
 
             #elif not(length == SHAPE_CORNERS):
                 #cv2.drawContours(kinect_image, [cnt], 0, red, -1)
-        shapes = shapes/2        
+        shapes = shapes/2
+
+        if shapes == 2:
+            shapes = 1        
+
+        print("[atDock]: Shapes: {}".format(shapes))
 
         if shapes == 1:
 
@@ -137,8 +143,8 @@ def atDock(kinect_image, kinect_depth):
             dx = int(symX - camX)
             dz = int(symZ - camZ)
 
-            #cv2.imshow('kinect_image', kinect_image)
-            #cv2.imshow('outFrame', outFrame)
+            cv2.imshow('kinect_image', kinect_image)
+            cv2.imshow('outFrame', outFrame)
             
             print('Delta in pixels: (%f, %f, %f)' % (x, y, thetaCamera))
 
