@@ -156,7 +156,8 @@ class CosineLawSolver:
         Err = "No Error"
         self._checkValues(A, B, C, a, b, c)
         A, B, C, a, b, c = self._makeInputsFloat(A, B, C, a, b, c)
-        
+
+        print ("CosineLawSolver._getSolution(): Showing iterative data...")
         while(not(self._has_A and self._has_B and self._has_C
                 and self._has_a and self._has_b and self._has_c)):
 
@@ -170,7 +171,8 @@ class CosineLawSolver:
                     print ("Uknown Error occured in the CosineLawSolver")
                 return None
             
-            print ("A=%s B=%s C=%s a=%s b=%s c=%s %s" % (A,B,C,a,b,c,Err))
+            print ("A=%s B=%s C=%s a=%s b=%s c=%s Error Status: %s"
+                   % (A,B,C,a,b,c,Err))
             if(not(self._has_A)): A, Err = self._calc_A(A, B, C, a, b, c)
             if(not(self._has_B)): B, Err = self._calc_B(A, B, C, a, b, c)
             if(not(self._has_C)): C, Err = self._calc_C(A, B, C, a, b, c)

@@ -48,13 +48,16 @@ def atDock(kinect_image, kinect_depth):
     # print(type(kinect_image_ros))
     # print(type(kinect_depth_ros))
 
+    print ("atDock(): Starting the atDock() funciton...")
     #TESTING
-    kinect_image = cv2.imread('Picture4.jpg', 0)
-    cv2.imshow('kinect_image', kinect_image)
+    kinect_image = cv2.imread('Marker_Pics/Picture 4.jpg', 0)
+    print ("atDock(): kinect_image successfully loaded...")
     cv2.waitKey(0)
+    cv2.imshow('kinect_image', kinect_image)
     outFrame = kinect_image
     #TESTING   
 
+    
     font = cv2.FONT_HERSHEY_SIMPLEX #font type
     E_COEFF = 0.01   #Coefficient for epsilon value
     SHAPE_CORNERS = 12
@@ -67,7 +70,6 @@ def atDock(kinect_image, kinect_depth):
     try:
         #_, inFrame = cap.read() #get the video frame
 
-        print('still working...')
         #outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_RGB2BGR)  #converts to grayscale
         #outFrame = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
         _, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
@@ -78,6 +80,8 @@ def atDock(kinect_image, kinect_depth):
         shapes = 0
         symX = 0
         symZ = 0
+
+        print ("atDock(): Looking for Contours in image...")
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt,E_COEFF*cv2.arcLength(cnt,True),True)
             length = len(approx)
@@ -96,6 +100,7 @@ def atDock(kinect_image, kinect_depth):
 
         if shapes == 1:
 
+            print ("atDock(): Found a contour! Starting processing...")
             cv2.drawContours(kinect_image, [cnt], 0, red, -1)
             symX /= SHAPE_CORNERS
             symZ /= SHAPE_CORNERS
@@ -103,8 +108,10 @@ def atDock(kinect_image, kinect_depth):
             rows, cols, _ = kinect_image.shape
             camX = int(cols/2)
             camZ = int(rows/2)
-            
+
+            print ("atDock(): Calling getLR.getLR()...")
             leftPoint, rightPoint = getLR.getLR(approx)
+            print ("atDock(): ...getLR.getLR() finished executing")
 
             #for symbol
             lpx = leftPoint[0]
@@ -115,8 +122,11 @@ def atDock(kinect_image, kinect_depth):
             sDistLeft = kinect_depth[lpx][lpz]
             sDistRight = kinect_depth[rpx][rpz]
 
+            print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
+                   +" for symbol triangulation...")
             rSymbol, thetaSymbol = tp.calcTargetPose(IRL_SYM_WIDTH, sDistLeft, sDistRight)
-
+            print ("atDock(): ...TriangulatePosition.calcTargetPose()"
+                   +" for symbol triangulation finished executing...")
             #for Camera
             pixelSymbolWidth = rpx - lpx
             camLeftX = int(camX - pixelSymbolWidth/2)
@@ -124,10 +134,12 @@ def atDock(kinect_image, kinect_depth):
 
             cDistLeft = kinect_depth[camLeftX][camZ]
             cDistRight = kinect_depth[camRightX][camZ]
-
-            print(IRL_SYM_WIDTH, cDistLeft, cDistRight)
             
+            print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
+                   +" for camera center triangulation...")
             rCamera, thetaCamera = tp.calcTargetPose(IRL_SYM_WIDTH, cDistLeft, cDistRight)
+            print ("atDock(): ...TriangulatePosition.calcTargetPose()"
+                   +" for camera center triangulation finished executing...")
 
             #final calcs
             dTheta = thetaSymbol - thetaCamera
@@ -140,15 +152,16 @@ def atDock(kinect_image, kinect_depth):
             #cv2.imshow('kinect_image', kinect_image)
             #cv2.imshow('outFrame', outFrame)
             
-            print('Delta in pixels: (%f, %f, %f)' % (x, y, thetaCamera))
-
-            return pose(x, y, thetaCamera)        
+            print('atDock(): Parameters returned: (%f, %f, %f)' % (x, y, thetaCamera))
+            return pose(x, y, thetaCamera)
+        
         else:
             cv2.imshow('kinect_image', kinect_image)
             cv2.imshow('outFrame', outFrame)
             cv2.waitKey(0)
+            print('atDock(): No Parameters found, \'None\' object returned!')
             return None
-        
+                  
     except Exception as e:
         print('ERROR: ' + str(e))
 
@@ -158,6 +171,8 @@ def atDock(kinect_image, kinect_depth):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+        print ("Calling \'atDock(kinect_image, kinect_depth)\'... ")
         atDock(kinect_image, kinect_depth)
+        print ("...atDock(kinect_image, kinect_depth)\' finished executing. ")
 
 
