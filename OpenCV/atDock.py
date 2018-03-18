@@ -12,27 +12,16 @@ IRL_SYM_WIDTH = 0.2032 #meters (0.2032m = 8 inches)
 #input Parameters
 ##image = np.ones((480,640,3), np.uint8)
 ##image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-kinect_image = cv2.imread('Marker_Pics/Picture 4.jpg', cv2.IMREAD_COLOR)
-kinect_depth = np.empty((480,640), np.uint8)    #maybe np.uint8
-
-print(kinect_depth)
-
-r, c = kinect_depth.shape
-print(r,c)
-
-#cv2.imshow('waht', kinect_depth)
-
-k = kinect_depth.view('float32')
-print(k)
-
-r, c= kinect_depth.shape
-print(r,c)
-
-for i in range(480):
-    for j in range(200,360):
-        k[i][j] = 0
-
-print(k)
+##kinect_image = cv2.imread('Marker_Pics/Picture 4.jpg', cv2.IMREAD_COLOR)
+##kinect_depth = np.empty((480,640), np.uint8)    #maybe np.uint8
+##
+##r, c = kinect_depth.shape
+##
+##cv2.imshow('waht', kinect_depth)
+##
+##k = kinect_depth.view('float32')
+##
+##r, c= kinect_depth.shape
 
 def sumPoints(approx):
     x = 0
