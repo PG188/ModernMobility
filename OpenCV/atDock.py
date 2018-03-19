@@ -1,4 +1,4 @@
-#data_out = list(pc2.read_points(nav_controller.getDepthFrame(), field_names=("x", "y", "z"), skip_nans=True, uvs=[[1, 1], [600,1], [600, 400], [1, 400]]))
+#data_out = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=True, uvs=[[1, 1], [600,1], [600, 400], [1, 400]]))
 
 #!/usr/bin/env python
 
@@ -10,7 +10,7 @@ import TriangulatePosition as tp
 import getLR
 
 
-IRL_SYM_WIDTH = 0.2032*1000 #meters (0.2032m = 8 inches)
+IRL_SYM_WIDTH = 0.2032*1000 #meters (0.2032m = 8 inches) *1000 for in millimeters
 
 class pose():
     def __init__(self, x, y, theta):
@@ -48,11 +48,11 @@ def atDock(kinect_image, kinect_depth):
 ##    time.sleep(3)   #Give camera time to startup
 ##    print ('Ready for video capture\n')
     # print(type(kinect_image_ros))
-    # print(type(kinect_depth_ros))
+    # print(type(kinect_depth_ros))    
 
     print ("atDock(): Starting the atDock() funciton...")
     #TESTING
-    kinect_image = cv2.imread('/home/josh/catkin_ws/Picture4.jpg', cv2.IMREAD_COLOR)
+    #kinect_image = cv2.imread('/home/josh/catkin_ws/Picture4.jpg', cv2.IMREAD_COLOR)
     print(kinect_image.shape)
     #cv2.imshow('kinect', kinect_image)
     #cv2.waitKey(0)
@@ -121,12 +121,16 @@ def atDock(kinect_image, kinect_depth):
 
             #for symbol
             lpx = leftPoint[0]
-            lpz = leftPoint[1]
+            lpz = rows - leftPoint[1]   #Kinect origin at bottom-left, OpenCV origin at top-left
             rpx = rightPoint[0]
-            rpz = rightPoint[1]
+            rpz = rows - rightPoint[1]  #Kinect origin at bottom-left, OpenCV origin at top-left
 
-            sDistLeft = kinect_depth[lpx][lpz]
-            sDistRight = kinect_depth[rpx][rpz]
+##            sDistLeft = kinect_depth[lpx][lpz]
+##            sDistRight = kinect_depth[rpx][rpz]
+
+            data_out4symbol = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=True, uvs=[[lpx, lpz], [rpx, rpz]]))    #[[(x,y,z)]]
+            sDistLeft = data_out4symbol[0][2]
+            sDistRight = data_out4symbol[1][2]
 
             print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
                    +" for symbol triangulation...")
@@ -137,9 +141,14 @@ def atDock(kinect_image, kinect_depth):
             pixelSymbolWidth = rpx - lpx
             camLeftX = int(camX - pixelSymbolWidth/2)
             camRightX = int(camX + pixelSymbolWidth/2)
+            kCamZ = rows - camZ     #Kinect origin at bottom-left, OpenCV origin at top-left
 
-            cDistLeft = kinect_depth[camLeftX][camZ]
-            cDistRight = kinect_depth[camRightX][camZ]
+##            cDistLeft = kinect_depth[camLeftX][camZ]
+##            cDistRight = kinect_depth[camRightX][camZ]
+
+            data_out4symbol = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=True, uvs=[[camLeftX, kCamZ], [camRightX, kCamZ]]))    #[[(x,y,z)]]
+            cDistLeft = data_out4symbol[0][2]
+            cDistRight = data_out4symbol[1][2]
             
             print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
                    +" for camera center triangulation...")
