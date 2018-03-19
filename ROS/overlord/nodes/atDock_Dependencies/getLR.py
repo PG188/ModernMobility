@@ -10,7 +10,7 @@ def getLR(approx):
         rp = approx[0][0]
         point = None
 
-        print ("getLR(): Showing iterative data:")
+        print ("[getLR.py]: Showing iterative data:")
         for i in range(1,len(approx)):
             point = [approx[i][0][0], approx[i][0][1]]
             
@@ -22,11 +22,11 @@ def getLR(approx):
                 R = point[0]
                 rp = point
 
-            print ("\tpoint = %s | L = %s | R = %s | lp = %s | rp = %s"
+            print ("  point = %s | L = %s | R = %s | lp = %s | rp = %s"
                    % (point, L, R, lp, rp))
 
-        print ("getLR(): Successfully returned points")
+        print ("[getLR.py]: Successfully returned points")
         return lp, rp
     except:
-        print ("getLR(): No points found!")
+        print ("[getLR.py]: No points found!")
         return None, None

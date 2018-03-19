@@ -32,10 +32,18 @@ def avgPoints(single_contour, number_of_points):
     x /= number_of_points
     y /= number_of_points
 
-    return x, y 
+    return x, y
+
+def getDists(left_coord, right_coord):
+    """
+    coords look like = [x, z]
+    """
+    depth_data = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=False, uvs=[left_coord, right_coord]))    #[[(x,y,z)]]
+    print('(x, y, z) from depth: %s' %(depth_data))
+    return depth_data[0][2], depth_data[1][2]
 
 def atDock(kinect_image, kinect_depth):
-    print ("[atDock()]: Starting the atDock() funciton...")
+    print ("[atDock.py]: Starting the atDock() function...")
 
     #Constants
     FONT = cv2.FONT_HERSHEY_SIMPLEX #font type
@@ -44,6 +52,9 @@ def atDock(kinect_image, kinect_depth):
     BLUE = (255,0,0)
     GREEN = (0,255,0)
     RED = (0,0,255)
+
+    #Variables
+    possible_contours = []
                 
     try:
         #_, inFrame = cap.read() #get the video frame
@@ -54,12 +65,8 @@ def atDock(kinect_image, kinect_depth):
         outFrame = cv2.Canny(outFrame, 50, 50)
 
         _, contours, _ = cv2.findContours(outFrame,1,2)
-        shapes = 0
-        symX = 0
-        symZ = 0
-        possible_contours = []
 
-        print ("[atDock()]: Looking for Contours in image...")
+        print ("[atDock.py]: Looking for Contours in image...")
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt,E_COEFF*cv2.arcLength(cnt,True),True)
             length = len(approx)
@@ -69,14 +76,13 @@ def atDock(kinect_image, kinect_depth):
                 possible_contours.append(cnt)
                 
     except Exception as e:
-        print("[atDock.py]: ERROR OCCURED WHILE ANALYSING THE IMAGE:\n" + str(e))
-
+        print("[atDock.py]: ERROR OCCURED WHILE ANALYSING THE IMAGE:\n\t" + str(e))
+        
     #If no contours are found return None type object
     if(len(possible_contours) <= 0):
         cv2.imshow('kinect_image', kinect_image)
         cv2.imshow('outFrame', outFrame)
-        print ("[atDock()]: Not %s-point contours found! Returned None."
-               % SHAPE_CORNERS)
+        print ("[atDock()]: Not %s-point contours found! Returned None." % SHAPE_CORNERS)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return None
@@ -90,7 +96,7 @@ def atDock(kinect_image, kinect_depth):
             print ("LARGEST CONTOUR: ", largest_contour)
             cv2.drawContours(kinect_image, [largest_contour], 0, RED, -1)
             cv2.imshow("kinect_image", kinect_image)
-            print ("[atDock()]: Found a contour! Start processing...")
+            print ("[atDock.py]: Found a contour! Start processing...")
 
             #Get the center of the contour
             symX, symZ = avgPoints(largest_contour, SHAPE_CORNERS)           
@@ -101,9 +107,9 @@ def atDock(kinect_image, kinect_depth):
             camZ = int(rows/2)
 
         #Find the position vector to the center of the symbol
-            print ("[atDock()]: Calling getLR.getLR()...\n")
+            print ("[atDock.py]: Calling getLR.getLR()...\n")
             leftPoint, rightPoint = getLR.getLR(largest_contour)
-            print ("\n[atDock()]: ...getLR.getLR() finished executing")
+            print ("\n[atDock.py]: ...getLR.getLR() finished executing")
             
             #Kinect origin at bottom-left, OpenCV origin at top-left
             lpx = leftPoint[0]
@@ -111,15 +117,12 @@ def atDock(kinect_image, kinect_depth):
             rpx = rightPoint[0]
             rpz = rows - rightPoint[1]
 
-            data_out4symbol = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=False, uvs=[[lpx, lpz], [rpx, rpz]]))    #[[(x,y,z)]]
-            print('(x, y, z) from depth: %s' %(data_out4symbol))
-            sDistLeft = data_out4symbol[0][2]
-            sDistRight = data_out4symbol[1][2]
+            sDistLeft, sDistRight = getDist([lpx, lpz], [rpx, rpz])
 
-            print ("[atDock()]: Calling TriangulatePosition.calcTargetPose()"
+            print ("[atDock.py]: Calling TriangulatePosition.calcTargetPose()"
                    +" for symbol triangulation...\n")
             rSymbol, thetaSymbol = tp.calcTargetPose(IRL_SYM_WIDTH, sDistLeft, sDistRight)
-            print ("\n[atDock()]: ...TriangulatePosition.calcTargetPose()"
+            print ("\n[atDock.py]: ...TriangulatePosition.calcTargetPose()"
                    +" for symbol triangulation finished executing...")
 
         #Find the position vector to the center of the kinect image frame
@@ -129,16 +132,14 @@ def atDock(kinect_image, kinect_depth):
 
             #Kinect origin at bottom-left, OpenCV origin at top-left
             kCamZ = rows - camZ
-
-            data_out4camera = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=True, uvs=[[camLeftX, kCamZ], [camRightX, kCamZ]]))    #[[(x,y,z)]]
-            cDistLeft = data_out4camera[0][2]
-            cDistRight = data_out4camera[1][2]
             
-            print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
+            cDistLeft, cDistRight = getDist([camLeftX, kCamZ], [camRightX, kCamZ])
+            
+            print ("[atDock.py]: Calling TriangulatePosition.calcTargetPose()"
                    +" for camera center triangulation...")
             rCamera, thetaCamera = tp.calcTargetPose(
                 IRL_SYM_WIDTH, cDistLeft, cDistRight)
-            print ("atDock(): ...TriangulatePosition.calcTargetPose()"
+            print ("[atDock.py]: ...TriangulatePosition.calcTargetPose()"
                    +" for camera center triangulation finished executing...")
 
             #final calcs
@@ -152,23 +153,23 @@ def atDock(kinect_image, kinect_depth):
             cv2.imshow('kinect_image', kinect_image)
             cv2.imshow('outFrame', outFrame)
             
-            print('atDock(): Parameters returned: (%f, %f, %f)'
+            print('[atDock.py]: Parameters returned: (%f, %f, %f)'
                   % (x, y, thetaCamera))
             return Pose(x, y, thetaCamera)
 
         except Exception as e:
             print("[atDock.py]: ERROR OCCURED WHILE PROCESSING KINECT IMAGE:")
-            print(str(e))
+            print("\t"+str(e))
             
         finally:
-            print("\n\n\tPRESS ANY KEY TO CONTINUE...\n\n")
+            print("\n\tPRESS ANY KEY TO CONTINUE...\n")
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     #=====TESTING=====#  
-    print ("Calling \'atDock(kinect_image, kinect_depth)\'... ")
-    atDock(cv2.imread('Picture 4.jpg', cv2.IMREAD_COLOR), None)
-    print ("...atDock(kinect_image, kinect_depth)\' finished executing. ")
+    print ("[atDock.py]: TEST: Calling \'atDock(kinect_image, kinect_depth)\'... ")
+    atDock(cv2.imread('Picture4.jpg', cv2.IMREAD_COLOR), None)
+    print ("[atDock.py]: TEST: ...atDock(kinect_image, kinect_depth)\' finished executing. ")
     #=====TESTING=====# 
 
