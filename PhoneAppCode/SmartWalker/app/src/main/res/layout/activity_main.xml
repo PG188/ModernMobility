@@ -108,10 +108,9 @@
         android:layout_height="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
-        android:text="Test0"
+        android:text="Origin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnDisconnect"
-        android:layout_marginRight="50dp" />
+        app:layout_constraintTop_toBottomOf="@+id/btnDisconnect" />
 
     <Button
         android:id="@+id/btnTest1"
@@ -119,10 +118,9 @@
         android:layout_height="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
-        android:text="Test1"
+        android:text="Forward"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTest0"
-        android:layout_marginRight="50dp" />
+        app:layout_constraintTop_toBottomOf="@+id/btnTest0" />
 
     <Button
         android:id="@+id/btnTest2"
@@ -130,10 +128,9 @@
         android:layout_height="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
-        android:text="Test2"
+        android:text="Left"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTest1"
-        android:layout_marginRight="50dp" />
+        app:layout_constraintTop_toBottomOf="@+id/btnTest1" />
 
     <Button
         android:id="@+id/btnTest3"
@@ -141,10 +138,9 @@
         android:layout_height="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
-        android:text="Test3"
+        android:text="Right"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTest2"
-        android:layout_marginRight="50dp" />
+        app:layout_constraintTop_toBottomOf="@+id/btnTest2" />
 
     <Button
         android:id="@+id/btnTest4"
@@ -152,9 +148,8 @@
         android:layout_height="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
-        android:text="Test4"
+        android:text="Backward"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTest3"
-        android:layout_marginRight="50dp" />
+        app:layout_constraintTop_toBottomOf="@+id/btnTest3" />
 
 </android.support.constraint.ConstraintLayout>
