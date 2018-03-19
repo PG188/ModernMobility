@@ -2,6 +2,9 @@
 
 #!/usr/bin/env python
 
+import sys
+sys.path.append('atDock_Dependencies')
+
 import cv2
 import numpy as np
 import time
