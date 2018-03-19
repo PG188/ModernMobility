@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     byte[] PhoneData = new byte[1];
 
     //Test sending floats
+    /**
     Button btnTest0;
     Button btnTest1;
     Button btnTest2;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     double TestX4 = -1;
     double TestY4 = 0;
     double TestO4 = 0;
+     */
+
     float floatValue;
     byte [] x;
     byte [] y;
@@ -106,11 +109,15 @@ public class MainActivity extends AppCompatActivity {
 
         //============================================================================
 
+        /**
+
         btnTest0 = findViewById(R.id.btnTest0);   //Test sending floats
         btnTest1 = findViewById(R.id.btnTest1);   //Test sending floats
         btnTest2 = findViewById(R.id.btnTest2);   //Test sending floats
         btnTest3 = findViewById(R.id.btnTest3);   //Test sending floats
         btnTest4 = findViewById(R.id.btnTest4);   //Test sending floats
+
+         */
 
         //============================================================================
 
@@ -239,9 +246,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //================TEST=============================================================
+        //================TESTS=============================================================
 
-        /**btnTest clicked!*/
+        /**
+
+        //btnTest clicked!
         btnTest0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**btnTest1 clicked!*/
+        //btnTest1 clicked!
         btnTest1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -281,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**btnTest2 clicked!*/
+        //btnTest2 clicked!
         btnTest2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -301,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**btnTest3 clicked!*/
+        //btnTest3 clicked!
         btnTest3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -321,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**btnTest4 clicked!*/
+        //btnTest4 clicked!
         btnTest4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -340,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+         */
     }
 
     //=================================================================================
