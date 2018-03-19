@@ -1,3 +1,5 @@
+#data_out = list(pc2.read_points(nav_controller.getDepthFrame(), field_names=("x", "y", "z"), skip_nans=True, uvs=[[1, 1], [600,1], [600, 400], [1, 400]]))
+
 #!/usr/bin/env python
 
 import cv2
@@ -8,7 +10,7 @@ import TriangulatePosition as tp
 import getLR
 
 
-IRL_SYM_WIDTH = 0.2032*100 #meters (0.2032m = 8 inches)
+IRL_SYM_WIDTH = 0.2032*1000 #meters (0.2032m = 8 inches)
 
 class pose():
     def __init__(self, x, y, theta):
