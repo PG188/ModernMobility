@@ -1,4 +1,4 @@
-#data_out = list(pc2.read_points(nav_controller.getDepthFrame(), field_names=("x", "y", "z"), skip_nans=True, uvs=[[1, 1], [600,1], [600, 400], [1, 400]]))
+#data_out = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=True, uvs=[[1, 1], [600,1], [600, 400], [1, 400]]))
 
 #!/usr/bin/env python
 
@@ -8,9 +8,10 @@ import time
 import math
 import TriangulatePosition as tp
 import getLR
+import sensor_msgs.point_cloud2 as pc2
 
 
-IRL_SYM_WIDTH = 0.2032*1000 #meters (0.2032m = 8 inches)
+IRL_SYM_WIDTH = 0.2032 #meters (0.2032m = 8 inches) 
 
 class pose():
     def __init__(self, x, y, theta):
@@ -43,22 +44,23 @@ def sumPoints(approx):
     return x, y 
 
 def atDock(kinect_image, kinect_depth):
-##    cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
+##   cap = cv2.VideoCapture(0)   #0 indicates first webcam in system
 ##    print('Starting video capture...')
 ##    time.sleep(3)   #Give camera time to startup
 ##    print ('Ready for video capture\n')
-    # print(type(kinect_image_ros))
-    # print(type(kinect_depth_ros))
+    #print(type(kinect_image))
+    # print(type(kinect_depth_ros)) 
+    #outFrame = np.array(kinect_image)
+
 
     print ("atDock(): Starting the atDock() funciton...")
     #TESTING
-    kinect_image = cv2.imread('/home/josh/catkin_ws/Picture4.jpg', cv2.IMREAD_COLOR)
-    print(kinect_image.shape)
+    #kinect_image = cv2.imread('/home/josh/catkin_ws/Picture4.jpg', cv2.IMREAD_COLOR)
+
     #cv2.imshow('kinect', kinect_image)
     #cv2.waitKey(0)
-    outFrame = kinect_image
+    #outFrame = kinect_image
     #TESTING   
-
     
     font = cv2.FONT_HERSHEY_SIMPLEX #font type
     E_COEFF = 0.01   #Coefficient for epsilon value
@@ -69,18 +71,28 @@ def atDock(kinect_image, kinect_depth):
     red = (0,0,255)
                 
     #while (cv2.waitKey(1) & 0xFF) != ord('q'):
+    print(0)
     try:
         #_, inFrame = cap.read() #get the video frame
         outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_BGR2GRAY)  #converts to grayscale
         #outFrame = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
+        print(1)
+
         _, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
         outFrame = cv2.bitwise_not(mask)
         outFrame = cv2.Canny(outFrame, 50, 50)
+
+        cv2.imshow('checkCheck', outFrame)
+        cv2.waitKey(0)
+
+        print(2)
 
         _, contours, _ = cv2.findContours(outFrame,1,2)
         shapes = 0
         symX = 0
         symZ = 0
+
+        #cv2.imshow('outFrame', outFrame)
 
         print ("atDock(): Looking for Contours in image...")
         for cnt in contours:
@@ -97,14 +109,20 @@ def atDock(kinect_image, kinect_depth):
 
             #elif not(length == SHAPE_CORNERS):
                 #cv2.drawContours(kinect_image, [cnt], 0, red, -1)
-        shapes = shapes/2
+        print(3)
 
-        if shapes == 2:
-            shapes = 1        
+        shapes = shapes/2
 
         print("[atDock]: Shapes: {}".format(shapes))
 
+        if not(shapes == 1):
+            shapes = 1        
+
+        
+
         if shapes == 1:
+
+            print(4)
 
             print ("atDock(): Found a contour! Starting processing...")
             cv2.drawContours(kinect_image, [cnt], 0, red, -1)
@@ -119,27 +137,53 @@ def atDock(kinect_image, kinect_depth):
             leftPoint, rightPoint = getLR.getLR(approx)
             print ("atDock(): ...getLR.getLR() finished executing")
 
+            print(leftPoint, rightPoint)
+
+            print(5)
+
             #for symbol
             lpx = leftPoint[0]
-            lpz = leftPoint[1]
+            lpz = rows - leftPoint[1]   #Kinect origin at bottom-left, OpenCV origin at top-left
             rpx = rightPoint[0]
-            rpz = rightPoint[1]
+            rpz = rows - rightPoint[1]  #Kinect origin at bottom-left, OpenCV origin at top-left
 
-            sDistLeft = kinect_depth[lpx][lpz]
-            sDistRight = kinect_depth[rpx][rpz]
+##            sDistLeft = kinect_depth[lpx][lpz]
+##            sDistRight = kinect_depth[rpx][rpz]
+    
+            print("lpx:{}  lpz:{} rpx:{}  rpz:{}".format(lpx, lpz, rpx, rpz))    
+
+            print(6)
+
+
+            data_out4symbol = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=False, uvs=[[lpx, lpz], [rpx, rpz]]))    #[[(x,y,z)]]
+            print('(x, y, z) from depth: %s' %(data_out4symbol))
+            sDistLeft = data_out4symbol[0][2]
+            sDistRight = data_out4symbol[1][2]
+
+            print(7)
 
             print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
                    +" for symbol triangulation...")
             rSymbol, thetaSymbol = tp.calcTargetPose(IRL_SYM_WIDTH, sDistLeft, sDistRight)
             print ("atDock(): ...TriangulatePosition.calcTargetPose()"
                    +" for symbol triangulation finished executing...")
+
+            print(8)
+
             #for Camera
             pixelSymbolWidth = rpx - lpx
             camLeftX = int(camX - pixelSymbolWidth/2)
             camRightX = int(camX + pixelSymbolWidth/2)
+            kCamZ = rows - camZ     #Kinect origin at bottom-left, OpenCV origin at top-left
 
-            cDistLeft = kinect_depth[camLeftX][camZ]
-            cDistRight = kinect_depth[camRightX][camZ]
+##            cDistLeft = kinect_depth[camLeftX][camZ]
+##            cDistRight = kinect_depth[camRightX][camZ]
+
+            data_out4camera = list(pc2.read_points(kinect_depth, field_names=("x", "y", "z"), skip_nans=True, uvs=[[camLeftX, kCamZ], [camRightX, kCamZ]]))    #[[(x,y,z)]]
+            cDistLeft = data_out4camera[0][2]
+            cDistRight = data_out4camera[1][2]
+
+            print(9)
             
             print ("atDock(): Calling TriangulatePosition.calcTargetPose()"
                    +" for camera center triangulation...")
@@ -155,10 +199,15 @@ def atDock(kinect_image, kinect_depth):
             dx = int(symX - camX)
             dz = int(symZ - camZ)
 
+            print('atDock(): Parameters returned: (x, y, theta) = (%f, %f, %f)' % (x, y, thetaCamera))
+
             cv2.imshow('kinect_image', kinect_image)
             cv2.imshow('outFrame', outFrame)
+            cv2.waitKey(0)
+            #cap.release()   #you gotta release
+            cv2.destroyAllWindows()
             
-            print('atDock(): Parameters returned: (%f, %f, %f)' % (x, y, thetaCamera))
+            print('atDock(): Parameters returned: (x, y, theta) = (%f, %f, %f)' % (x, y, thetaCamera))
             return pose(x, y, thetaCamera)
         
         else:
@@ -166,15 +215,14 @@ def atDock(kinect_image, kinect_depth):
             cv2.imshow('outFrame', outFrame)
             cv2.waitKey(0)
             print('atDock(): No Parameters found, \'None\' object returned!')
+            #cap.release()   #you gotta release
+            cv2.destroyAllWindows()
             return None
                   
     except Exception as e:
-        print('ERROR: ' + str(e))
+        print('ERROR (atDock except): ' + str(e))
 
-    cv2.waitKey(0)
-
-    #cap.release()   #you gotta release
-    cv2.destroyAllWindows()
+    
 
 if __name__ == "__main__":
         print ("Calling \'atDock(kinect_image, kinect_depth)\'... ")

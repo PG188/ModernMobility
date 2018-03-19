@@ -51,7 +51,10 @@ class nav_controller():
         self.goalArrived = True
 
     def parkInDock(self):
-        dockPose = atDock(img_color, nav_controller.getDepthFrame())
+        # data_out4symbol = list(pc2.read_points(nav_controller.getDepthFrame(), field_names=("x", "y", "z"), skip_nans=True, uvs=[[1, 1], [1, 2]]))
+        # print(data_out4symbol)
+
+        dockPose = atDock(self.bridge.imgmsg_to_cv2(nav_controller.getColorFrame(), desired_encoding="passthrough"), nav_controller.getDepthFrame())
         if dockPose is not None:
             result = self.client.send_goal_and_wait(self.buildAlignGoal(dockPose), rospy.Duration(10), rospy.Duration(10))
             if result == GoalStatus.SUCCEEDED:

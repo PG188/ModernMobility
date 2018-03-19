@@ -4,14 +4,14 @@ import numpy as np
 
 def getLR(approx):
     try:
-        L = 0
-        R = 0
-        lp = [0,0]
-        rp = [0,0]
+        L = approx[0][0][0]
+        R = approx[0][0][0]
+        lp = approx[0][0]
+        rp = approx[0][0]
         point = None
 
         print ("getLR(): Showing iterative data:")
-        for i in range(len(approx)):
+        for i in range(1,len(approx)):
             point = [approx[i][0][0], approx[i][0][1]]
             
             if point[0] < L:
