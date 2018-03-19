@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.modernmobility.smartwalker.MainActivity">
+
+    !Textview for outputting info
+    <TextView
+        android:id="@+id/txtCmd"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Press connect to begin."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    !Bluetooth connect/disconnect and phone command buttons
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Connect"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCmd"
+        android:layout_marginLeft="50dp" />
+
+    <Button
+        android:id="@+id/btnToMe"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="90dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:text="Come to me"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCmd"
+        android:layout_marginLeft="50dp" />
+
+    <Button
+        android:id="@+id/btnPark"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:text="Park"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnToMe"
+        android:layout_marginLeft="50dp" />
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:text="Stop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPark"
+        android:layout_marginLeft="50dp" />
+
+    <Button
+        android:id="@+id/btnResume"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:text="Resume"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnStop"
+        android:layout_marginLeft="50dp" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:text="Cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnResume"
+        android:layout_marginLeft="50dp" />
+
+    <Button
+        android:id="@+id/btnDisconnect"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Disconnect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCmd"
+        android:layout_marginRight="50dp" />
+
+    !Textviews for X,Y and θ
+    <TextView
+        android:id="@+id/tvX"
+        android:layout_width="30dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:text="X:"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/etX"
+        app:layout_constraintTop_toBottomOf="@+id/btnDisconnect"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:id="@+id/tvY"
+        android:layout_width="30dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Y:"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/etY"
+        app:layout_constraintTop_toBottomOf="@+id/tvX"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:id="@+id/tvθ"
+        android:layout_width="30dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:text="θ:"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/etθ"
+        app:layout_constraintTop_toBottomOf="@+id/tvY"
+        android:layout_marginRight="10dp" />
+
+    !editTexts to enter values into the phone
+
+    <EditText
+        android:id="@+id/etX"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDisconnect"
+        android:layout_marginRight="10dp" />
+
+    <EditText
+        android:id="@+id/etY"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etX"
+        android:layout_marginRight="10dp" />
+
+    <EditText
+        android:id="@+id/etθ"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etY"
+        android:layout_marginRight="10dp" />
+
+    <!--
+
+    <Button
+        android:id="@+id/btnTest0"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Test0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDisconnect"
+        android:layout_marginRight="50dp" />
+
+    <Button
+        android:id="@+id/btnTest1"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Test1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTest0"
+        android:layout_marginRight="50dp" />
+
+    <Button
+        android:id="@+id/btnTest2"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Test2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTest1"
+        android:layout_marginRight="50dp" />
+
+    <Button
+        android:id="@+id/btnTest3"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Test3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTest2"
+        android:layout_marginRight="50dp" />
+
+    <Button
+        android:id="@+id/btnTest4"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Test4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTest3"
+        android:layout_marginRight="50dp" />
+
+        -->
+
+</android.support.constraint.ConstraintLayout>

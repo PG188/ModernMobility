@@ -18,6 +18,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Math;
 import java.nio.ByteBuffer;
 import java.util.Set;
 
@@ -54,29 +55,27 @@ public class MainActivity extends AppCompatActivity {
     byte[] PhoneData = new byte[1];
 
     //Test sending floats
-
     Button btnTest0;
     Button btnTest1;
     Button btnTest2;
     Button btnTest3;
     Button btnTest4;
 
-    double TestX = 1.5;
-    double TestY = 1.3;
-    double TestO = 2;
-    double TestX1 = 0.3;
-    double TestY1 = 0.8;
+    double TestX = 0;
+    double TestY = 0;
+    double TestO = 0;
+    double TestX1 = 1;
+    double TestY1 = 0;
     double TestO1 = 0;
-    double TestX2 = -0.5;
-    double TestY2 = 0.2;
-    double TestO2 = 0.7;
-    double TestX3 = -0.9;
-    double TestY3 = -0.3;
-    double TestO3 = 3.5;
-    double TestX4 = -1.2;
-    double TestY4 = -1.2;
-    double TestO4 = 4.2;
-
+    double TestX2 = 0;
+    double TestY2 = 1;
+    double TestO2 = Math.PI/2;
+    double TestX3 = 0;
+    double TestY3 = -1;
+    double TestO3 = -Math.PI/2;
+    double TestX4 = -1;
+    double TestY4 = 0;
+    double TestO4 = 0;
     float floatValue;
     byte [] x;
     byte [] y;
@@ -248,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
                 try {
+                    Log.d(TAG,"onCreate:  onClick: TEST BUTTON CLICKED!");
                     PhoneData[0] = 10;
                     x = ToByteArray(TestX);
                     y = ToByteArray(TestY);
@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             txtCmd = findViewById(R.id.txtCmd);
-            txtCmd.setText("Bluetooth connection successful!");
+            txtCmd.setText(R.string.String_BT_Connected);
 
         }
     };
@@ -394,23 +394,23 @@ public class MainActivity extends AppCompatActivity {
     public void UpdateCommandTxt(byte PhoneData) {
         switch (PhoneData){
             case 0: //btnToMe clicked!
-                txtCmd.setText("SmartWalker is Navigating towards the the user.");
-                //Log.d(TAG,"UpdateCommandTxt: ToMe");
+                txtCmd.setText(R.string.String_ToMe);
+                Log.d(TAG,"UpdateCommandTxt: ToMe");
             case 1: //btnPark clicked!
-                txtCmd.setText("SmartWalker is Parking.");
-                //Log.d(TAG,"UpdateCommandTxt: Park");
+                txtCmd.setText(R.string.String_Park);
+                Log.d(TAG,"UpdateCommandTxt: Park");
             case 2: //btnStop clicked!
-                txtCmd.setText("SmartWalker is has stopped.");
-                //Log.d(TAG,"UpdateCommandTxt: Stop");
+                txtCmd.setText(R.string.String_Stop);
+                Log.d(TAG,"UpdateCommandTxt: Stop");
             case 3: //btnResume clicked!
-                txtCmd.setText("SmartWalker is resuming.");
-                //Log.d(TAG,"UpdateCommandTxt: Resume");
+                txtCmd.setText(R.string.String_Resume);
+                Log.d(TAG,"UpdateCommandTxt: Resume");
             case 4: //btnCancel clicked!
-                txtCmd.setText("SmartWalker is Navigating towards the the user.");
-                //Log.d(TAG,"UpdateCommandTxt: Cancel");
+                txtCmd.setText(R.string.String_Cancel);
+                Log.d(TAG,"UpdateCommandTxt: Cancel");
             case 10: //btnTest clicked!
-                txtCmd.setText("Pose sent.");
-                //Log.d(TAG,"UpdateCommandTxt: Pose");
+                txtCmd.setText(R.string.String_Pose);
+                Log.d(TAG,"UpdateCommandTxt: Pose");
         }
     }
 
