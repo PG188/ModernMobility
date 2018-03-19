@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SmartWalker</string>
+    <string name="String_BT_Connected">Bluetooth connection successful!</string>
+    <string name="String_ToMe">SmartWalker is Navigating towards the user.</string>
+    <string name="String_Park">SmartWalker is Parking.</string>
+    <string name="String_Stop">SmartWalker is has stopped.</string>
+    <string name="String_Resume">SmartWalker is resuming.</string>
+    <string name="String_Cancel">Command cancelled.</string>
+    <string name="String_Pose">Pose sent.</string>
 </resources>
