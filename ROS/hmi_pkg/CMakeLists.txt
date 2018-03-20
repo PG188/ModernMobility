@@ -185,9 +185,9 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-add_executable(bluetoothNode src/bluetoothNode.cpp)
-target_link_libraries(bluetoothNode ${catkin_LIBRARIES})
-target_link_libraries(bluetoothNode bluetooth)
+add_executable(bluetooth_node src/bluetooth_node.cpp)
+target_link_libraries(bluetooth_node ${catkin_LIBRARIES})
+target_link_libraries(bluetooth_node bluetooth)
 
 add_executable(HMINode src/HMINode.cpp)
 target_link_libraries(HMINode ${catkin_LIBRARIES})

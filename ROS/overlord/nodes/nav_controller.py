@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+#import sys
+#sys.path.append("atDock_Dependencies")
+
 import roslib
 import rospy
 import sys
@@ -34,15 +37,15 @@ class nav_controller():
         elif nav_cmd.data == GO_TO_DOCK:
             nav_.ROS_INFO("[NAV CONTROLLER]: GO TO DOCK not implemented")
         elif nav_cmd.data == PARK_IN_DOCK:
-            self.navigationDone = False;
+            self.navigationDone = False
             result = self.parkInDock()
         elif (nav_cmd.data == GO_TO_TESTPOSE) or (nav_cmd.data == GO_TO_POSE):
-            self.navigationDone = False;
+            self.navigationDone = False
             while not self.goalArrived:
                 pass
             self.goalArrived = False
             result = self.goToTestPose(self.goalReceived)
-        self.navigationDone = True;
+        self.navigationDone = True
         self.nav_status_pub.publish(self.navigationDone)
 
     def receive_goal_cb(self, goal):

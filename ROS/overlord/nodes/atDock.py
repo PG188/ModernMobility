@@ -80,8 +80,8 @@ def atDock(kinect_image, kinect_depth):
         
     #If no contours are found return None type object
     if(len(possible_contours) <= 0):
-        cv2.imshow('kinect_image', kinect_image)
-        cv2.imshow('outFrame', outFrame)
+        #cv2.imshow('kinect_image', kinect_image)
+        #cv2.imshow('outFrame', outFrame)
         print ("[atDock()]: Not %s-point contours found! Returned None." % SHAPE_CORNERS)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -93,8 +93,8 @@ def atDock(kinect_image, kinect_depth):
             #Find the largest contour and display it
             largest_contour = max(possible_contours, key = cv2.contourArea)
             
-            cv2.drawContours(kinect_image, [largest_contour], 0, RED, -1)
-            cv2.imshow("kinect_image", kinect_image)
+            #cv2.drawContours(kinect_image, [largest_contour], 0, RED, -1)
+            #cv2.imshow("kinect_image", kinect_image)
             print ("[atDock.py]: Found a contour! Start processing...")
 
             #Get the center of the contour
@@ -149,8 +149,8 @@ def atDock(kinect_image, kinect_depth):
             dx = int(symX - camX)
             dz = int(symZ - camZ)
 
-            cv2.imshow('kinect_image', kinect_image)
-            cv2.imshow('outFrame', outFrame)
+            #cv2.imshow('kinect_image', kinect_image)
+            #cv2.imshow('outFrame', outFrame)
             
             print('[atDock.py]: Parameters returned: (%f, %f, %f)'
                   % (x, y, thetaCamera))
@@ -160,10 +160,10 @@ def atDock(kinect_image, kinect_depth):
             print("[atDock.py]: ERROR OCCURED WHILE PROCESSING KINECT IMAGE:")
             print("\t"+str(e))
             
-        finally:
-            print("\n\tPRESS ANY KEY TO CONTINUE...\n")
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+        #finally:
+            #print("\n\tPRESS ANY KEY TO CONTINUE...\n")
+            #cv2.waitKey(0)
+            #v2.destroyAllWindows()
 
 if __name__ == "__main__":
     #=====TESTING=====#  

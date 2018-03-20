@@ -11,15 +11,15 @@
 //ROS stuff
 #include "ros/ros.h"
 #include <geometry_msgs/Point32.h>
-#include <std_msgs/UInt16.h>
+#include <std_msgs/Int8.h>
 #include <sstream>
 
 float S, E, M, num, x, y, o;
 
-ros::Publisher blue_pose_pub;
-ros::Publisher blue_cmd_pub;
+ros::Publisher phone_cmd_pub;
+ros::Publisher nav_goal_pub;
 geometry_msgs::Point32 pose;
-std_msgs::UInt16 cmd;
+std_msgs::Int8 cmd;
 
 float toFloatNum(char b0, char b1, char b2, char b3){
 	
@@ -111,11 +111,11 @@ int main(int argc, char **argv){
 
 //=====ROS================================================
 
-	ros::init(argc, argv, "talker");
+	ros::init(argc, argv, "bluetooth_node");
 	ros::NodeHandle bluetooth;
 	
-	blue_cmd_pub = bluetooth.advertise<std_msgs::UInt16>("blue_cmd", 1000);
-	blue_pose_pub = bluetooth.advertise<geometry_msgs::Point32>("nav_goal", 1000);
+	phone_cmd_pub = bluetooth.advertise<std_msgs::Int8>("phone_cmd", 1000);
+	nav_goal_pub = bluetooth.advertise<geometry_msgs::Point32>("nav_goal", 1000);
 	
 
 //=====BLUETOOTH STUFF====================================
@@ -160,19 +160,23 @@ int main(int argc, char **argv){
 		// read data from the client
 		bytes_read = read(client, buf, sizeof(buf));
 		if(bytes_read == 1){
-			int close = interpretCmd(buf);
-			if(close == 1){
-				connected = false;
-				printf("connection terminated\n");
+			if (*buf != (char)9) {
+				int close = interpretCmd(buf);
+				if(close == 1){
+					connected = false;
+					printf("connection terminated\n");
+				}
+				//printf("received [%s]\n", buf);
+				phone_cmd_pub.publish(cmd);
+				ROS_INFO("%d",cmd.data);
+			} else {
+				break;
 			}
-			//printf("received [%s]\n", buf);
-			blue_cmd_pub.publish(cmd);
-			ROS_INFO("%d",cmd.data);
 		}
 		else{
 			if(bytes_read == 12){
 				interpretPose(buf);
-				blue_pose_pub.publish(pose);
+				nav_goal_pub.publish(pose);
 				ROS_INFO("%3.2f, %3.2f, %3.2f", pose.x, pose.y, pose.z);
 			}
 		}
