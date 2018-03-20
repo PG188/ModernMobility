@@ -2,8 +2,8 @@
 
 #!/usr/bin/env python
 
-import sys
-sys.path.append('atDock_Dependencies')
+#import sys
+#sys.path.append('atDock_Dependencies')
 
 import cv2
 import numpy as np
@@ -11,9 +11,9 @@ import time
 import math
 import TriangulatePosition as tp
 import getLR
-#import sensor_msgs.point_cloud2 as pc2
+import sensor_msgs.point_cloud2 as pc2
 
-IRL_SYM_WIDTH = 0.2032 #meters (0.2032m = 8 inches) *1000 for in millimeters
+IRL_SYM_WIDTH = 0.2032 #meters (0.2032m = 8 inches)
 
 class Pose():
     def __init__(self, x, y, theta):
@@ -34,7 +34,7 @@ def avgPoints(single_contour, number_of_points):
 
     return x, y
 
-def getDists(left_coord, right_coord):
+def getDists(left_coord, right_coord, kinect_depth):
     """
     coords look like = [x, z]
     """
@@ -60,7 +60,7 @@ def atDock(kinect_image, kinect_depth):
         #_, inFrame = cap.read() #get the video frame
         outFrame = cv2.cvtColor(kinect_image, cv2.COLOR_BGR2GRAY)  #converts to grayscale
         #outFrame = cv2.fastNlMeansDenoising(outFrame,None,50,7,21) #filters out noise (frame, None, higher filter out more noise but gives less detail, filter parameter, filtaer parameter)
-        _, mask = cv2.threshold(outFrame, 100, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
+        _, mask = cv2.threshold(outFrame, 50, 255, cv2.THRESH_BINARY_INV)    #If pixel value is above 220 it will convert to 255(white), below will turn to black (because binary)
         outFrame = cv2.bitwise_not(mask)
         outFrame = cv2.Canny(outFrame, 50, 50)
 
@@ -93,7 +93,6 @@ def atDock(kinect_image, kinect_depth):
             #Find the largest contour and display it
             largest_contour = max(possible_contours, key = cv2.contourArea)
             
-            print ("LARGEST CONTOUR: ", largest_contour)
             cv2.drawContours(kinect_image, [largest_contour], 0, RED, -1)
             cv2.imshow("kinect_image", kinect_image)
             print ("[atDock.py]: Found a contour! Start processing...")
@@ -117,7 +116,7 @@ def atDock(kinect_image, kinect_depth):
             rpx = rightPoint[0]
             rpz = rows - rightPoint[1]
 
-            sDistLeft, sDistRight = getDist([lpx, lpz], [rpx, rpz])
+            sDistLeft, sDistRight = getDists([lpx, lpz], [rpx, rpz], kinect_depth)
 
             print ("[atDock.py]: Calling TriangulatePosition.calcTargetPose()"
                    +" for symbol triangulation...\n")
@@ -133,7 +132,7 @@ def atDock(kinect_image, kinect_depth):
             #Kinect origin at bottom-left, OpenCV origin at top-left
             kCamZ = rows - camZ
             
-            cDistLeft, cDistRight = getDist([camLeftX, kCamZ], [camRightX, kCamZ])
+            cDistLeft, cDistRight = getDists([camLeftX, kCamZ], [camRightX, kCamZ], kinect_depth)
             
             print ("[atDock.py]: Calling TriangulatePosition.calcTargetPose()"
                    +" for camera center triangulation...")
