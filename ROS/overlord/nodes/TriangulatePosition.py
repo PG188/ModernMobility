@@ -33,10 +33,10 @@ def _calcTheta(A_over_2, B, C):
             else:                theta = -1*(B - PI_OVER_2 + A_over_2)
 
             
-        print ("TriangulatePosition._calcTheta(): Found theta.")
+        print ("[TriangulatePosition.py]:_calcTheta(): Found theta.")
         return theta
     except:
-        print ("TriangulatePosition._calcTheta(): No theta found!")
+        print ("[TriangulatePosition.py]:_calcTheta(): No theta found!")
         return None
 
 def calcTargetPose(symbol_width, dist_to_left_side, dist_to_right_side):
@@ -61,10 +61,10 @@ def calcTargetPose(symbol_width, dist_to_left_side, dist_to_right_side):
         T2 = CLS.solve(A = A_over_2, a = 0.5*T1.get_a(), b = T1.get_b(), C = C)
         r = T2.get_c()
 
-        print ("TriangulatePosition.calcTargetPose(): Found target pose.")
+        print ("[TriangulatePosition.py]:calcTargetPose(): Found target pose.")
         return r, theta
     except:
-        print ("TriangulatePosition.calcTargetPose(): No target pose found!")
+        print ("[TriangulatePosition.py]:calcTargetPose(): No target pose found!")
         return None, None
     
 

@@ -45,7 +45,7 @@ int interpretCmd(char *buf){
 	switch(data){
 	
 		case (char)0:
-			printf("SmartWalker is navigating towards the user\n");
+			printf("Command Cancelled\n");
 			//call ROS function
 			cmd.data = 0;
 			
@@ -53,7 +53,7 @@ int interpretCmd(char *buf){
 		break;
 		
 		case (char)1:
-			printf("SmartWalker is parking\n");
+			printf("SmartWalker is heading to docking station\n");
 			//call ROS function
 			cmd.data = 1;
 
@@ -61,7 +61,7 @@ int interpretCmd(char *buf){
 		break;
 		
 		case (char)2:
-			printf("SmartWalker has stopped\n");
+			printf("SmartWalker is parking\n");
 			//call ROS function
 			cmd.data = 2;
 			
@@ -69,7 +69,7 @@ int interpretCmd(char *buf){
 		break;
 		
 		case (char)3:
-			printf("Smartwalker is resuming\n");
+			printf("Extra command\n");
 			//call ROS function
 			cmd.data = 3;
 			
@@ -77,7 +77,7 @@ int interpretCmd(char *buf){
 		break;
 		
 		case (char)4:
-			printf("Command cancelled\n");
+			printf("Extra command 2\n");
 			//call ROS function
 			cmd.data = 4;
 			
