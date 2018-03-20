@@ -26,12 +26,12 @@
 	<node name="wheel_controller" pkg="overlord" type="wheel_controller.py" output="screen"/> 
 	<node name="serial_left" pkg="overlord" type="serial_left.py" output="screen"/>
 	<node name="serial_right" pkg="overlord" type="serial_right.py" output="screen"/>
+	<node name="serial_GUI_In" pkg="overlord" type="serial_GUI_In.py" output="screen"/>
 
 	<node name="tf_kinect_broadcaster" pkg="transform" type="tf_kinect_broadcaster"/>
 	<node name="tf_US_broadcaster" pkg="transform" type="tf_US_broadcaster"/>
 
-	<node name="bluetooth_node" pkg="hmi_pkg" type="bluetooth_node" output="screen" />
- 	<node name="HMINode" pkg="hmi_pkg" type="HMINode" output="screen" /> 
+	<node name="bluetooth_node" pkg="bluetooth" type="bluetooth_node" output="screen" />
 
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 		<rosparam file="$(find overlord)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />

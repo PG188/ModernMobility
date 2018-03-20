@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>hmi_pkg</name>
+  <name>bluetooth</name>
   <version>0.0.0</version>
-  <description>hmi_package</description>
+  <description>bluetooth package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(hmi_pkg)
+project(bluetooth)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -188,9 +188,6 @@ include_directories(
 add_executable(bluetooth_node src/bluetooth_node.cpp)
 target_link_libraries(bluetooth_node ${catkin_LIBRARIES})
 target_link_libraries(bluetooth_node bluetooth)
-
-add_executable(HMINode src/HMINode.cpp)
-target_link_libraries(HMINode ${catkin_LIBRARIES})
 
 #############
 ## Testing ##
