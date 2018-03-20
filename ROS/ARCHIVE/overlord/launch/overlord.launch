@@ -1,0 +1,28 @@
+<launch>
+
+	<include file="$(find freenect_launch)/launch/freenect.launch" />
+
+	<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" > 
+		  <remap from="image" to="/camera/depth/image_raw"/>
+		  <remap from="camera_info" to="/camera/depth/camera_info"/>
+	</node>
+	
+	<node name="serialNode_motor_left" pkg="motor_control_left" type="serialNode_motor_left.py" output="screen"/>
+	<node name="leftVelocitySelection" pkg="motor_control_left" type="leftVelocitySelection" />
+	<node name="l_wheelController" pkg="motor_control_left" type="l_wheelController" />
+
+	<node name="serialNode_motor_right" pkg="motor_control_right" type="serialNode_motor_right.py" output="screen"/>
+	<node name="rightVelocitySelection" pkg="motor_control_right" type="rightVelocitySelection" />
+	<node name="r_wheelController" pkg="motor_control_right" type="r_wheelController" />
+
+	<node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen">
+		<rosparam param="base_width">0.245</rosparam>
+   	</node>
+
+   	<node pkg="differential_drive" type="virtual_joystick.py" name="virtual_joystick" output="screen"/>
+
+	<node name="serialNode_US_slider" pkg="ultrasonic_slider" type="serialNode_US_slider.py" output="screen"/>
+
+	<node name="Ultrasonic_and_slider_pub" pkg="ultrasonic_slider" type="Ultrasonic_and_slider_pub" output="screen" /> 
+
+</launch>

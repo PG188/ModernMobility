@@ -18,9 +18,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
-  geometry_msgs
-  actionlib_msgs
-  actionlib
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -113,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-  LIBRARIES overlord
+#  LIBRARIES overlord
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )

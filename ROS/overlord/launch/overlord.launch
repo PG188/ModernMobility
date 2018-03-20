@@ -1,28 +1,44 @@
 <launch>
-
 	<include file="$(find freenect_launch)/launch/freenect.launch" />
 
 	<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" > 
-		  <remap from="image" to="/camera/depth/image_raw"/>
-		  <remap from="camera_info" to="/camera/depth/camera_info"/>
+		<remap from="image" to="/camera/depth/image_raw"/>
+		<remap from="camera_info" to="/camera/depth/camera_info"/>
 	</node>
-	
-	<node name="serialNode_motor_left" pkg="motor_control_left" type="serialNode_motor_left.py" output="screen"/>
-	<node name="leftVelocitySelection" pkg="motor_control_left" type="leftVelocitySelection" />
-	<node name="l_wheelController" pkg="motor_control_left" type="l_wheelController" />
-
-	<node name="serialNode_motor_right" pkg="motor_control_right" type="serialNode_motor_right.py" output="screen"/>
-	<node name="rightVelocitySelection" pkg="motor_control_right" type="rightVelocitySelection" />
-	<node name="r_wheelController" pkg="motor_control_right" type="r_wheelController" />
 
 	<node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen">
 		<rosparam param="base_width">0.245</rosparam>
-   	</node>
-
-   	<node pkg="differential_drive" type="virtual_joystick.py" name="virtual_joystick" output="screen"/>
+		<remap from="/twist" to="/cmd_vel"/>
+	</node>
+	<node pkg="differential_drive" type="diff_tf.py" name="diff_tf" output="screen">
+		<remap from="/lwheel" to="/leftEncoder"/>
+		<remap from="/rwheel" to="/rightEncoder"/>
+	</node>
+   	<node pkg="differential_drive" type="virtual_joystick.py" name="virtual_joystick" output="screen" >
+		<remap from="/twist" to="/cmd_vel"/>
+	</node>
 
 	<node name="serialNode_US_slider" pkg="ultrasonic_slider" type="serialNode_US_slider.py" output="screen"/>
+	<node name="Ultrasonic_and_slider_pub" pkg="ultrasonic_slider" type="Ultrasonic_and_slider_pub" output="screen" />
 
-	<node name="Ultrasonic_and_slider_pub" pkg="ultrasonic_slider" type="Ultrasonic_and_slider_pub" output="screen" /> 
+	<node name="overlord" pkg="overlord" type="overlord.py" output="screen"/> 
+	<node name="nav_controller" pkg="overlord" type="nav_controller.py" output="screen"/>
+	<node name="wheel_controller" pkg="overlord" type="wheel_controller.py" output="screen"/> 
+	<node name="serial_left" pkg="overlord" type="serial_left.py" output="screen"/>
+	<node name="serial_right" pkg="overlord" type="serial_right.py" output="screen"/>
 
+	<node name="tf_kinect_broadcaster" pkg="transform" type="tf_kinect_broadcaster"/>
+	<node name="tf_US_broadcaster" pkg="transform" type="tf_US_broadcaster"/>
+
+	<node name="bluetoothNode" pkg="hmi_pkg" type="bluetoothNode" output="screen" />
+ 	<node name="HMINode" pkg="hmi_pkg" type="HMINode" output="screen" /> 
+
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<rosparam file="$(find overlord)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    	<rosparam file="$(find overlord)/move_base_config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    	<rosparam file="$(find overlord)/move_base_config/local_costmap_params.yaml" command="load" />
+    	<rosparam file="$(find overlord)/move_base_config/global_costmap_params.yaml" command="load" />
+    	<rosparam file="$(find overlord)/move_base_config/base_local_planner_params.yaml" command="load" />
+  	</node>
+	
 </launch>
