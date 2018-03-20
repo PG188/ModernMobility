@@ -1,3 +1,4 @@
+
 /*
 This software reads the value from each of the ultrasonic sensors and manual slider.
 Every 10ms these values are sent back to the Raspberry Pi for processing 
@@ -28,11 +29,11 @@ first block of code with the Serial.available check. How can we make it so this 
 
 /*  Constants */
 //PID Constants
-const double K_P = 0, 
+const double K_P = 120, 
              K_I = 100,
-             K_D = 0,
-             OUT_MIN = -255,  
-             OUT_MAX = 255;
+             K_D = 1,
+             OUT_MIN = -210,  
+             OUT_MAX = 210;
 const int SAMPLE_TIME = 30;
 
 //Serial Constants   
@@ -78,7 +79,7 @@ void setup() {
     pinMode(DIR1, OUTPUT);  //Wheel motor direction
     pinMode(PWM1, OUTPUT);  //Wheel motor PWM
 
-    digitalWrite(DIR1, initMotorDir); //direcitons  
+    digitalWrite(DIR1, HIGH); //direcitons  
     digitalWrite(PWM1, initMotorCmd);   //speed scale speed here with input from pi
 }
 
@@ -111,10 +112,12 @@ void loop() {
       }
     }
 
-    if (count > 1000)
-      motorVelCmd = 0.1;
-    else
-      motorVelCmd = 0.1;
+    /*if (count > 1000){
+      motorVelCmd = -0.2;
+    }
+    else {
+      motorVelCmd = 0.2;
+    }*/
     
     /*if (count >= 100){
       if (motorVelCmd == lastMotorVelCmd)
@@ -136,18 +139,16 @@ void loop() {
       //DO PID
       Input = wheelVel;
       SetPoint_double = (double) motorVelCmd;
-      MotorCmd = doPID(lastMotorCmd);
+      MotorCmd = doPID();
       lastMotorCmd = MotorCmd;
-      Serial.print(MotorCmd);Serial.println(" ");
+      //Serial.print(MotorCmd);Serial.println(" ");
     //}
-
-    lastMotorVelCmd = motorVelCmd;
     digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
     analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   
     //Serial.println(wheelVel);
     //Serial.print(" "); //For plotting purposes*/
-    wheelVelOut = (unsigned int)abs(byteRead*100);
+    //wheelVelOut = (unsigned int)abs(byteRead*100);
     
     //Send updated encoder value
     if (sendEncoder == 1) {
@@ -168,15 +169,17 @@ void initPID(){
     MotorPID.SetTunings(K_P, K_I, K_D, P_ON_E);
 }
 
-int doPID(int lastOutput){
+int doPID(){
     /*
      * MotorPID.Compute() computes the PID and returns true, 
      * if it does not compute anything it will return false
      */
+     double MotorCmd;
      if (!MotorPID.Compute()) {
       return 0;  //Send invalid value when nothing computed
      }
      else {
+       //Serial.print("Output = ");Serial.print(Output);
       /*if (signPos(lastOutput) && !signPos(Output)){
         Output = -1;
         delay(10);
@@ -185,16 +188,23 @@ int doPID(int lastOutput){
         Output = 0;
         delay(10);
       }*/
-      if (Output >= -20 && Output <= 20){
+      /*if (Output >= -20 && Output <= 20){
           Output = 0;
         }
-      if (Output > 20 && Output <= 45){
+      else if (Output > 20 && Output <= 45){
           Output = 50;
         }
       else if (Output < -20 && Output >= -45){
         Output = -50;
-      }
-      return (int)Output;
+      }*/
+      if (Output > 0)
+        MotorCmd = Output + 45;
+      else if (Output < 0)
+        MotorCmd = Output - 45;
+      else
+        MotorCmd = 0;
+      //Serial.print("  MotorCmd = ");Serial.println(MotorCmd);
+      return MotorCmd;
      }
 }
 
