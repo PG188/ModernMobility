@@ -447,20 +447,20 @@ public class MainActivity extends AppCompatActivity {
     public void UpdateCommandTxt(byte PhoneData) {
         switch (PhoneData){
             case 0: //btnToMe clicked!
-                txtCmd.setText(R.string.String_ToMe);
-                Log.d(TAG,"UpdateCommandTxt: ToMe");
+                txtCmd.setText(R.string.String_Cmd0);
+                Log.d(TAG,"UpdateCommandTxt: Cmd0");
             case 1: //btnPark clicked!
-                txtCmd.setText(R.string.String_Park);
-                Log.d(TAG,"UpdateCommandTxt: Park");
+                txtCmd.setText(R.string.String_Cmd1);
+                Log.d(TAG,"UpdateCommandTxt: Cmd1");
             case 2: //btnStop clicked!
-                txtCmd.setText(R.string.String_Stop);
-                Log.d(TAG,"UpdateCommandTxt: Stop");
+                txtCmd.setText(R.string.String_Cmd2);
+                Log.d(TAG,"UpdateCommandTxt: Cmd2");
             case 3: //btnResume clicked!
-                txtCmd.setText(R.string.String_Resume);
-                Log.d(TAG,"UpdateCommandTxt: Resume");
+                txtCmd.setText(R.string.String_Cmd3);
+                Log.d(TAG,"UpdateCommandTxt: Cmd3");
             case 4: //btnCancel clicked!
-                txtCmd.setText(R.string.String_Cancel);
-                Log.d(TAG,"UpdateCommandTxt: Cancel");
+                txtCmd.setText(R.string.String_Cmd4);
+                Log.d(TAG,"UpdateCommandTxt: Cmd4");
             case 10: //btnTest clicked!
                 txtCmd.setText(R.string.String_Pose);
                 Log.d(TAG,"UpdateCommandTxt: Pose");
@@ -490,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void Toasting(String s){
         Context context = getApplicationContext();
-        CharSequence text = "Hello toast!";
+        CharSequence text = s;
         int duration = Toast.LENGTH_SHORT;
 
         Toast.makeText(context, text, duration).show();
