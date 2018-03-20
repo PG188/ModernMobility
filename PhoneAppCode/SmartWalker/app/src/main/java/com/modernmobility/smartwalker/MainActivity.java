@@ -5,6 +5,7 @@ package com.modernmobility.smartwalker;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelUuid;
@@ -13,7 +14,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
     //Widgets
     TextView txtCmd;
     Button btnConnect;
-    Button btnToMe;
-    Button btnPark;
-    Button btnStop;
-    Button btnResume;
-    Button btnCancel;
+    Button btnCmd0;
+    Button btnCmd1;
+    Button btnCmd2;
+    Button btnCmd3;
+    Button btnCmd4;
     Button btnDisconnect;
 
     //first paired device
@@ -79,10 +82,18 @@ public class MainActivity extends AppCompatActivity {
     double TestO4 = 0;
      */
 
+    TextView tvX;
+    TextView tvY;
+    TextView tvθ;
+    EditText etX;
+    EditText etY;
+    EditText etθ;
+    Button btnSendPose;
+
     float floatValue;
     byte [] x;
     byte [] y;
-    byte [] o;
+    byte [] θ;
     byte [] pose;
     byte [] bytes4 = new byte[4];
     byte [] bytes12 = new byte[12];
@@ -98,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.d(TAG,"onCreate: created");
         btnConnect = findViewById(R.id.btnConnect);
-        btnToMe = findViewById(R.id.btnToMe);
-        btnPark = findViewById(R.id.btnPark);
-        btnStop = findViewById(R.id.btnStop);
-        btnResume = findViewById(R.id.btnResume);
-        btnCancel = findViewById(R.id.btnCancel);
+        btnCmd0 = findViewById(R.id.btnCmd0);
+        btnCmd1 = findViewById(R.id.btnCmd1);
+        btnCmd2 = findViewById(R.id.btnCmd2);
+        btnCmd3 = findViewById(R.id.btnCmd3);
+        btnCmd4 = findViewById(R.id.btnCmd4);
         btnDisconnect = findViewById(R.id.btnDisconnect);
 
         final BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -118,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
         btnTest4 = findViewById(R.id.btnTest4);   //Test sending floats
 
          */
+
+        tvX = findViewById(R.id.tvX);
+        tvY = findViewById(R.id.tvY);
+        tvθ = findViewById(R.id.tvθ);
+        etX = findViewById(R.id.etX);
+        etY = findViewById(R.id.etY);
+        etθ = findViewById(R.id.etθ);
+        btnSendPose = findViewById(R.id.btnSendPose);
 
         //============================================================================
 
@@ -149,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /** btnToMe clicked!*/
-        btnToMe.setOnClickListener(new View.OnClickListener() {
+        btnCmd0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnToMe clicked");
@@ -166,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**btnPark clicked!*/
-        btnPark.setOnClickListener(new View.OnClickListener() {
+        btnCmd1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnPark clicked");
@@ -183,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**btnStop clicked!*/
-        btnStop.setOnClickListener(new View.OnClickListener() {
+        btnCmd2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnStop clicked");
@@ -199,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**btnResume clicked!*/
-        btnResume.setOnClickListener(new View.OnClickListener() {
+        btnCmd3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnResume clicked");
@@ -215,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**btnCancel clicked!*/
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        btnCmd4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG,"onCreate: onClick: btnCancel clicked");
@@ -248,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
 
         //================TESTS=============================================================
 
-        /**
+        /**HARDCODED TESTS
 
         //btnTest clicked!
         btnTest0.setOnClickListener(new View.OnClickListener() {
@@ -350,6 +369,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
          */
+
+        /**VARIABLE TESTS*/
+
+        //btnSendPose clicked!
+        btnSendPose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d(TAG,"onCreate: onClick: btnDisconnect clicked");
+                try {
+                    Log.d(TAG,"onCreate:  onClick: SEND POSE BUTTON CLICKED!");
+                    PhoneData[0] = 10;
+                    x = ToByteArray(Double.parseDouble(etX.getText().toString()));  //Parsing text from editText for X value and passing into byte Array
+                    y = ToByteArray(Double.parseDouble(etY.getText().toString()));  //Parsing text from editText for X value and passing into byte Array
+                    θ = ToByteArray(Double.parseDouble(etθ.getText().toString()));  //Parsing text from editText for X value and passing into byte Array
+                    pose = Pose(x, y, θ);
+                    Toasting(pose.toString());
+                    write(pose);
+
+                    UpdateCommandTxt(PhoneData[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     //=================================================================================
@@ -441,6 +484,16 @@ public class MainActivity extends AppCompatActivity {
         buffer = ByteBuffer.allocate(bytes12.length);
         buffer.put(x).put(y).put(o);
         return buffer.array();
+    }
+
+    //=================================================================================
+
+    public void Toasting(String s){
+        Context context = getApplicationContext();
+        CharSequence text = "Hello toast!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast.makeText(context, text, duration).show();
     }
 
    /* //=================================================================================
