@@ -76,12 +76,12 @@ void loop() {
     }*/
   
     leftSliderVal = (int) lowPassFilter_lslider.output();
-    Serial.print("Left Slider Value = ");Serial.print(leftSliderVal);
+    //Serial.print("Left Slider Value = ");Serial.print(leftSliderVal);
     rightSliderVal = (int) lowPassFilter_rslider.output();
-    Serial.print("\tRight Slider Value = ");Serial.println(rightSliderVal);
+    //Serial.print("\tRight Slider Value = ");Serial.println(rightSliderVal);
     //leftSliderVal = 512;
     //rightSliderVal = 513;
-    //distance_cm[0] = 100;
+    distance_cm[0] = 100;
     distance_cm[1] = 200;
     distance_cm[2] = 300;
     distance_cm[3] = 400;
@@ -98,7 +98,7 @@ void loop() {
      * Any slider filter/amplification if necessary.
      */
      //Serial.println(Serial.available());
-     /*if (Serial.available()) {
+     if (Serial.available()) {
        readByte = Serial.read();
        if (readByte == 'A') {
           serial_start_flag = 1; //Start serial communication
@@ -109,6 +109,6 @@ void loop() {
      }
      if (serial_start_flag) {
       Serial.write(ValArray,12);
-     }*/
+     }
      delay(30);
 }
