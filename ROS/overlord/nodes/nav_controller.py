@@ -100,13 +100,16 @@ class nav_controller():
         goal.target_pose.header.frame_id = "base_link"
         goal.target_pose.header.stamp = rospy.Time.now()
         goal.target_pose.pose.position.x = pose.x
+        rospy.loginfo("[nav_controller] goal x:{}".format(pose.x))
         goal.target_pose.pose.position.y = pose.y
+        rospy.loginfo("[nav_controller] goal y:{}".format(pose.y))
         goal.target_pose.pose.position.z = 0
         poseQuat = quaternion_from_euler(0, 0, pose.theta)
         goal.target_pose.pose.orientation.x = poseQuat[0]
         goal.target_pose.pose.orientation.y = poseQuat[1]
         goal.target_pose.pose.orientation.z = poseQuat[2]
         goal.target_pose.pose.orientation.w = poseQuat[3]
+        rospy.loginfo("[nav_controller] goal quat:{}".format(poseQuat))
         return goal
 
     @staticmethod

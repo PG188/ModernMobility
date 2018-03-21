@@ -85,7 +85,8 @@ class TwistToMotors():
     #############################################################
     def twistCallback(self,msg):
     #############################################################
-        # rospy.loginfo("-D- twistCallback: %s" % str(msg))
+        rospy.loginfo("[Twist_to_motors]: %s" % str(msg))
+        
         self.ticks_since_target = 0
         self.dx = msg.linear.x
         self.dr = msg.angular.z
