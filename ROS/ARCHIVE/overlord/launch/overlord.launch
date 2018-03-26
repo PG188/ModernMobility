@@ -1,5 +1,7 @@
 <launch>
 
+	<rosparam param="ticks_meter">1350.8</rosparam>
+
 	<include file="$(find freenect_launch)/launch/freenect.launch" />
 
 	<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" > 

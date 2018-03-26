@@ -56,10 +56,11 @@ class wheel_controller:
             self.change_r_vel(wheel_controller.get_slider_vel(msg.data))
 
     def right_encoder_cb(self, msg):
+    	#rospy.loginfo("[wheel controlller] right encoder received:{}".format(msg.data))
         self.r_encoder_pub.publish(msg)
 
     def left_encoder_cb(self, msg):
-        # rospy.loginfo("[Wheel Controller] Back from serial: {}".format(msg.data))
+    	#rospy.loginfo("[wheel controlller] left encoder received:{}".format(msg.data))
         self.l_encoder_pub.publish(msg)
 
     def change_vel(self, rightVel, leftVel):
@@ -68,10 +69,12 @@ class wheel_controller:
 
     def change_r_vel(self, rightVel):
         self.r_vel =  rightVel
+    	rospy.loginfo("[wheel controlller] Right vel out:{}".format(rightVel))
         self.r_vel_pub.publish(Int8(wheel_controller.vel_meter_to_cm(rightVel)))
 
     def change_l_vel(self, leftVel):
         self.l_vel =  leftVel
+        rospy.loginfo("[wheel controlller] Left vel out:{}".format(leftVel))
         # rospy.loginfo("[Wheel Controller] Vel: {}  Int out:{}".format(leftVel, wheel_controller.vel_meter_to_cm(leftVel)))
         # rospy.loginfo("Int8: {}".format(Int8(wheel_controller.vel_meter_to_cm(leftVel))))
         self.l_vel_pub.publish(Int8(wheel_controller.vel_meter_to_cm(leftVel)))

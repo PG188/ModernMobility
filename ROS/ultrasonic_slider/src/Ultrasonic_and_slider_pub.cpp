@@ -60,7 +60,7 @@ class UltrasonicSlider_Pub {
 				cloud.points[i].z = float(US_frames[i][2]);
 			}
 			cloud.header.stamp = ros::Time::now();
-			cloud_pub.publish(cloud);
+			//cloud_pub.publish(cloud);
 			lslider_pos.publish(lslider_pos_value);
 			rslider_pos.publish(rslider_pos_value);
 			if (abs(lslider_old.data - lslider_pos_value.data) > 30 || abs(rslider_old.data - rslider_pos_value.data) > 30) {

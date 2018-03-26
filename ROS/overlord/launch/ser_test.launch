@@ -1,0 +1,4 @@
+<launch>
+	<node name="serial_left" pkg="overlord" type="serial_left.py" output="screen"/>
+	<node name="serial_right" pkg="overlord" type="serial_right.py" output="screen"/>
+</launch>

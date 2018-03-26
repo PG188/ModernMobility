@@ -41,8 +41,8 @@ def serialNode():
 						pub.publish(str(writeserial))
 						bytecount = 0
 						writeserial = b''
-					msg_str = "ser.in_waiting = %d" %ser.in_waiting
-					rospy.loginfo(msg_str)
+					#msg_str = "ser.in_waiting = %d" %ser.in_waiting
+					#rospy.loginfo(msg_str)
 				rate.sleep()
 		except serial.SerialException:
 				rospy.loginfo("[Serial Ultrasound] Could not find the port")
