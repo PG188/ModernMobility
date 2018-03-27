@@ -21,11 +21,11 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
 
 # access variables inside of the UI's file
 	def BrakeMode(self,brkmode):
-		print ("Brake Mode On!")
+		print ("Sending assisted flag")
 		self.ser.write(self.assisted_flag)
 
 	def FreeRolling(self,brkmode):
-		print ("Free Rolling Mode On!")
+		print ("Sending freeroll flag")
 		self.ser.write(self.freeroll_flag)
 
 	def __init__(self):
