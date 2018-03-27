@@ -10,23 +10,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def readMap():
-    map_data = open("map_config.json", "r")
-    map_str = map_data.read()
-    map_data.close()
-
-    print ("[ReadMap.py]:readMap():Data read from map_config.json:")
-    print (map_str)
-    map_dict = json.loads(map_str)
     xcoords = []
     ycoords = []
+    try:
+        map_data = open("map_config.json", "r")
+        map_str = map_data.read()
+        map_data.close()
 
-    for k,v in map_dict.iteritems():
-        xcoords.append(v["x"])
-        ycoords.append(v["y"])
+        map_dict = json.loads(map_str)
+        map_dict = map_dict["Data"]
+        
+        for k,v in map_dict.iteritems():
+            xcoords.append(v["x"])
+            ycoords.append(v["y"])
 
-    return xcoords, ycoords
+    except Exception as e:
+        print ("""\n[ReadMap.py]:readMap():\n\tError while reading
+                map_config.json:\n\t%s\n""" % str(e))
 
-def drawMap(xcoords, ycoords, invertX = False, invertY = False):
+    finally:
+        return xcoords, ycoords
+
+def _drawMap(xcoords, ycoords, invertX = False, invertY = False):
     #Some settings
     fig = plt.figure()
     fig.canvas.set_window_title("ArUco Marker Locations")
@@ -41,5 +46,5 @@ def drawMap(xcoords, ycoords, invertX = False, invertY = False):
     plt.show()
 
 if __name__ == "__main__":
-    x,y = readMap()
-    drawMap(x,y)
+    x, y = readMap()
+    _drawMap(x, y)
