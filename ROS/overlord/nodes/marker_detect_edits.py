@@ -25,11 +25,18 @@ import numpy as np
 
 #Initialization (should not have to do every time)
 marker_length = 20 #Any unit. Pose estimation will have the same unit
-cal_file = "webcam_calibration.xml"
-calibrationParams = cv2.FileStorage(cal_file, cv2.FILE_STORAGE_READ)
-camera_matrix = calibrationParams.getNode("cameraMatrix").mat()
-dist_coeffs = calibrationParams.getNode("distCoeffs").mat()
+#cal_file = "webcam_calibration.xml"
+#calibrationParams = cv2.FileStorage(cal_file, cv2.FILE_STORAGE_READ)
+##camera_matrix = calibrationParams.getNode("cameraMatrix").mat()
+##dist_coeffs = calibrationParams.getNode("distCoeffs").mat()
 aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+
+webcam_cals = np.load('webcam_cals.npz')
+camera_matrix = webcam_cals['camera']
+dist_coeffs = webcam_cals['dist']
+
+##print(camera_matrix)
+##print(dist_coeffs)
 
 NUM_MARKERS = 20 #You are allowed to change this (breaks if you go higher than 20 with size 40 atm)
 ARUCO_SIZE = 40 #You are allowed to change this
@@ -42,40 +49,53 @@ ids = []
 blank = np.ones((WIN_WIDTH,WIN_LENGTH),np.uint8)*255
 
 i = 0
-while i < NUM_MARKERS:
-    ids.append(cv2.aruco.drawMarker(aruco_dict, i, ARUCO_SIZE, 2))
-    xstart = i*(ARUCO_SIZE + SPACING) + SPACING
-    ystart = i*(ARUCO_SIZE + SPACING) + SPACING
-    
-    if xstart > (WIN_WIDTH - ARUCO_SIZE):
-        xstart -= (WIN_WIDTH - ARUCO_SIZE)
+##while i < NUM_MARKERS:
+##    ids.append(cv2.aruco.drawMarker(aruco_dict, i, ARUCO_SIZE, 1))
+##    xstart = i*(ARUCO_SIZE + SPACING) + SPACING
+##    ystart = i*(ARUCO_SIZE + SPACING) + SPACING
+##    
+##    if xstart > (WIN_WIDTH - ARUCO_SIZE):
+##        xstart -= (WIN_WIDTH - ARUCO_SIZE)
+##
+##    if ystart > (WIN_LENGTH - ARUCO_SIZE):
+##        ystart -= (WIN_LENGTH - ARUCO_SIZE)
+##    
+##    xend = xstart + ARUCO_SIZE
+##    #print(xstart,xend)
+##    yend = ystart + ARUCO_SIZE
+##    #print(ystart,yend)
+##    
+##    blank[xstart:xend,ystart:yend] = ids[i]
+##    
+##    i += 1
 
-    if ystart > (WIN_LENGTH - ARUCO_SIZE):
-        ystart -= (WIN_LENGTH - ARUCO_SIZE)
-    
-    xend = xstart + ARUCO_SIZE
-    #print(xstart,xend)
-    yend = ystart + ARUCO_SIZE
-    #print(ystart,yend)
-    
-    blank[xstart:xend,ystart:yend] = ids[i]
-    
-    i += 1
+
+cap = cv2.VideoCapture(1)
+
+while (cv2.waitKey(1) & 0xFF != ord('q')):
+    _, frame = cap.read()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
 #Read in color image, 'image_color', here
 #image_gray = cv2.cvtColor(image_color, cv2.COLOR_BGR2GRAY)
-corners, ids, rejected = aruco.detectMarkers(blank, aruco_dict)
+    corners, ids, rejected = aruco.detectMarkers(gray, aruco_dict)
 
-aruco.drawDetectedMarkers(blank, corners, ids, (120,120,120))
+    aruco.drawDetectedMarkers(gray, corners, ids, (120,120,120))
 
-cv2.imshow('blank', blank)
-cv2.waitKey(0)
+    cv2.imshow('gray', gray)
+
+    if not(ids is None): #Markers were detected
+        print('Markers detected\n')
+        rvec, tvec = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
+
+    else:
+        print('No markers detected\n')
+
+#cv2.imshow('blank', blank)
+    cv2.imshow('gray', gray)
+
+cap.release()
 cv2.destroyAllWindows()
 
-if ids != None: #Markers were detected
-    print('Markers detected\n')
-    rvec, tvec = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
 
-else:
-    print('No markers detected\n')
 
