@@ -31,8 +31,8 @@ marker_length = 0.165 #Any unit. Pose estimation will have the same unit
 ##dist_coeffs = calibrationParams.getNode("distCoeffs").mat()
 aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
 
-webcam_cals = np.load('webcam_cals.npz')
-camera_matrix = webcam_cals['camera']
+webcam_cals = np.load('calib.npz')
+camera_matrix = webcam_cals['mtx']
 dist_coeffs = webcam_cals['dist']
 
 ##print(camera_matrix)
@@ -85,7 +85,7 @@ while (cv2.waitKey(1) & 0xFF != ord('q')):
     if not(ids is None): #Markers were detected
         print('Markers detected')
         
-        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
+        rvec, tvec = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
         aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvec, tvec, marker_length)
         print ('rvec = %s\ntvec = %s' % (rvec, tvec))
     else:
