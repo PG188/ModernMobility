@@ -24,6 +24,10 @@ objectPointsArray = []
 imgPointsArray = []
 
 # Loop over the image files
+
+## IMPORTANT PLEASE READ - Josh
+#The initial images need a 0 in front, as in 01, 02, etc or they won't be picked up due to the [1-3]
+#That should be [0-3] and we need the zeros
 for path in glob.glob('[1-3][1-9].jpg'):
     # Load the image and convert it to gray scale
     img = cv2.imread(path)
