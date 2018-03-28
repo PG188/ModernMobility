@@ -24,7 +24,7 @@ import numpy as np
 #    goal
 
 #Initialization (should not have to do every time)
-marker_length = 20 #Any unit. Pose estimation will have the same unit
+marker_length = 0.165 #Any unit. Pose estimation will have the same unit
 #cal_file = "webcam_calibration.xml"
 #calibrationParams = cv2.FileStorage(cal_file, cv2.FILE_STORAGE_READ)
 ##camera_matrix = calibrationParams.getNode("cameraMatrix").mat()
@@ -80,19 +80,19 @@ while (cv2.waitKey(1) & 0xFF != ord('q')):
 #image_gray = cv2.cvtColor(image_color, cv2.COLOR_BGR2GRAY)
     corners, ids, rejected = aruco.detectMarkers(gray, aruco_dict)
 
-    aruco.drawDetectedMarkers(gray, corners, ids, (120,120,120))
-
-    cv2.imshow('gray', gray)
+    aruco.drawDetectedMarkers(frame, corners, ids, (120,120,120))
 
     if not(ids is None): #Markers were detected
-        print('Markers detected\n')
-        rvec, tvec = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
-
+        print('Markers detected')
+        
+        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
+        aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvec, tvec, marker_length)
+        print ('rvec = %s\ntvec = %s' % (rvec, tvec))
     else:
         print('No markers detected\n')
 
 #cv2.imshow('blank', blank)
-    cv2.imshow('gray', gray)
+    cv2.imshow('frame', frame)
 
 cap.release()
 cv2.destroyAllWindows()
