@@ -3,6 +3,22 @@
 """
 This file reads in the data from 'map_config.json' and
 plots it to visualize what the data currently represents
+
+The .json file structure looks like the following:
+{
+"Data":
+    {
+    "ID":{"x":num,"y":num},...
+    },
+"Parameters":
+    {
+    "room_length": num,
+    "room_width": num,
+    "max_spacing": num,
+    "x_spacing": num,
+    "y_spacing": num
+    }
+}       
 """
 
 import json
@@ -12,7 +28,7 @@ import sys
 
 MAP_CONFIG_FILE = "map_config.json" #filename.extension (Should be a .json file)
 
-def readMap():
+def _readMap():
     map_dict = {}
     try:
         map_file = open(MAP_CONFIG_FILE, "r")
@@ -21,7 +37,6 @@ def readMap():
 
         map_dict = json.loads(map_str)
         
-
     except Exception as e:
         print ("\n[ReadMap.py]:readMap():\n\tError while reading map_config.json:\n\t%s\n" % str(e))
 
@@ -83,7 +98,7 @@ def _generateMap():
             needInputs = True
 
     #Load in current data
-    map_dict = readMap()
+    map_dict = _readMap()
     map_dict_data = {}
     if (max_spacing == ''): max_spacing = map_dict["Parameters"]["max_spacing"]
     if (width == ''): width = map_dict["Parameters"]["room_width"]
@@ -154,7 +169,13 @@ def _writeMap(map_dict):
     map_file.write(map_str)
     map_file.close()
 
+def getXY(ID):
+    #Returns the x, y position of the marker given its ID number
+    map_dict = _readMap()
+    x = map_dict["Data"][str(ID)]["x"]
+    y = map_dict["Data"][str(ID)]["y"]
+    return x, y
     
 if __name__ == "__main__":
     _writeMap(_generateMap())   #Generates map and writes it to config file
-    _drawMap(readMap())         #Reads map config file and visualizes it on a plot
+    _drawMap(_readMap())         #Reads map config file and visualizes it on a plot
