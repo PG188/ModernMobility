@@ -8,6 +8,7 @@ plots it to visualize what the data currently represents
 import json
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 MAP_CONFIG_FILE = "map_config.json" #filename.extension (Should be a .json file)
 
@@ -47,9 +48,17 @@ def _drawMap(map_dict, invertX = False, invertY = False):
     #Draw the map
     x_coords = []
     y_coords = []
-    for k,v in map_dict["Data"].iteritems():
+    py_ver = sys.version_info[0]
+    if (py_ver == 2):
+        for k,v in map_dict["Data"].iteritems():
             x_coords.append(v["x"])
             y_coords.append(v["y"])
+    elif (py_ver == 3):
+        for k,v in map_dict["Data"].items():
+            x_coords.append(v["x"])
+            y_coords.append(v["y"])
+    else:
+        print("\n[ReadMap.py]:_drawMap():\nMust be using python version 2 or 3\n")
     
     plt.scatter(x_coords, y_coords)
     plt.show()
