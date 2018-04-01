@@ -46,7 +46,7 @@ SPACING = 5
 
 ids = []
 
-blank = np.ones((WIN_WIDTH,WIN_LENGTH),np.uint8)*255
+#blank = np.ones((WIN_WIDTH,WIN_LENGTH),np.uint8)*255
 
 i = 0
 ##while i < NUM_MARKERS:
@@ -70,14 +70,14 @@ i = 0
 ##    i += 1
 
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 while (cv2.waitKey(1) & 0xFF != ord('q')):
     _, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
 #Read in color image, 'image_color', here
-#image_gray = cv2.cvtColor(image_color, cv2.COLOR_BGR2GRAY)
+    #image_gray = cv2.cvtColor(image_color, cv2.COLOR_BGR2GRAY)
     corners, ids, rejected = aruco.detectMarkers(gray, aruco_dict)
 
     aruco.drawDetectedMarkers(frame, corners, ids, (120,120,120))
