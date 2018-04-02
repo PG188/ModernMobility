@@ -22,9 +22,15 @@ import os
 import cv2
 from cv2 import aruco
 import numpy as np
-import locWalker
 import Mag3D
 import ReadMap
+
+def locWalker(arucoID, dx, dy):
+    xid, yid, _ = ReadMap.getPose(arucoID)
+    xWalker = xid - dx
+    yWalker = yid - dy
+
+    return xWalker, yWalker
 
 def marker_detect():
     
@@ -44,7 +50,7 @@ def marker_detect():
     dy = None #distance vector between walker and marker in on y-axis (Scalar value)
     yaw = None #angle between Aruco's "North" and Walker's "North"
         
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     #while (cv2.waitKey(1) & 0xFF != ord('q')):
     _, frame = cap.read()
@@ -92,8 +98,8 @@ def marker_detect():
     cap.release()
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-    xWalker, yWalker = locWalker.locWalker(arucoID, dx, dy)    
+    
+    xWalker, yWalker = locWalker(arucoID, dx, dy)    
     return xWalker, yWalker, yaw
 
 def get_pose(location):
@@ -101,5 +107,6 @@ def get_pose(location):
         return marker_detect()
     else:
         return ReadMap.getConstPose(location)
-    
 
+a, b, c = get_pose('walker')
+print("Pose = %s, %s, %s" % (a,b,c))
