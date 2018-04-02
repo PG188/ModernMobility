@@ -1,4 +1,4 @@
-import ReadMap.py
+import ReadMap
 
 def locWalker(arucoID, dx, dy, dtheta):
     xid, yid = ReadMap.getXY(arucoID)
