@@ -49,12 +49,13 @@ def marker_detect():
     dx = None #distance vector between walker and marker in on x-axis (Scalar value)
     dy = None #distance vector between walker and marker in on y-axis (Scalar value)
     yaw = None #angle between Aruco's "North" and Walker's "North"
+    arucoID = -1
         
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     #while (cv2.waitKey(1) & 0xFF != ord('q')):
     _, frame = cap.read()
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)   
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     corners, ids, rejected = aruco.detectMarkers(gray, aruco_dict)
 
@@ -108,5 +109,5 @@ def get_pose(location):
     else:
         return ReadMap.getConstPose(location)
 
-a, b, c = get_pose('walker')
-print("Pose = %s, %s, %s" % (a,b,c))
+##a, b, c = get_pose('walker')
+##print("Pose = %s, %s, %s" % (a,b,c))
