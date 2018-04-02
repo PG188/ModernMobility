@@ -216,10 +216,10 @@ def _writeMap(map_dict):
 
 def getPose(ID):
     #Returns the x, y position of the marker given its ID number
-    map_dict = _readMap()
-    x = map_dict["Data"][str(ID)]["x"]
-    y = map_dict["Data"][str(ID)]["y"]
-    theta = map_dict["Data"][str(ID)]["theta"]
+    const_map, config_map = _readMap()
+    x = config_map["Data"][str(ID)]["x"]
+    y = config_map["Data"][str(ID)]["y"]
+    theta = config_map["Data"][str(ID)]["theta"]
     return x, y, theta
 
 def getConstPose(name):
