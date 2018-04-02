@@ -224,7 +224,7 @@ def getPose(ID):
 
 def getConstPose(name):
     const_map, config_map = _readMap()
-    const_dict_data = json.loads(const_map)
+    const_dict_data = const_map["Data"]
     py_ver = sys.version_info[0]
     if (py_ver == 2):
         for k,v in const_dict_data.iteritems():
@@ -246,4 +246,4 @@ if __name__ == "__main__":
 
     #Reads map config file and visualizes it on a plot
     const_map, config_map = _readMap()
-    _drawMap(config_map)        
+    _drawMap(config_map)
