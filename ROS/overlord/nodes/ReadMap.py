@@ -89,10 +89,12 @@ def _generateMap():
         try:
             print ("Hit enter to reuse the already loaded values.") 
             print ("Please specify values in meters:")
-            max_spacing = raw_input("What is the max spacing between ArUco markers allowed? ")
-            width = raw_input("What is the width (x-axis) of the room? ")
-            length = raw_input("What is the length (y-axis) of the room? ")
+            max_spacing = input("What is the max spacing between ArUco markers allowed? ")
+            width = input("What is the width (x-axis) of the room? ")
+            length = input("What is the length (y-axis) of the room? ")
+            
             needInputs = False
+            
         except:
             print("\nError with input types, please make sure they are numberic!\n")
             needInputs = True
