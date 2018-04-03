@@ -2,7 +2,8 @@
 	"Notes":
 	{
 	"(1)":"This file is for ArUco ID constants e.g. the docking station and other hardcoded locations.  Please follow the specified format.",
-	"(2)":"x and y are measured in meters, while theta is measured in radians."
+	"(2)":"x and y are measured in meters, while theta is measured in radians.",
+	"(3)":"Please contact Tyler Jass if you have any concerns about either of the map json files."
 	},
 
 	"Format":
@@ -12,7 +13,7 @@
 
 	"Data":
 	{
-		"0": {"name":"dock","x": 0, "y": 2, "theta": 0.0},
-		"1": {"name":"bedside","x": 4, "y": 4, "theta": 0.0}
+		"0": {"name":"dock","x": 0, "y": 2, "theta":1.570796325},
+		"1": {"name":"bedside","x": 4, "y": 4, "theta": 3.14159265}
 	}
 }
