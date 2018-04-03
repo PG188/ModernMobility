@@ -26,6 +26,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
+NAN = float('NaN')
 
 MAP_CONST_FILE = "map_constants.json"   #"filename.json"
 MAP_CONFIG_FILE = "map_config.json"     #"filename.json"
@@ -215,12 +216,16 @@ def _writeMap(map_dict):
     map_file.close()
 
 def getPose(ID):
-    #Returns the x, y position of the marker given its ID number
-    const_map, config_map = _readMap()
-    x = config_map["Data"][str(ID)]["x"]
-    y = config_map["Data"][str(ID)]["y"]
-    theta = config_map["Data"][str(ID)]["theta"]
-    return x, y, theta
+    if ((type(ID) is int) and (ID >= 0)):
+        #Returns the x, y position of the marker given its ID number
+        const_map, config_map = _readMap()
+        x = config_map["Data"][str(ID)]["x"]
+        y = config_map["Data"][str(ID)]["y"]
+        theta = config_map["Data"][str(ID)]["theta"]
+        return x, y, theta
+    else:
+        print ("[ReadMap.py]:getPose(): Received an invalid ID = %s" % ID)
+        return NAN, NAN, NAN
 
 def getConstPose(name):
     const_map, config_map = _readMap()
