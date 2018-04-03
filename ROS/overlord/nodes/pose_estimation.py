@@ -30,9 +30,8 @@ import Mag3D
 import ReadMap
 
 FRAME_CAP_ATTEMPS = 5
-VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
+VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
 
-def locWalker(arucoID, dx, dy):
     xid, yid, _ = ReadMap.getPose(arucoID)
     xWalker = xid - dx
     yWalker = yid - dy
@@ -49,13 +48,12 @@ def marker_detect(failed_detections = 0):
     camera_matrix = webcam_cals['camera']
     dist_coeffs = webcam_cals['dist']
 
+    NAN = float('NaN')
     i = 0
-    cm = None #Closest Marker to walker
-    mm = None #Marker magnitude
-    cmm = None #Comparing marker magnitude
-    dx = None #distance vector between walker and marker in on x-axis (Scalar value)
-    dy = None #distance vector between walker and marker in on y-axis (Scalar value)
-    yaw = None #angle between Aruco's "North" and Walker's "North"
+    mm = -1 #Magnitue of vector between Walker camera and aruco marker (in meters)
+    dx = NAN #distance vector between walker and marker in on x-axis (Scalar value)
+    dy = NAN #distance vector between walker and marker in on y-axis (Scalar value)
+    yaw = NAN #angle between Aruco's "North" and Walker's "North"
     arucoID = -1
         
     cap = cv2.VideoCapture(VIDEO_CAP_CHANNEL)
@@ -69,7 +67,7 @@ def marker_detect(failed_detections = 0):
     aruco.drawDetectedMarkers(frame, corners, ids, (120,120,120))
 
     if not(ids is None): #Markers were detected
-        print('\nTestVideo:\tMarkers detected')
+        print('\n[pose_estimation.py]:marker_detect():\tMarkers detected')
         rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
 
         while i < len(ids):  #This loop determines which marker is the closest
@@ -92,21 +90,25 @@ def marker_detect(failed_detections = 0):
                     dy = tvec[i][0][1]
                     yaw = rvec[i][0][0]
                 
-            print ('\nTestVideo:\ti = %d, Magnitude = %f, arucoID = %d, rvec[%d] = %s\ttvec[%d] = %s' %(i, tmp, ids[i][0], i, rvec[i], i, tvec[i]))
+            print ('\n[pose_estimation.py]:marker_detect():\ti = %d, Magnitude = %f, arucoID = %d, rvec[%d] = %s\ttvec[%d] = %s' %(i, tmp, ids[i][0], i, rvec[i], i, tvec[i]))
             aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvec[i], tvec[i], marker_length)
             i += 1
 
     else:
-        print('\nTestVideo:\tNo markers detected\n')
+        print('\n[pose_estimation.py]:marker_detect():\tNo markers detected\n')
         failed_detections += 1
         print('[pose_estimation.py]:marker_detect(): Failed to detect marker %s time(s)' % failed_detections)
+        
         if(failed_detections < FRAME_CAP_ATTEMPS):
             print('[pose_estimation.py]:marker_detect: Retrying marker_detect()...)')
             marker_detect(failed_detections)
+            
         else:
             print('[pose_estimation.py]:marker_detect(): Reached max number of retries (%s)' % failed_detections)
+            print('[pose_estimation.py]:marker_detect(): Could not find or detect any markers!')
+            return NAN, NAN, NAN
             
-    print('\nTestIVideo:\tFinal Values:\tMagnitude = %f, arucoID = %d, dx = %f, dy = %f, yaw = %f' %(mm, arucoID, dx, dy, yaw))
+    print('\n[pose_estimation.py]:marker_detect():\tFinal Values:\tMagnitude = %f, arucoID = %d, dx = %f, dy = %f, yaw = %f' %(mm, arucoID, dx, dy, yaw))
 
     cv2.imshow('frame', frame)
 
@@ -118,10 +120,12 @@ def marker_detect(failed_detections = 0):
     return xWalker, yWalker, yaw
 
 def get_pose(location):
+    
     if location == 'walker':
         return marker_detect()
+    
     else:
         return ReadMap.getConstPose(location)
 
-##a, b, c = get_pose('walker')
-##print("Pose = %s, %s, %s" % (a,b,c))
+a, b, c = get_pose('walker')
+print('[pose_estimation.py]:get_pose(): Pose = %f, %f, %f' (a,b,c))
