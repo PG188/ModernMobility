@@ -1,26 +1,24 @@
-#pose_estimation.py version 2
+#pose_estimation.py version 1
 
-"""
-PLEASE DO NOT CHANGE ANYTHING UNLESS THE COMMENTS STATE OTHERWISE!!!
-====================================================================
+#PLEASE DO NOT CHANGE ANYTHING UNLESS THE COMMENTS STATE OTHERWISE!!!
+#====================================================================
 
- 1) Corners contains an array of vectors, each of which describes the 
- locations of the corners of one marker in the frame
- 2) Strategy is to find the marker closest to the center of the frame, 
- seperate it from corners, and estimate its pose using 
- estimatePoseSingleMarkers
- 3) EstimatePoseSingleMarkers will return rvec, tvec, which describe the 
-    rotation and translation vectors from the marker to the camera
-       - The marker coordinate system that is assumed by this function 
-         is placed at the center of the marker with the Z axis pointing 
-         out
- 4) Using the relationship between the pose of the camera and the base_link
-   frame of the walker, as well as the known pose of that specific marker
-   (as identified by the id) in the map of the room, we can easily calculate 
-   the walkers pose in the room map
- 5) The walkers pose can be returned and then used to determine its navigation
-    goal
-"""
+# 1) Corners contains an array of vectors, each of which describes the 
+# locations of the corners of one marker in the frame
+# 2) Strategy is to find the marker closest to the center of the frame, 
+# seperate it from corners, and estimate its pose using 
+# estimatePoseSingleMarkers
+# 3) EstimatePoseSingleMarkers will return rvec, tvec, which describe the 
+#    rotation and translation vectors from the marker to the camera
+#       - The marker coordinate system that is assumed by this function 
+#         is placed at the center of the marker with the Z axis pointing 
+#         out
+# 4) Using the relationship between the pose of the camera and the base_link
+#   frame of the walker, as well as the known pose of that specific marker
+#   (as identified by the id) in the map of the room, we can easily calculate 
+#   the walkers pose in the room map
+# 5) The walkers pose can be returned and then used to determine its navigation
+#    goal
 
 import os
 import cv2
@@ -29,9 +27,6 @@ import numpy as np
 import Mag3D
 import ReadMap
 
-FRAME_CAP_ATTEMPS = 5
-VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
-
 def locWalker(arucoID, dx, dy):
     xid, yid, _ = ReadMap.getPose(arucoID)
     xWalker = xid - dx
@@ -39,7 +34,7 @@ def locWalker(arucoID, dx, dy):
 
     return xWalker, yWalker
 
-def marker_detect(failed_detections = 0):
+def marker_detect():
     
     marker_length = 0.165 #Any unit. Pose estimation will have the same unit
     
@@ -58,7 +53,7 @@ def marker_detect(failed_detections = 0):
     yaw = None #angle between Aruco's "North" and Walker's "North"
     arucoID = -1
         
-    cap = cv2.VideoCapture(VIDEO_CAP_CHANNEL)
+    cap = cv2.VideoCapture(1)
 
     #while (cv2.waitKey(1) & 0xFF != ord('q')):
     _, frame = cap.read()
@@ -98,14 +93,7 @@ def marker_detect(failed_detections = 0):
 
     else:
         print('\nTestVideo:\tNo markers detected\n')
-        failed_detections += 1
-        print('[pose_estimation.py]:marker_detect(): Failed to detect marker %s time(s)' % failed_detections)
-        if(failed_detections < FRAME_CAP_ATTEMPS):
-            print('[pose_estimation.py]:marker_detect: Retrying marker_detect()...)')
-            marker_detect(failed_detections)
-        else:
-            print('[pose_estimation.py]:marker_detect(): Reached max number of retries (%s)' % failed_detections)
-            
+
     print('\nTestIVideo:\tFinal Values:\tMagnitude = %f, arucoID = %d, dx = %f, dy = %f, yaw = %f' %(mm, arucoID, dx, dy, yaw))
 
     cv2.imshow('frame', frame)
