@@ -31,6 +31,17 @@ NAN = float('NaN')
 MAP_CONST_FILE = "map_constants.json"   #"filename.json"
 MAP_CONFIG_FILE = "map_config.json"     #"filename.json"
 
+"""
+_readMap():
+    Inputs:
+    Outputs:
+        const_dict:  <dict>
+        config_dict: <dict>
+    Description:
+        Reads in the json files containing the map constants and overall
+        configuration and returns dictionary containing the constants and
+        a dictionary containing the current overall configuration
+"""
 def _readMap():
     const_dict = {}
     config_dict = {}
@@ -52,6 +63,18 @@ def _readMap():
     finally:
         return const_dict, config_dict
 
+"""
+_drawMap():
+    Inputs:
+        map_dict: <dict>
+        invertX:  <bool> (optional)
+        invertY:  <bool> (optional)
+    Outputs:
+    Description:
+        Takes map_dict and plots all of the points on a graph.  If the X axis
+        increases to the left set invertX to True, if the Y axis increases
+        going down set invertY to True.
+"""
 def _drawMap(map_dict, invertX = False, invertY = False):
     #Some settings
     fig = plt.figure()
@@ -87,6 +110,17 @@ def _drawMap(map_dict, invertX = False, invertY = False):
     plt.scatter(x_coords, y_coords)
     plt.show()
 
+    
+"""
+_generateMap():
+    Inputs:
+    Outputs:
+        config_dict: <dict>
+    Description:
+        Reads in the map constants, the current map configuration, and any new
+        inputs from the user, and reconstructs the map configuration in the form
+        of a dictionary, and returns that dictionary.
+"""
 def _generateMap():
     needInputs = True
     max_spacing = 0
@@ -184,7 +218,7 @@ def _generateMap():
     print("------------------------------")
     for j in range(y):
         for i in range(x):
-            ID = i + (j * x) + offset
+            ID = i + (j * x) + offset #offset avoids overwriting map constants
             x_coord = (i + 1) * x_spacing
             y_coord = (j + 1) * y_spacing
             print ("%d\t|%3.3f\t|%3.3f\t|%3.3f" % (ID, x_coord, y_coord, 0.000))
@@ -192,6 +226,7 @@ def _generateMap():
 
     print("""
 Summary:
+--------
     ArUco markers used:     %d
     Room (width x length):  %3.3fm x %3.3fm   
     Spacing used (Max allowed = %3.3fm):
@@ -209,12 +244,34 @@ Summary:
 
     return config_dict
 
+"""
+_writeMap():
+    Inputs:
+        map_dict: <dict>
+    Outputs:
+        None
+    Description:
+        Creates/overwrites the map configuration file given map_dict
+"""
 def _writeMap(map_dict):
     map_file = open(MAP_CONFIG_FILE, "w")
     map_str = json.dumps(map_dict)
     map_file.write(map_str)
     map_file.close()
 
+"""
+    Inputs:
+        ID: <int>
+    Outputs:
+        x: <float>
+        y: <float>
+        theta: <float>
+    Description:
+        Finds the corresponding pose (x,y position and theta) to the inputted
+        aruco marker ID value, and returns it.  If ID is invalid returns NAN
+        values.
+        
+"""
 def getPose(ID):
     if ((type(ID) is int) and (ID >= 0)):
         #Returns the x, y position of the marker given its ID number
@@ -227,24 +284,38 @@ def getPose(ID):
         print ("[ReadMap.py]:getPose(): Received an invalid ID = %s" % ID)
         return NAN, NAN, NAN
 
+"""
+    Inputs:
+        ID: <int>
+    Outputs:
+        x: <float>
+        y: <float>
+        theta: <float>
+    Description:
+        Finds the corresponding pose (x,y position and theta) to the inputted
+        aruco marker ID value, and returns it.  If an error occurs while trying
+        to read data it returns NAN values.
+"""
 def getConstPose(name):
-    const_map, config_map = _readMap()
-    const_dict_data = const_map["Data"]
-    py_ver = sys.version_info[0]
-    if (py_ver == 2):
-        for k,v in const_dict_data.iteritems():
-            if name == v["name"]:
-                return v["x"],v["y"],v["theta"]
-    elif (py_ver == 3):
-        for k,v in const_dict_data.items():
-            if name == v["name"]:
-                return v["x"],v["y"],v["theta"]
-    else:
-        print("\n[ReadMap.py]:_drawMap():\nMust be using python version 2 or 3\n")
-
-    
-
-    
+    try:
+        const_map, config_map = _readMap()
+        const_dict_data = const_map["Data"]
+        py_ver = sys.version_info[0]
+        if (py_ver == 2):
+            for k,v in const_dict_data.iteritems():
+                if name == v["name"]:
+                    return v["x"],v["y"],v["theta"]
+        elif (py_ver == 3):
+            for k,v in const_dict_data.items():
+                if name == v["name"]:
+                    return v["x"],v["y"],v["theta"]
+        else:
+            print("\n[ReadMap.py]:getConstPose():\nMust be using python version 2 or 3\n")
+            
+    except Exception as e:
+        print("[ReadMap.py]:getConstPose():  Error occured, name given = '\%s'\\nError:\n%s" % (name, str(e)))
+        return NAN, NAN, NAN
+        
 if __name__ == "__main__":
     #Generates map and writes it to config file
     _writeMap(_generateMap())
