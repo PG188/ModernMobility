@@ -49,16 +49,18 @@ def _readMap():
         map_const = open(MAP_CONST_FILE, "r")
         const_str = map_const.read()
         map_const.close()
+        #print ("\n[ReadMap.py]:readMap():\n\tSuccessfully read and closed %s" % MAP_CONST_FILE)
         
         map_config = open(MAP_CONFIG_FILE, "r")
         config_str = map_config.read()
         map_config.close()
-
+        #print ("\n[ReadMap.py]:readMap():\n\tSuccessfully read and closed %s" % MAP_CONFIG_FILE)
+        
         const_dict = json.loads(const_str)
         config_dict = json.loads(config_str)
         
     except Exception as e:
-        print ("\n[ReadMap.py]:readMap():\n\tError while reading map_config.json:\n\t%s\n" % str(e))
+        print ("\n[ReadMap.py]:readMap():\n\tError while reading:\n\t%s\n" % str(e))
 
     finally:
         return const_dict, config_dict
@@ -127,20 +129,37 @@ def _generateMap():
     length = 0
     width = 0
 
+    #Load in current data
+    const_dict, config_dict = _readMap()
+    curr_ms = config_dict["Parameters"]["max_spacing"]
+    curr_rw = config_dict["Parameters"]["room_width"]
+    curr_rl = config_dict["Parameters"]["room_length"]
+    curr_xs = config_dict["Parameters"]["x_spacing"]
+    curr_ys = config_dict["Parameters"]["y_spacing"]
+    
     #Get input parameters
     while(needInputs):
         try:
-            print ("\n\nHit enter to reuse the already loaded values.") 
-            print ("Please specify values in meters:\n")
+            print (
+"""Hit enter in the following prompt to use the following current values:
+Max Spacing:\t%sm, resulting in:
+    x direction spacing:\t%sm
+    y direction spacing:\t%sm
+Room width:\t%sm
+Room length:\t%sm
+
+Please specify any new values in meters:
+"""
+% (curr_ms, curr_xs, curr_ys, curr_rw, curr_rl))
             py_ver = sys.version_info[0]
             if (py_ver == 2):
-                max_spacing = raw_input("What is the max spacing between ArUco markers allowed? ")
-                width = raw_input("What is the width (x-axis) of the room? ")
-                length = raw_input("What is the length (y-axis) of the room? ")
+                max_spacing = raw_input("\tMax spacing between ArUco markers >>\t")
+                width = raw_input("\tRoom width (x-axis) of the room >>\t")
+                length = raw_input("\tRoom length (y-axis) of the room >>\t")
             elif (py_ver == 3):
-                max_spacing = input("What is the max spacing between ArUco markers allowed? ")
-                width = input("What is the width (x-axis) of the room? ")
-                length = input("What is the length (y-axis) of the room? ")
+                max_spacing = input("\tMax spacing between ArUco markers >>\t")
+                width = input("\tRoom width (x-axis) of the room >>\t")
+                length = input("\tRoom length (y-axis) of the room >>\t")
             else:
                 print("\n[ReadMap.py]:_drawMap():\nMust be using python version 2 or 3\n")
 
@@ -150,8 +169,7 @@ def _generateMap():
             print("\nError with input types, please make sure they are numberic!\n")
             needInputs = True
 
-    #Load in current data
-    const_dict, config_dict = _readMap()
+    
     if (max_spacing == ''): max_spacing = config_dict["Parameters"]["max_spacing"]
     if (width == ''): width = config_dict["Parameters"]["room_width"]
     if (length == ''): length = config_dict["Parameters"]["room_length"]  
