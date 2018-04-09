@@ -248,11 +248,7 @@ int main(int argc, char **argv){
     c.conn("172.17.50.37" , 8080);
      
     //send some data
-<<<<<<< HEAD
-    c.send_data("GET / HTTP/1.1\r\n\r\n");
-=======
     c.send_data("C++ client for phone data connected!");
->>>>>>> 09e49e2d1151ced93a14478457ee378ae75220bf
      
     //receive and echo reply
     cout<<"----------------------------\n\n";
