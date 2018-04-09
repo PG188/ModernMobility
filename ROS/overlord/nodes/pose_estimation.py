@@ -28,10 +28,18 @@ from cv2 import aruco
 import numpy as np
 import Mag3D
 import ReadMap
+import TransformMatrix
 
 FRAME_CAP_ATTEMPS = 5
 VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
 
+#Camera to Walker frame differences
+W2C_X = 0       #In meters
+W2C_Y = 0       #In meters
+W2C_Z = 0       #In meters
+W2C_YAW = 0     #In radians
+
+def locWalker(xid, yid, arucoID):
     xid, yid, _ = ReadMap.getPose(arucoID)
     xWalker = xid - dx
     yWalker = yid - dy
@@ -119,10 +127,21 @@ def marker_detect(failed_detections = 0):
     xWalker, yWalker = locWalker(arucoID, dx, dy)    
     return xWalker, yWalker, yaw
 
+def camBase2walkerBase(cam_x, cam_y, cam_yaw):
+    #Create transformation matrix to go from camera frame to walker frame
+    tm = TransformMatrix.TransformMatrix()
+    tm.translate(W2C_X, W2C_Y, W2C_Z)           #Deal with any x or y translations
+    tm.rotate(Axis.Z, W2C_YAW, degrees = True)  #Deal with any yaw rotations
+    
+    #Translate vector to walker frame
+    walker_x, walker_y, _ = tm.transformVector(xpos, ypos)
+    return walker_x, walker_y, (cam_yaw + W2C_YAW)
+    
 def get_pose(location):
     
     if location == 'walker':
-        return marker_detect()
+        cam_x, cam_y, cam_yaw = marker_detect()
+        return camBase2walkerBase(cam_x, cam_y, cam_yaw)
     
     else:
         return ReadMap.getConstPose(location)
