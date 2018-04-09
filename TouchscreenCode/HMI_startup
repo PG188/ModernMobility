@@ -1,0 +1,16 @@
+#!/bin/bash
+echo "HMI code compiling..."
+g++ -o BTReceive_edit BTReceive_edit.cpp -lbluetooth
+echo "Compiling complete!"
+echo "HMI starting..."
+
+python Main_Server_edit.py &
+echo "Python server on RPi started!"
+sleep 2
+
+python Client.py &
+echo "Python client on walker started!"
+sleep 2
+
+./BTReceive_edit &
+echo "C++ client on RPi started!"
