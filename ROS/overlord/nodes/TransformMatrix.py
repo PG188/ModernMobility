@@ -92,11 +92,31 @@ class TransformMatrix:
         newVect = self._postMult(vect)
         return newVect[0][0], newVect[1][0], newVect[2][0]
     
-    def show(self):
+    def show(self, name = '\nTransform Matrix'):
+        print(name+':')
         rows = len(self.m)
         cols = len(self.m[0])
         for i in range(rows):
             row = '|\t'
             for j in range(cols):
-                row += str(round(self.m[i][j], 3)) + '\t'
-            print(row + ' |')
+                row += ('%3.3f\t' % self.m[i][j])
+            print(row + '|')
+            
+###TESTING (SHOULD RETURN (0,0,0))
+###Camera to Walker frame differences
+##W2C_X = 0.486664    #In meters
+##W2C_Y = 0           #In meters
+##W2C_Z = 0.854964    #In meters
+##W2C_YAW = 0         #In radians
+##
+##
+##tm = TransformMatrix()
+##tm.show()
+##tm.translate(W2C_X, W2C_Y, W2C_Z)   #Deal with any x or y translations
+##tm.show()
+##tm.rotate(Axis.Z, W2C_YAW)          #Deal with any yaw rotations
+##tm.show()
+##
+##V = tm.transformVector(-1*W2C_X, -1*W2C_Y, -1*W2C_Z)
+##print(V)
+##
