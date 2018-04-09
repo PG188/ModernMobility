@@ -1,6 +1,7 @@
 import socket
 
-TCP_IP = '169.254.10.85' 
+#TCP_IP = '169.254.10.85'
+TCP_IP = '172.17.50.37' 
 TCP_PORT = 8080
 BUFFER_SIZE = 1024
 

@@ -1,4 +1,4 @@
-//g++ -o rfcomm-server rfcomm-server.cpp -lbluetooth <--TYPE THIS COMMAND TO COMPILE
+//g++ -o BTReceive BTReceive.cpp -lbluetooth <--TYPE THIS COMMAND TO COMPILE
 
 #include <stdio.h>
 #include <unistd.h>
@@ -7,6 +7,7 @@
 #include <bluetooth/rfcomm.h>
 #include <iostream>
 #include <math.h>
+
 
 float S, E, M, num, x, y, o;
 
@@ -98,25 +99,25 @@ int main(int argc, char **argv){
 
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buf[1024] = { 0 };
-	int s, client, bytes_read;
+	int bs, client, bytes_read;
 	socklen_t opt = sizeof(rem_addr);
 
 	// allocate socket
-	s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+	bs = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 
 	// bind socket to port 1 of the first available 
 	// local bluetooth adapter
 	loc_addr.rc_family = AF_BLUETOOTH;
 	str2ba( address, &loc_addr.rc_bdaddr);
 	loc_addr.rc_channel = (uint8_t) 1;
-	bind(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
+	bind(bs, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 	
 	// put socket into listening mode
-	listen(s, 1);
+	listen(bs, 1);
 	printf("\nlistening...\n");
 
 	// accept one connection
-	client = accept(s, (struct sockaddr *)&rem_addr, &opt);
+	client = accept(bs, (struct sockaddr *)&rem_addr, &opt);
 	printf("\nconnection accepted!\n");
 
 	ba2str( &rem_addr.rc_bdaddr, buf );
@@ -148,7 +149,7 @@ int main(int argc, char **argv){
 
 	// close connection
 	close(client);
-	close(s);
+	close(bs);
 
 	return 0;
 }
