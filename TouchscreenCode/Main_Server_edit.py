@@ -3,7 +3,11 @@ import sys
 # gets the Qt stuff
 import PyQt5
 import socket
+
 import threading
+##import freeport
+##from psutil import process_iter
+##from signal import SIGTERM
 
 from PyQt5.QtWidgets import *
 
@@ -14,11 +18,17 @@ from PyQt5.QtWidgets import *
 import mainwindow_auto
 
 
+##for proc in process_iter():
+##    for conns in proc.connections(kind='inet'):
+##        if conns.laddr.port == 8080:
+##            proc.send_signal(SIGTERM)
+##            continue
+
 def newConnection(conn, addr):
     print("Main_Server.py: newConnection")
     print ('Main_Server.py: Connection address: ', addr)
 
-#set up connection
+#set up connecion
 TCP_IP = '172.17.50.37' 
 TCP_PORT = 8080
 BUFFER_SIZE = 1024
@@ -29,7 +39,7 @@ s.listen(2)
 
 while 1:
     print('Main_Server.py: Listening for connection...')   
-    threading.Thread(target=newConnection, args=(s.accept(), )).start()
+    threading.Thread(target=newConnection, args=(s.accept())).start()
     print("Main_Server.py: You in Trouble")
     
 ##print('Main_Server.py: Listening for Touchscreen...')
@@ -82,8 +92,8 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
  ### Hooks for buttons
      self.BrakeModeBtn.clicked.connect(lambda: self.BrakeMode())
      self.FreeRollingBtn.clicked.connect(lambda: self.FreeRolling())
-    # self.BrakeModeBtn.clicked.connect(lambda: self.brkmode)
-     #self.FreeRollingBtn.clicked.connect(lambda: self.brkmode)
+    #self.BrakeModeBtn.clicked.connect(lambda: self.brkmode)
+    #self.FreeRollingBtn.clicked.connect(lambda: self.brkmode)
  
 def main():
  # a new app instance

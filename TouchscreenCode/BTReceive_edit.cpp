@@ -252,7 +252,7 @@ int main(int argc, char **argv){
      
     //receive and echo reply
     cout<<"----------------------------\n\n";
-    cout<<c.receive(1024);
+    //cout<<c.receive(1024);
     cout<<"\n\n----------------------------\n\n";
      
     //done
@@ -268,29 +268,37 @@ int main(int argc, char **argv){
 
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buf[1024] = { 0 };
-	int bs, client, bytes_read;
+	int b, client, bytes_read;
 	socklen_t opt = sizeof(rem_addr);
 
 	// allocate socket
-	bs = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+	b = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 
 	// bind socket to port 1 of the first available 
 	// local bluetooth adapter
 	loc_addr.rc_family = AF_BLUETOOTH;
 	str2ba( address, &loc_addr.rc_bdaddr);
 	loc_addr.rc_channel = (uint8_t) 1;
-	bind(bs, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
+	bind(b, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 	
 	// put socket into listening mode
-	listen(bs, 1);
-	printf("\nlistening...\n");
+	listen(b, 1);
+	printf("\nBT:listening...\n");
+	close(b);
 
 	// accept one connection
-	client = accept(bs, (struct sockaddr *)&rem_addr, &opt);
-	printf("\nconnection accepted!\n");
+	client = accept(b, (struct sockaddr *)&rem_addr, &opt);
+	if (client < 0){
+		perror("BT:error in accept");
+		close(b);
+	}
+	else{
+		//printf(client);
+		printf("\nBT:connection accepted!\n");
+	}
 
 	ba2str( &rem_addr.rc_bdaddr, buf );
-	fprintf(stderr, "accepted connection from %s\n", buf);
+	fprintf(stderr, "BT:accepted connection from %s\n", buf);
 	memset(buf, 0, sizeof(buf));
 
 	while (connected){
@@ -301,7 +309,7 @@ int main(int argc, char **argv){
 				int close = interpretCmd(buf);
 				if(close == 1){
 					connected = false;
-					printf("connection terminated\n");
+					printf("BT:connection terminated\n");
 				}
 				//printf("received [%s]\n", buf);
 
@@ -318,7 +326,7 @@ int main(int argc, char **argv){
 
 	// close connection
 	close(client);
-	close(bs);
+	close(b);
 
 	return 0;
 }
