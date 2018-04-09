@@ -14,7 +14,7 @@ s.connect((TCP_IP, TCP_PORT))
 while 1:
     data = s.recv(BUFFER_SIZE)
     if not data: break
-    print ("received data:", data)
+    print ("Client.py: Received ", data)
     
 s.close()
 
