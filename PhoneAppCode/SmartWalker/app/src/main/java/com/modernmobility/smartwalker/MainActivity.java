@@ -84,16 +84,16 @@ public class MainActivity extends AppCompatActivity {
 
     TextView tvX;
     TextView tvY;
-    TextView tvθ;
+    TextView tvO;
     EditText etX;
     EditText etY;
-    EditText etθ;
+    EditText etO;
     Button btnSendPose;
 
     float floatValue;
     byte [] x;
     byte [] y;
-    byte [] θ;
+    byte [] O;
     byte [] pose;
     byte [] bytes4 = new byte[4];
     byte [] bytes12 = new byte[12];
@@ -132,10 +132,10 @@ public class MainActivity extends AppCompatActivity {
 
         tvX = findViewById(R.id.tvX);
         tvY = findViewById(R.id.tvY);
-        tvθ = findViewById(R.id.tvθ);
+        tvO = findViewById(R.id.tvθ);
         etX = findViewById(R.id.etX);
         etY = findViewById(R.id.etY);
-        etθ = findViewById(R.id.etθ);
+        etO = findViewById(R.id.etθ);
         btnSendPose = findViewById(R.id.btnSendPose);
 
         //============================================================================
@@ -167,18 +167,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /** btnToMe clicked!*/
+        /** btnCmd0 clicked!*/
         btnCmd0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Log.d(TAG,"onCreate: onClick: btnToMe clicked");
+                Log.d(TAG,"onCreate: onClick: btnToMe clicked");
                 PhoneData[0] = 0 ;
                 try {
-                    //Log.d(TAG,"onCreate: onClick: Message written");
+                    Log.d(TAG,"onCreate: onClick: Message written");
 
                     write(PhoneData);
                     UpdateCommandTxt(PhoneData[0]);
                 } catch (IOException e) {
+                    Log.d(TAG,"onCreate: onClick: ERROR");
                     e.printStackTrace();
                 }
             }
@@ -380,10 +381,25 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Log.d(TAG,"onCreate:  onClick: SEND POSE BUTTON CLICKED!");
                     PhoneData[0] = 10;
-                    x = ToByteArray(Double.parseDouble(etX.getText().toString()));  //Parsing text from editText for X value and passing into byte Array
-                    y = ToByteArray(Double.parseDouble(etY.getText().toString()));  //Parsing text from editText for X value and passing into byte Array
-                    θ = ToByteArray(Double.parseDouble(etθ.getText().toString()));  //Parsing text from editText for X value and passing into byte Array
-                    pose = Pose(x, y, θ);
+
+                    Double tmpX = Double.parseDouble(etX.getText().toString());
+                    Double tmpY = Double.parseDouble(etY.getText().toString());
+                    Double tmpO = Double.parseDouble(etO.getText().toString());
+
+                    if (tmpX != null ) {
+                        tmpX = (double) 0;
+                    }
+                    if (tmpY != null ) {
+                        tmpY = (double) 0;
+                    }
+                    if (tmpO != null ) {
+                        tmpO = (double) 0;
+                    }
+
+                    x = ToByteArray(tmpX);  //Parsing text from editText for X value and passing into byte Array
+                    y = ToByteArray(tmpY);  //Parsing text from editText for Y value and passing into byte Array
+                    O = ToByteArray(tmpO);  //Parsing text from editText for O value and passing into byte Array
+                    pose = Pose(x, y, O);
                     Toasting(pose.toString());
                     write(pose);
 

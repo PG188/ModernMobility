@@ -1,0 +1,63 @@
+{
+	"=====Notes=====":
+	{
+	"(1)":"Please contact Tyler Jass if you have any concerns about either of the map json files.",
+	"(2)":"This file is for ArUco ID constants e.g. the docking station and other hardcoded locations.",
+	"(3)":"Sections with heading that look like =====Heading Name===== are not sections containing information that is read for software.  These sections are intended to be an aid for users of this file and map_config.json"
+	},
+
+	"=====Format=====":
+	{
+		"Note":"Please use the specified format, name is a string passed in software to retrieve the associated pose, x and y are floating point numbers representing position in meters, theta is a point number representing the yaw in radians.",
+		"ID":{"name":"location name","x":"number","y":"number","theta":"number"}
+	},	
+
+	"Data":
+	{
+		"0": {"name":"dock","x": 0, "y": 2, "theta":1.570796325},
+		"1": {"name":"bedside","x": 4, "y": 4, "theta": 3.14159265}
+	}, 
+
+	"=====Recorded Data=====":
+	{
+		"Note": "Recorded Data isn't used in software, this just a record of room parameters to be used in map configuration.",
+
+		"aruco marker parameters":
+		{
+			"sidelength":"0.165 meters"
+		},
+
+		"cameras":
+		{
+			"webcam":
+			{
+				"camera horizontal width": "1.56 meters ( = 1.195 + 0.365 )",
+				"camera vertical height": "1.17 meters ( = 1.56 x 480 / 640 )",
+				"max possible aruco marker spacing":"1.005 meters ( = 1.17 - 0.165)",
+				"selected aruco marker spacing":"1 meter"
+			},
+			"kinect":
+			{
+				"camera horizontal width": "TBD",
+				"camera vertical height": "TBD",
+				"max possible aruco marker spacing":"TBD",
+				"selected aruco marker spacing":"TBD"
+			}
+
+		},
+
+		"rooms":
+		{
+			"ITB 134":
+			{
+				"room width":"7.68 meters",
+				"room_length":"9.105 meters"
+			},
+			"MARC TBD":
+			{
+				"room width":"TBD",
+				"room_length":"TBD"
+			}
+		}
+	}
+}
