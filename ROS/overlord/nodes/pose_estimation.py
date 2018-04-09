@@ -39,14 +39,25 @@ W2C_Y = 0           #In meters
 W2C_Z = 0.854964    #In meters
 W2C_YAW = 0         #In radians
 
-def locWalker(xid, yid, arucoID):
+#====================Private Functions====================#
+def _locWalker(xid, yid, arucoID):
     xid, yid, _ = ReadMap.getPose(arucoID)
     xWalker = xid - dx
     yWalker = yid - dy
 
     return xWalker, yWalker
 
-def marker_detect(failed_detections = 0):
+def _camBase2walkerBase(cam_x, cam_y, cam_yaw):
+    #Create transformation matrix to go from camera frame to walker frame
+    tm = TransformMatrix.TransformMatrix()
+    tm.translate(W2C_X, W2C_Y, W2C_Z)   #Deal with any x or y translations
+    tm.rotate(Axis.Z, W2C_YAW)          #Deal with any yaw rotations
+    
+    #Translate vector to walker frame
+    walker_x, walker_y, _ = tm.transformVector(xpos, ypos)
+    return walker_x, walker_y, (cam_yaw + W2C_YAW)
+
+def _marker_detect(failed_detections = 0):
     
     marker_length = 0.165 #Any unit. Pose estimation will have the same unit
     
@@ -124,27 +135,28 @@ def marker_detect(failed_detections = 0):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
-    xWalker, yWalker = locWalker(arucoID, dx, dy)    
+    xWalker, yWalker = _locWalker(arucoID, dx, dy)    
     return xWalker, yWalker, yaw
 
-def camBase2walkerBase(cam_x, cam_y, cam_yaw):
-    #Create transformation matrix to go from camera frame to walker frame
-    tm = TransformMatrix.TransformMatrix()
-    tm.translate(W2C_X, W2C_Y, W2C_Z)   #Deal with any x or y translations
-    tm.rotate(Axis.Z, W2C_YAW)          #Deal with any yaw rotations
-    
-    #Translate vector to walker frame
-    walker_x, walker_y, _ = tm.transformVector(xpos, ypos)
-    return walker_x, walker_y, (cam_yaw + W2C_YAW)
-    
+#====================Public Functions====================#
+"""
+get_pose():
+    Inputs:
+        location <str>: name of the location being requested
+
+    Returns:
+        (walker_xpos, walker_ypos, walker_yaw) <float, float, float>: Python tuple
+        containing the Walker's x position, y position, and yaw orientation 
+        respectively
+"""
 def get_pose(location):
-    
+
+    #If looking for walker location we must use the ArUco markers
     if location == 'walker':
-        cam_x, cam_y, cam_yaw = marker_detect()
-        return camBase2walkerBase(cam_x, cam_y, cam_yaw)
+        cam_x, cam_y, cam_yaw = _marker_detect()            #Find pose from marker
+        return _camBase2walkerBase(cam_x, cam_y, cam_yaw)   #Translate to walker frame
     
+    #If looking for a different location, it is expected to be a static location
+    #Specified in the map_constants.json file
     else:
         return ReadMap.getConstPose(location)
-
-a, b, c = get_pose('walker')
-print('[pose_estimation.py]:get_pose(): Pose = %f, %f, %f' (a,b,c))
