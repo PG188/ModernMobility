@@ -14,7 +14,7 @@ first block of code with the Serial.available check. How can we make it so this 
 #include <Arduino.h>
 #include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 #include <Encoder.h>
-//#include <Filters.h>
+#include <Filters.h>
 #define ENCODER_OPTIMIZE_INTERRUPTS
 
 //Motor Pins
@@ -31,8 +31,8 @@ first block of code with the Serial.available check. How can we make it so this 
 
 /*  Constants */
 //PID Constants
-const double K_P = 330.15, 
-             K_I = 20.05,
+const double K_P = 380, 
+             K_I = 50,
              K_D = 20,
              OUT_MIN = -255,  
              OUT_MAX = 255;
@@ -43,20 +43,14 @@ bool pOnE = true;
 const byte START_FLAG = 0x7F,
            STOP_FLAG = 0x7E;
            
-const float radius = 0.12065; //in meters
+const float radius = 0.132/2; //in meters
 
 //Variables
-//double PID_Input,              //The variable we are trying to control (from Motor Module)
-//       PID_Output,             //The variable that will be adjusted by the PID
-//       PID_SetPoint;    //The value we are trying to get to or maintain (from ROS node)
 double lastInput = 0;
 unsigned long PID_lastTime = 0;
 double outputSum = 0;
-double Output, Kp_calc;
-double error;
-double dInput;
+double Output, Kp_calc, error, dInput, Ki_calc;
 double deadband = 0.075;
-double Ki_calc;
 
 //PID values
 float motorVelCmd = 0;
@@ -80,9 +74,11 @@ unsigned int wheelVelOut;
 int count = 0;
 int period = 0;
 
-//float filterFrequency_PID = 0.8;
-//FilterOnePole PID_output(LOWPASS, filterFrequency_PID);
+double pot;
+
 Encoder myEncoder(ENC1, ENC2);
+//float filterFrequency_KD = 1;
+//FilterOnePole lowPassFilter_KD(LOWPASS, filterFrequency_KD);
 
 void setup() {
     Serial.begin(115200); // Starts the serial communication at 57600 baud (this is fast enough)
@@ -101,10 +97,6 @@ void loop() {
   if (Serial.available()){
     //count = 0; 
     byteRead = Serial.read();
-    //byteString = Serial.readString();
-    //Serial.print("Num bytes available: ");Serial.println(Serial.available());
-    //Serial.print("I received: ");
-    //Serial.println(byteRead);
     switch (byteRead){
       case START_FLAG: sendEncoder = 1; break;
       case STOP_FLAG: sendEncoder = 0; break;
@@ -119,16 +111,27 @@ void loop() {
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
         motorVelCmd = -float(byteRead)/100; //Converts cm/s value to m/s
+        if ((motorVelCmd == -1) || (motorVelCmd == 1)){
+          motorVelCmd = 0;
+        }
         break;
     }
   }
-
-    /*if (count > 1000){
-      motorVelCmd = 0;
+  //pot = analogRead(2);
+  //Serial.println(pot);
+  /*if (count > 500){
+      motorVelCmd = 0.2;
     }
     else {
-      motorVelCmd = 0;
-    }*/
+      motorVelCmd = -0.2;
+  }*/
+
+  /*if (pot > 782) {
+    motorVelCmd = -0.1;
+  }
+  else{
+    motorVelCmd = 0;
+  }*/
   
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
@@ -144,17 +147,15 @@ void loop() {
 
   //DO PID
   /* Graphing wheel velcoity */
-  //Serial.print(wheelVel);Serial.print(",");
+  Serial.print(encoderVal);Serial.println(" ");
   //Serial.println(motorVelCmd);
 
   unsigned long now = millis();
   if(now - PID_lastTime >= SAMPLE_TIME){
     /*Compute all the working error variables*/
-    //Serial.print("SetPoint = ");Serial.print(motorVelCmd);Serial.print("  Input = ");Serial.print(wheelVel);
     error = (double) motorVelCmd - wheelVel;
-    //Serial.print("  Error = ");Serial.print(error);
     dInput = (double) (wheelVel - lastInput);
-    //Serial.print("  dInput = ");Serial.print(dInput);
+    //lowPassFilter_KD.input(dInput);
     if (abs(error) <= deadband){
       Ki_calc = 0;
     }
@@ -162,10 +163,8 @@ void loop() {
       Ki_calc = K_I * error;
     }
     outputSum+= Ki_calc;
-    //Serial.println(*outputSum);
     if(outputSum > OUT_MAX) outputSum = OUT_MAX;
     else if(outputSum < OUT_MIN) outputSum = OUT_MIN;
-    //Serial.print("  OutputSum = ");Serial.print(outputSum);
 
     /*Add Proportional on Error, if P_ON_E is specified*/
     if(pOnE){
@@ -180,21 +179,17 @@ void loop() {
     else Output = 0;
 
     /*Compute Rest of PID Output*/
+    //Output += outputSum - K_D * (double)lowPassFilter_KD.output();
     Output += outputSum - K_D * dInput;
-    //Serial.println(Output);
     if(Output > OUT_MAX) Output = OUT_MAX;
     else if(Output < OUT_MIN) Output = OUT_MIN;
-    //Serial.print("  Output = ");Serial.println(Output);
     MotorCmd = Output;
-    //Serial.println(MotorCmd);
-      /*Remember some variables for next time*/
+    /*Remember some variables for next time*/
     lastInput = wheelVel;
     PID_lastTime = now;
   }
 
-  //PID_output.input(Output);
-  //MotorCmd = PID_output.output();
-  MotorCmd = 0;
+  //Serial.println(MotorCmd);
   digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
   analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   
@@ -203,7 +198,7 @@ void loop() {
     Serial.write(byte(encoderVal & 0x00FF)); 
     Serial.write(byte((encoderVal >> 8) & 0x00FF));
   }
-  //count++;
+  count++;
   delay(30);
 }
 
