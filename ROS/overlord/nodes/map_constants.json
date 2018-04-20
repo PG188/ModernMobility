@@ -55,8 +55,9 @@
 			},
 			"MARC TBD":
 			{
-				"room width":"TBD",
-				"room_length":"TBD"
+				"room width":"8.71 meters",
+				"room_length":"12.235 meters",
+				"room_height":"2.665 meters"
 			}
 		}
 	}

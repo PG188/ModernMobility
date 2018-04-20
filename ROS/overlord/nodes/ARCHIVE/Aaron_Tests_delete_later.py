@@ -36,7 +36,7 @@ def TestImage():
     camera_matrix = webcam_cals['camera']
     dist_coeffs = webcam_cals['dist']
 
-    NUM_MARKERS = 5 #You are allowed to change this (breaks if you go higher than 20 with size 40 atm)
+    NUM_MARKERS = 0 #You are allowed to change this (breaks if you go higher than 20 with size 40 atm)
     ARUCO_SIZE = 40 #You are allowed to change this
     WIN_WIDTH = 480
     WIN_LENGTH = 640
@@ -192,7 +192,7 @@ def TestVideo():
     xWalker, yWalker = locWalker.locWalker(arucoID, dx, dy)    
     return xWalker, yWalker, yaw
 
-#TestImage()
+TestImage()
 #TestVideo()
     
 
