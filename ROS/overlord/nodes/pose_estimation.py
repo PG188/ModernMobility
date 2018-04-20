@@ -28,10 +28,10 @@ from cv2 import aruco
 import numpy as np
 import Mag3D
 import ReadMap
-import TransformMatrix
+from TransformMatrix import *
 
-FRAME_CAP_ATTEMPS = 5
-VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
+FRAME_CAP_ATTEMPTS = 5
+VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
 
 #Camera to Walker frame differences
 W2C_X = 0.486664    #In meters
@@ -49,12 +49,12 @@ def _locWalker(arucoID, dx, dy):
 
 def _camBase2walkerBase(cam_x, cam_y, cam_yaw):
     #Create transformation matrix to go from camera frame to walker frame
-    tm = TransformMatrix.TransformMatrix()
+    tm = TransformMatrix()
     tm.translate(W2C_X, W2C_Y, W2C_Z)   #Deal with any x or y translations
     tm.rotate(Axis.Z, W2C_YAW)          #Deal with any yaw rotations
     
     #Translate vector to walker frame
-    walker_x, walker_y, _ = tm.transformVector(xpos, ypos)
+    walker_x, walker_y, _ = tm.transformVector(cam_x, cam_y)
     return walker_x, walker_y, (cam_yaw + W2C_YAW)
 
 def _marker_detect(failed_detections = 0):
@@ -118,9 +118,9 @@ def _marker_detect(failed_detections = 0):
         failed_detections += 1
         print('[pose_estimation.py]:marker_detect(): Failed to detect marker %s time(s)' % failed_detections)
         
-        if(failed_detections < FRAME_CAP_ATTEMPS):
+        if(failed_detections < FRAME_CAP_ATTEMPTS):
             print('[pose_estimation.py]:marker_detect: Retrying marker_detect()...)')
-            marker_detect(failed_detections)
+            _marker_detect(failed_detections)
             
         else:
             print('[pose_estimation.py]:marker_detect(): Reached max number of retries (%s)' % failed_detections)
@@ -160,3 +160,5 @@ def get_pose(location):
     #Specified in the map_constants.json file
     else:
         return ReadMap.getConstPose(location)
+
+print(get_pose('walker'))
