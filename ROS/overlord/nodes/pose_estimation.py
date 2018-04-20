@@ -40,7 +40,7 @@ W2C_Z = 0.854964    #In meters
 W2C_YAW = 0         #In radians
 
 #====================Private Functions====================#
-def _locWalker(xid, yid, arucoID):
+def _locWalker(arucoID, dx, dy):
     xid, yid, _ = ReadMap.getPose(arucoID)
     xWalker = xid - dx
     yWalker = yid - dy
