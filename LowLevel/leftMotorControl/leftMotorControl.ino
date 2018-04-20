@@ -67,6 +67,7 @@ long lastPosition = 0;
 float RPM = 0, wheelVel = 0;
 int encoderVal = 0;
 int encPosition  = 0;
+int lastEncoderVal = 0;
 
 unsigned int wheelVelOut;
 int count = 0;
@@ -82,6 +83,7 @@ void setup() {
 
     digitalWrite(DIR1, HIGH); //direcitons  
     digitalWrite(PWM1, 0);   //speed scale speed here with input from pi
+    myEncoder.write(0);
 }
 
 void loop() {  
@@ -119,6 +121,16 @@ void loop() {
   
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
+
+  //Reset count if walker hasn't moved in a while (~30s)
+  if (encoderVal == lastEncoderVal){
+    if (count > 1000){
+      myEncoder.write(0);
+      count = 0;
+    }
+  }
+  else count = 0;
+  
   encPosition = encoderVal;
   currentTime = (unsigned int)millis();
   if (currentTime - lastTime >= SAMPLE_DELAY) {
@@ -128,12 +140,15 @@ void loop() {
     lastPosition = encPosition;
     encPosition = 0;
   }
-
+  lastEncoderVal = encoderVal;
 
   /* Graphing wheel velcoity */
   //Serial.print(encoderVal);Serial.println(" ");
   //Serial.println(motorVelCmd);
-
+  //Serial.print("EncoderVal = ");Serial.print(encoderVal);Serial.print("\t");
+  //Serial.print("lastEncoderVal = ");Serial.print(lastEncoderVal);Serial.print("\t");
+  //Serial.print("Count = ");Serial.println(count);
+  
   if (motorVelCmd = FREE_ROLL_FLAG){
     Output = 0;
     MotorCmd = 0;

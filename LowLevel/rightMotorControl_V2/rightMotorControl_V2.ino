@@ -47,9 +47,7 @@ const byte START_FLAG = 0x7F,
 const float radius = 0.127/2; //in meters
 
 //Variables
-//double PID_Input,              //The variable we are trying to control (from Motor Module)
-//       PID_Output,             //The variable that will be adjusted by the PID
-//       PID_SetPoint;    //The value we are trying to get to or maintain (from ROS node)
+//PID variables
 double lastInput = 0;
 unsigned long PID_lastTime = 0;
 double outputSum = 0;
@@ -73,6 +71,7 @@ long lastPosition = 0;
 float RPM = 0, wheelVel = 0;
 int encoderVal = 0;
 int encPosition  = 0;
+int lastEncoderVal = 0;
 
 unsigned int wheelVelOut;
 int count = 0;
@@ -87,9 +86,10 @@ void setup() {
 
     digitalWrite(DIR1, HIGH); //direcitons  
     digitalWrite(PWM1, 0);   //speed scale speed here with input from pi
+    myEncoder.write(0);
 }
 
-void loop() {  
+void loop() {
   // Receive new motor command or stop/start
   //sendFlag = 0;
   if (Serial.available()){
@@ -125,6 +125,16 @@ void loop() {
   
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
+  
+  //Reset count if walker hasn't moved in a while (~30s)
+  if (encoderVal == lastEncoderVal){
+    if (count > 1000){
+      myEncoder.write(0);
+      count = 0;
+    }
+  }
+  else count = 0;
+  
   encPosition = encoderVal;
   currentTime = (unsigned int)millis();
   if (currentTime - lastTime >= SAMPLE_DELAY) {
@@ -134,10 +144,12 @@ void loop() {
     lastPosition = encPosition;
     encPosition = 0;
   }
-  
+  lastEncoderVal = encoderVal;
   //DO PID
   /* Graphing wheel velcoity */
-  //Serial.print(encoderVal);Serial.println(" ");
+  //Serial.print("EncoderVal = ");Serial.print(encoderVal);Serial.print("\t");
+  //Serial.print("lastEncoderVal = ");Serial.print(lastEncoderVal);Serial.print("\t");
+  //Serial.print("Count = ");Serial.println(count);
   //Serial.println(motorVelCmd);
 
   if (motorVelCmd = FREE_ROLL_FLAG) {
