@@ -249,7 +249,7 @@ int main(int argc, char **argv){
     //cin>>host;
      
     //connect to host
-    c.conn("127.0.0.1" , 8080);
+    c.conn("10.0.0.3" , 8080);
      
     //send some data
     c.send_data("C++ client for phone data connected!");	

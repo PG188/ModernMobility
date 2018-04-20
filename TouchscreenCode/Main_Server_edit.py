@@ -17,6 +17,16 @@ from PyQt5.QtWidgets import *
 #window from QtCreator
 import mainwindow_auto
 
+#set up connecion
+#TCP_IP = '10.0.0.3'  
+TCP_IP = '127.0.0.1' 
+TCP_PORT = 8080
+BUFFER_SIZE = 1024
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt (socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((TCP_IP, TCP_PORT))
+s.listen(1)
+
 class Tmanager:
     def __init__(self):
         self.connP = None
@@ -97,16 +107,7 @@ def newConnection(s, m, t):
     else:
         print('Main_Server.py: Unknown connection attempted')
 
-#set up connecion
 m = Tmanager()
-TCP_IP = '127.0.0.1'  
-#TCP_IP = '10.0.0.3' 
-TCP_PORT = 8080
-BUFFER_SIZE = 1024
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt (socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
 
 try: 
     tt = threading.Thread(target=newConnection, args=(s, m, 'touchscreen'))
