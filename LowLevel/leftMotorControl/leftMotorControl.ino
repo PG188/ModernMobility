@@ -12,7 +12,6 @@ first block of code with the Serial.available check. How can we make it so this 
 */
 
 #include <Arduino.h>
-#include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 #include <Encoder.h>
 #define ENCODER_OPTIMIZE_INTERRUPTS
 
