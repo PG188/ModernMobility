@@ -119,6 +119,10 @@ def _marker_detect(failed_detections = 0):
         print('[pose_estimation.py]:marker_detect(): Failed to detect marker %s time(s)' % failed_detections)
         
         if(failed_detections < FRAME_CAP_ATTEMPTS):
+            print('[pose_estimation.py]:marker_detect: Releasing captured frame...)')
+            cap.release()
+            cv2.destroyAllWindows()
+
             print('[pose_estimation.py]:marker_detect: Retrying marker_detect()...)')
             _marker_detect(failed_detections)
             
