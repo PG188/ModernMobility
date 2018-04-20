@@ -32,7 +32,7 @@ from TransformMatrix import *
 
 FRAME_CAP_ATTEMPTS = 5
 SHOW_CAPTURED_FRAME = True
-VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
+VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
 
 MARKER_LENGTH = 0.165   #meters
 
@@ -133,11 +133,11 @@ def _marker_detect(failed_detections = 0):
         print('[pose_estimation.py]:_marker_detect():\tFailed to detect marker %s time(s)' % failed_detections)
         
         if(failed_detections < FRAME_CAP_ATTEMPTS):
-            print('[pose_estimation.py]:_marker_detect:\tReleasing captured frame...')
+            print('[pose_estimation.py]:_marker_detect():\tReleasing captured frame...')
             cap.release()
             cv2.destroyAllWindows()
 
-            print('[pose_estimation.py]:_marker_detect:\tRetrying _marker_detect()...')
+            print('[pose_estimation.py]:_marker_detect():\tRetrying _marker_detect()...')
             _marker_detect(failed_detections)
             
         else:
