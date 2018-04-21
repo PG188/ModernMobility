@@ -59,10 +59,10 @@ bool tcp_client::conn(string address , int port)
         sock = socket(AF_INET , SOCK_STREAM , 0);
         if (sock == -1)
         {
-            perror("\nCould not create socket\n");
+            perror("Could not create socket");
         }
          
-        cout<<"\nSocket created\n";
+        cout<<"Socket created\n";
     }
     else    {   /* OK , nothing */  }
      
@@ -77,7 +77,7 @@ bool tcp_client::conn(string address , int port)
         {
             //gethostbyname failed
             herror("gethostbyname");
-            cout<<"\nFailed to resolve hostname\n";
+            cout<<"Failed to resolve hostname\n";
              
             return false;
         }
@@ -112,7 +112,7 @@ bool tcp_client::conn(string address , int port)
         return 1;
     }
      
-    cout<<"\nConnected\n";
+    cout<<"Connected\n";
     return true;
 }
  
@@ -165,7 +165,7 @@ float toFloatNum(char b0, char b1, char b2, char b3){
 	return num;
 }
 
-int interpretCmd(char *buf, tcp_client &c){
+int interpretCmd(char *buf){
 	
 	int cmd = -1;
 
@@ -176,7 +176,6 @@ int interpretCmd(char *buf, tcp_client &c){
 		case (char)0:
 			printf("Command Cancelled\n");
 			//call function that sends cmd to master controller
-			c.send_data("2");
 			cmd = 0;
 			
 			return 0;
@@ -185,7 +184,6 @@ int interpretCmd(char *buf, tcp_client &c){
 		case (char)1:
 			printf("SmartWalker is heading to docking station\n");
 			//call function that sends cmd to master controller
-			c.send_data("3");
 			cmd = 1;
 
 			return 0;
@@ -194,7 +192,6 @@ int interpretCmd(char *buf, tcp_client &c){
 		case (char)2:
 			printf("SmartWalker is parking\n");
 			//call function that sends cmd to master controller
-			c.send_data("4");
 			cmd = 2;
 			
 			return 0;
@@ -203,7 +200,6 @@ int interpretCmd(char *buf, tcp_client &c){
 		case (char)3:
 			printf("Extra command\n");
 			//call function that sends cmd to master controller
-			c.send_data("5");
 			cmd = 3;
 			
 			return 0;
@@ -212,7 +208,6 @@ int interpretCmd(char *buf, tcp_client &c){
 		case (char)4:
 			printf("Extra command 2\n");
 			//call function that sends cmd to master controller
-			c.send_data("6");
 			cmd = 4;
 			
 			return 0;
@@ -249,10 +244,10 @@ int main(int argc, char **argv){
     //cin>>host;
      
     //connect to host
-    c.conn("10.0.0.3" , 8080);
+    //c.conn("127.0.0.1" , 8080);
      
     //send some data
-    c.send_data("C++ client for phone data connected!");	
+    //c.send_data("C++ client for phone data connected!");
      
     //receive and echo reply
     cout<<"----------------------------\n\n";
@@ -311,7 +306,7 @@ int main(int argc, char **argv){
 		bytes_read = read(client, buf, sizeof(buf));
 		if(bytes_read == 1){
 			if (*buf != (char)9) {
-				int close = interpretCmd(buf, c);
+				int close = interpretCmd(buf);
 				if(close == 1){
 					connected = false;
 					printf("BT:connection terminated\n");
