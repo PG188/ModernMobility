@@ -59,10 +59,10 @@ bool tcp_client::conn(string address , int port)
         sock = socket(AF_INET , SOCK_STREAM , 0);
         if (sock == -1)
         {
-            perror("\nCould not create socket\n");
+            perror("\nBTReceive: ERROR: Could not create socket\n");
         }
          
-        cout<<"\nSocket created\n";
+        cout<<"BTReceive: TCP Socket created\n";
     }
     else    {   /* OK , nothing */  }
      
@@ -76,8 +76,8 @@ bool tcp_client::conn(string address , int port)
         if ( (he = gethostbyname( address.c_str() ) ) == NULL)
         {
             //gethostbyname failed
-            herror("gethostbyname");
-            cout<<"\nFailed to resolve hostname\n";
+            herror("BTReceive: gethostbyname");
+            cout<<"\nBTReceive: ERROR: Failed to resolve hostname\n";
              
             return false;
         }
@@ -108,11 +108,11 @@ bool tcp_client::conn(string address , int port)
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        perror("connect failed. Error");
+        perror("BTReceive: connect failed. Error");
         return 1;
     }
      
-    cout<<"\nConnected\n";
+    cout<<"BTReceive: Connected\n";
     return true;
 }
  
@@ -124,10 +124,10 @@ bool tcp_client::send_data(string data)
     //Send some data
     if( send(sock , data.c_str() , strlen( data.c_str() ) , 0) < 0)
     {
-        perror("Send failed : ");
+        perror("BTReceive: Send failed : ");
         return false;
     }
-    cout<<"Data send\n";
+    cout<<"BTReceive: Data sent from phone\n\n";
      
     return true;
 }
@@ -143,7 +143,7 @@ string tcp_client::receive(int size=512)
     //Receive a reply from the server
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
-        puts("recv failed");
+        puts("BTReceive: recv failed");
     }
      
     reply = buffer;
@@ -174,7 +174,7 @@ int interpretCmd(char *buf, tcp_client &c){
 	switch(data){
 	
 		case (char)0:
-			printf("Command Cancelled\n");
+			printf("BTReceive: Command Cancelled\n");
 			//call function that sends cmd to master controller
 			c.send_data("2");
 			cmd = 0;
@@ -183,7 +183,7 @@ int interpretCmd(char *buf, tcp_client &c){
 		break;
 		
 		case (char)1:
-			printf("SmartWalker is heading to docking station\n");
+			printf("BTReceive: SmartWalker is heading to docking station\n");
 			//call function that sends cmd to master controller
 			c.send_data("3");
 			cmd = 1;
@@ -192,7 +192,7 @@ int interpretCmd(char *buf, tcp_client &c){
 		break;
 		
 		case (char)2:
-			printf("SmartWalker is parking\n");
+			printf("BTReceive: SmartWalker is parking\n");
 			//call function that sends cmd to master controller
 			c.send_data("4");
 			cmd = 2;
@@ -201,7 +201,7 @@ int interpretCmd(char *buf, tcp_client &c){
 		break;
 		
 		case (char)3:
-			printf("Extra command\n");
+			printf("BTReceive: Extra command\n");
 			//call function that sends cmd to master controller
 			c.send_data("5");
 			cmd = 3;
@@ -210,7 +210,7 @@ int interpretCmd(char *buf, tcp_client &c){
 		break;
 		
 		case (char)4:
-			printf("Extra command 2\n");
+			printf("BTReceive: Extra command 2\n");
 			//call function that sends cmd to master controller
 			c.send_data("6");
 			cmd = 4;
@@ -219,7 +219,8 @@ int interpretCmd(char *buf, tcp_client &c){
 		break;
 		
 		case (char)9:
-			printf("Disconnecting...");
+			printf("BTReceive: Disconnecting...");
+			c.send_data("-1");
 			return 1;
 	}
 }
@@ -249,22 +250,21 @@ int main(int argc, char **argv){
     //cin>>host;
      
     //connect to host
-    c.conn("10.0.0.3" , 8080);
+    //c.conn("10.0.0.3" , 8080); //When Ethernet is connected
+ 	c.conn("127.0.0.1" , 8080);	//When Ethernet is not connected (For isolated testing)
      
     //send some data
-    c.send_data("C++ client for phone data connected!");	
+    //c.send_data("C++ client for phone data connected!");	
      
     //receive and echo reply
-    cout<<"----------------------------\n\n";
+    //cout<<"BTReceive: Connected to TCP Server";
     //cout<<c.receive(1024);
-    cout<<"\n\n----------------------------\n\n";
+    //cout<<"\n\n----------------------------\n\n";
      
     //done
     //return 0;
 
 	//==============================================
-
-
 	bool connected = true;
 	
 	//Raspberry Pi's Bluetooth Address
@@ -288,22 +288,22 @@ int main(int argc, char **argv){
 	
 	// put socket into listening mode
 	listen(b, 1);
-	printf("\nBT:listening...\n");
+	printf("\nBTReceive: listening...\n\n");
 	//close(b);
 
 	// accept one connection
 	client = accept(b, (struct sockaddr *)&rem_addr, &opt);
 	if (client < 0){
-		perror("BT:error in accept");
+		perror("BTReceive: error in accept");
 		close(b);
 	}
 	else{
 		//printf(client);
-		printf("\nBT:connection accepted!\n");
+		printf("\nBTReceive: connection accepted!\n\n");
 	}
 
 	ba2str( &rem_addr.rc_bdaddr, buf );
-	fprintf(stderr, "BT:accepted connection from %s\n", buf);
+	fprintf(stderr, "BTReceive: accepted connection from %s\n\n", buf);
 	memset(buf, 0, sizeof(buf));
 
 	while (connected){
@@ -314,7 +314,7 @@ int main(int argc, char **argv){
 				int close = interpretCmd(buf, c);
 				if(close == 1){
 					connected = false;
-					printf("BT:connection terminated\n");
+					printf("BTReceive: connection terminated\n\n");
 				}
 				//printf("received [%s]\n", buf);
 

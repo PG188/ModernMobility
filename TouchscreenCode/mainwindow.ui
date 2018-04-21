@@ -23,7 +23,7 @@
    <string notr="true">background-color: rgb(255, 255, 255);</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="BrakeModeBtn">
+   <widget class="QPushButton" name="AssistModeBtn">
     <property name="geometry">
      <rect>
       <x>390</x>
