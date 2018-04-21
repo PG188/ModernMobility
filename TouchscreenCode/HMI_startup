@@ -1,12 +1,12 @@
 #!/bin/bash
 echo "==========================================================="
 echo "HMI code compiling..."
-g++ -o BTReceive_edit BTReceive_edit.cpp -lbluetooth
+g++ -o BTReceive BTReceive.cpp -lbluetooth
 echo "Compiling complete!"
 echo "HMI starting..."
 echo ""
 
-python Main_Server_edit.py &
+python Main_Server.py &
 echo "Python TCP server on RPi started!"
 echo ""
 sleep 2
@@ -17,7 +17,7 @@ echo "Touchscreen Ready! Awaiting commands..."
 echo ""
 sleep 2
 
-./BTReceive_edit &
+./BTReceive &
 echo "C++ TCP client/Bluetooth server on RPi started!"
 echo "Awaiting Bluetooth connection and commands..."
 echo ""
