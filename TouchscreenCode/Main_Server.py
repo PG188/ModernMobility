@@ -92,6 +92,7 @@ def newConnection(s, m, t):
         m.connW, addrW = s.accept()
         print('Main_Server.py: Walker connected!')
         print('Main_Server.py: Walker TCP client connection address: ' + str(addrW))
+        sendbyte('-3')
 
     elif t == 'phone':
         print('Main_Server.py: Listening for phone connection...\n')
@@ -99,7 +100,6 @@ def newConnection(s, m, t):
         print('Main_Server.py: TCP Client for Phone connected!')
         print ('Main_Server.py: Phone TCP client connection address: ' + str(addrP))
         while 1:
-            #print('\nMain_Server.py: Still alive')
             data = m.connP.recv(BUFFER_SIZE).decode()
             print('Main_Server.py: data received')
             if not data or (data == -1):
