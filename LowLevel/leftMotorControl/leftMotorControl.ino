@@ -104,6 +104,7 @@ void loop() {
         if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
+   
         motorVelCmd = -float(byteRead)/100; //Converts cm/s value to m/s
         if ((motorVelCmd == -1) || (motorVelCmd == 1)){
           motorVelCmd = 0;
@@ -113,10 +114,12 @@ void loop() {
   }
   /*if (count > 500){
       motorVelCmd = 0.2;
-    }
-    else {
+  }
+  else {
       motorVelCmd = -0.2;
   }*/
+  
+  //motorVelCmd = -0.2;
   
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
@@ -148,11 +151,11 @@ void loop() {
   //Serial.print("lastEncoderVal = ");Serial.print(lastEncoderVal);Serial.print("\t");
   //Serial.print("Count = ");Serial.println(count);
   
-  if (motorVelCmd = FREE_ROLL_FLAG){
+  /*if (motorVelCmd == FREE_ROLL_FLAG){
     Output = 0;
     MotorCmd = 0;
   }
-  else {
+  else {*/
     //DO PID
     unsigned long now = millis();
     if(now - PID_lastTime >= SAMPLE_TIME){
@@ -192,7 +195,7 @@ void loop() {
       lastInput = wheelVel;
       PID_lastTime = now;
     }
-  }
+  //}
   digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
   analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   

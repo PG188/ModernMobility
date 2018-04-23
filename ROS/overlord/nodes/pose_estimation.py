@@ -30,9 +30,11 @@ import Mag3D
 import ReadMap
 from TransformMatrix import *
 
+#User configurable inputs
 FRAME_CAP_ATTEMPTS = 5
 SHOW_CAPTURED_FRAME = True
 VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
+WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
 
 MARKER_LENGTH = 0.165   #meters
 
@@ -66,7 +68,7 @@ def _marker_detect(failed_detections = 0):
     
     aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_100)
 
-    webcam_cals = np.load('webcam_cals.npz')
+    webcam_cals = np.load(WEBCAM_CALS_PATH)
     camera_matrix = webcam_cals['camera']
     dist_coeffs = webcam_cals['dist']
 
@@ -177,4 +179,4 @@ def get_pose(location):
 
 
 #TEST
-print(get_pose('walker'))
+#print(get_pose('walker'))
