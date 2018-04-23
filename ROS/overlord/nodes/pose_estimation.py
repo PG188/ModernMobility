@@ -66,7 +66,7 @@ def _marker_detect(failed_detections = 0):
     
     marker_length = MARKER_LENGTH   #Any unit. Pose estimation will have the same unit
     
-    aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+    aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_100)
 
     webcam_cals = np.load(WEBCAM_CALS_PATH)
     camera_matrix = webcam_cals['camera']
