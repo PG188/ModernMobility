@@ -47,6 +47,8 @@ def interpretCmd(data):
                 print('Client.py: Phone disconnected!\n')
         elif data == '-2':
                 print('Client.py: Touch Screen and Phone disconnected!\n')
+        elif int(data) <= -3:
+                pass
         else:
                 print('Client.py: Invalid data Received\n' + str(data))
 
@@ -71,9 +73,12 @@ while 1:
         except OSError:
                 print('Client.py: Successfully connected to TCP server\n')
                 break
+
+s.send(('-9').encode()) #So Main_Server.py knows this connection is the walker
                 
 while 1:
-        data = s.recv(BUFFER_SIZE)
+        data = s.recv(BUFFER_SIZE).decode()
+        print('data: ' + str(data))
         try:  
                 if not data:
                         print('Client.py: ERROR: Disconnected from TCP server!\n')

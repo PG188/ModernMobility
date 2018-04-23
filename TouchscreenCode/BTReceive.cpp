@@ -251,10 +251,10 @@ int main(int argc, char **argv){
      
     //connect to host
     //c.conn("10.0.0.3" , 8080); //When Ethernet is connected
- 	c.conn("10.0.0.3" , 8080);	//When Ethernet is not connected (For isolated testing)
+ 	c.conn("127.0.0.1" , 8080);	//When Ethernet is not connected (For isolated testing)
      
     //send some data
-    //c.send_data("C++ client for phone data connected!");	
+    c.send_data("-8");	
      
     //receive and echo reply
     //cout<<"BTReceive: Connected to TCP Server";

@@ -3,6 +3,7 @@ import sys
 # gets the Qt stuff
 import PyQt5
 import socket
+import time
 
 from PyQt5.QtWidgets import *
  
@@ -23,8 +24,12 @@ s.listen(1)
 
 class Tmanager:
     def __init__(self):
+        self.connFirst = None
+        self.connSecond = None
         self.connP = None
         self.connW = None
+        self.First = None
+        self.firstIsConnected = False
 
 m = Tmanager()
 
@@ -81,44 +86,88 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
          self.FreeRollingBtn.clicked.connect(lambda: self.FreeRolling())
          self.DisconnectBtn.clicked.connect(lambda: self.Disconnect())
 
-# a new app instance
-app = QApplication(sys.argv)
-form = MainWindow()
-form.show()
+def walkerConn(conn, addr):
+    if not m.firstIsConnected:
+        m.firstIsConnected = True
+    m.connW = conn
+    print('Main_Server.py: Walker TCP client connection address: ' + str(addr))
+    #sendbyte('-3')
 
-def newConnection(s, m, t):
-    if t == 'walker':
-        print('Main_Server.py: Listening for walker connection...\n')
-        m.connW, addrW = s.accept()
-        print('Main_Server.py: Walker connected!')
-        print('Main_Server.py: Walker TCP client connection address: ' + str(addrW))
-        sendbyte('-3')
-
-    elif t == 'phone':
-        print('Main_Server.py: Listening for phone connection...\n')
-        m.connP, addrP = s.accept()
-        print('Main_Server.py: TCP Client for Phone connected!')
-        print ('Main_Server.py: Phone TCP client connection address: ' + str(addrP))
-        while 1:
-            data = m.connP.recv(BUFFER_SIZE).decode()
-            print('Main_Server.py: data received')
-            if not data or (data == -1):
-                print('Main_server.py: Phone disconnected!')
-                sendbyte('-1')
-                m.connP.close()
-                break
-            print ('\nMain_Server.py: Received data: '  + str(data))
-            sendbyte(data)
-            print('Main_server.py: Sent data: ' + str(data))
-
+def phoneConn(conn, addr):
+    if not m.firstIsConnected:
+        m.firstIsConnected = True
+    m.connP = conn
+    print ('Main_Server.py: Phone TCP client connection address: ' + str(addr))
+    while 1:
+        data = m.connP.recv(BUFFER_SIZE).decode()
+        print('Main_Server.py: data received')
+        if not data or (data == -1):
+            print('Main_server.py: Phone disconnected!')
+            sendbyte('-1')
+            m.connP.close()
+            break
+        print ('\nMain_Server.py: Received data: '  + str(data))
+        sendbyte(data)
+        print('Main_server.py: Sent data: ' + str(data))
     else:
         print('Main_Server.py: Unknown connection attempted')
-        
-try: 
-    tw = threading.Thread(target=newConnection, args=(s, m, 'walker'))
-    tw.start()
-    tp = threading.Thread(target=newConnection, args=(s, m, 'phone'))
-    tp.start()
+
+def newConnection(s, m, t):
+    if t == 'first':
+        print('Main_Server.py: Identifying first connection...')
+        m.connFirst, addrFirst = s.accept()
+        m.connFirst.send(('-3').encode())
+        data = m.connFirst.recv(BUFFER_SIZE).decode()
+        if data == '-9':
+            m.First= 'Walker'
+            print('Main_Server.py: Walker connected first!')
+            walkerConn(m.connFirst, addrFirst)
+        elif data == '-8':
+            m.First= 'Phone'
+            print('Main_Server.py: Phone connected first!')
+            phoneConn(m.connFirst, addrFirst)
+        else:
+            print('Main_Server.py: Unexpected data in first thread')
+    elif t == 'second':
+        print('Main_Server.py: Identifying second connection...')
+        m.connSecond, addrSecond = s.accept()
+        if m.First == 'Phone':
+            print('Main_Server.py: Walker connected second!')
+            walkerConn(m.connSecond, addrSecond)
+        elif m.First == 'Walker':
+            print('Main_Server.py: Phone connected second!')
+            phoneConn(m.connSecond, addrSecond)
+        else:
+            print('Main_Server.py: Unexpected data in second thread')
+    else:
+        print('This should be impossible to see')
+
+def main():
+    # a new app instance
+    app = QApplication(sys.argv)
+    form = MainWindow()
+    form.show()
+    sys.exit(app.exec_())
+ 
+     # without this, the script exits immediately.
+    sys.exit(app.exec_())
+    m.connP.close()
+    m.connW.close()
+    s.close()
+ 
+### python bit to figure how who started This
+##if __name__ == "__main__":
+##    main()
+
+try:
+    mainT = threading.Thread(target=main, args=())
+    mainT.start()
+    t1 = threading.Thread(target=newConnection, args=(s, m, 'first'))
+    t1.start()
+    while not m.firstIsConnected:
+        time.sleep(1)
+    t2 = threading.Thread(target=newConnection, args=(s, m, 'second'))
+    t2.start()
 
 except e as Exception:
     print('Main_Server.py: ' + str(e))
@@ -127,15 +176,3 @@ except e as Exception:
     m.connW.close()
     s.close()
     form.close()
-
-def main():
- 
- # without this, the script exits immediately.
-    sys.exit(app.exec_())
-    m.connP.close()
-    m.connW.close()
-    s.close()
- 
-# python bit to figure how who started This
-if __name__ == "__main__":
-    main()
