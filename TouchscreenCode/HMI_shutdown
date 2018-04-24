@@ -1,0 +1,15 @@
+#!/bin/bash
+cd
+cd ~/ModernMobility/TouchscreenCode
+
+echo "==========================================================="
+echo "Closing HMI processes..."
+echo ""
+
+sleep 1
+
+killall -9 python BTReceive HMI_startup
+echo ""
+echo "All processes closed"
+
+sleep 2

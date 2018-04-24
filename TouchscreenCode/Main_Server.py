@@ -15,8 +15,8 @@ import mainwindow_auto
 import threading
 
 #set up connecion
-#TCP_IP = '10.0.0.3'  
-TCP_IP = '127.0.0.1' 
+TCP_IP = '10.0.0.3'  
+#TCP_IP = '127.0.0.1' 
 TCP_PORT = 8080
 BUFFER_SIZE = 1024
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

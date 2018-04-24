@@ -251,11 +251,11 @@ int main(int argc, char **argv){
     //cin>>host;
      
     //connect to host
-    //c.conn("10.0.0.3" , 8080); //When Ethernet is connected
- 	c.conn("127.0.0.1" , 8080);	//When Ethernet is not connected (For isolated testing)
+    c.conn("10.0.0.3" , 8080); //When Ethernet is connected
+ 	//c.conn("127.0.0.1" , 8080);	//When Ethernet is not connected (For isolated testing)
      
     //send some data
-    c.send_data("-8");	
+    c.send_data("-8");	//So that Main_Server.py knows the c++ Client for the phone commands has connected
      
     //receive and echo reply
     //cout<<"BTReceive: Connected to TCP Server";
