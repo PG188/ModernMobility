@@ -12,7 +12,6 @@ first block of code with the Serial.available check. How can we make it so this 
 */
 
 #include <Arduino.h>
-#include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 #include <Encoder.h>
 #define ENCODER_OPTIMIZE_INTERRUPTS
 
@@ -22,19 +21,22 @@ first block of code with the Serial.available check. How can we make it so this 
 
 //Encoder Pins
 #define ENC1 3
-#define ENC2 4
+#define ENC2 2
 
 //Encoder Parameters
 #define SAMPLE_DELAY 10
-#define PULSES_PER_TURN 512
+#define PULSES_PER_TURN 128
 
 #define FREE_ROLL_FLAG 2.0
 
 /*  Constants */
+//K_P = 395, 
+//K_I = 100,
+//K_D = 20,
 //PID Constants
-const double K_P = 395, 
-             K_I = 100,
-             K_D = 20,
+const double K_P = 150, 
+             K_I = 70,
+             K_D = 135,
              OUT_MIN = -255,  
              OUT_MAX = 255;
 const int SAMPLE_TIME = 30;
@@ -44,7 +46,7 @@ bool pOnE = true;
 const byte START_FLAG = 0x7F,
            STOP_FLAG = 0x7E;
            
-const float radius = 0.127/2; //in meters
+const float radius = 0.130175/2; //in meters
 
 //Variables
 //PID variables
@@ -58,7 +60,7 @@ double deadband = 0.05;
 double Ki_calc;
 
 //PID values
-float motorVelCmd = 0;
+float motorVelCmd = FREE_ROLL_FLAG;
 int MotorCmd = 0;
 
 //Serial reading values
@@ -92,7 +94,7 @@ void setup() {
 void loop() {
   // Receive new motor command or stop/start
   //sendFlag = 0;
-  if (Serial.available()){
+  /*if (Serial.available()){
     //count = 0; 
     byteRead = Serial.read();
     //byteString = Serial.readString();
@@ -106,7 +108,7 @@ void loop() {
         * Arduino think it is a positive number. We must set these bits to 1
         * (sign extension) to get it to recognize byteRead as negative.
         */
-        if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
+        /*if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
         motorVelCmd = -float(byteRead)/100; //Converts cm/s value to m/s
@@ -115,14 +117,14 @@ void loop() {
         }
         break;
     }
-  }
+  }*/
   /*if (count > 500){
     motorVelCmd = 0.2;
   }
   else {
     motorVelCmd = -0.2;
   }*/
-  
+  motorVelCmd = 0.1;
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
   
@@ -138,7 +140,7 @@ void loop() {
   encPosition = encoderVal;
   currentTime = (unsigned int)millis();
   if (currentTime - lastTime >= SAMPLE_DELAY) {
-    RPM = ((encPosition-lastPosition) * (60000.f / (currentTime - lastTime))) / PULSES_PER_TURN/4;
+    RPM = ((lastPosition-encPosition) * (60000.f / (currentTime - lastTime)))/PULSES_PER_TURN/4;
     wheelVel = convertToLinearVel(RPM);
     lastTime = currentTime;
     lastPosition = encPosition;
@@ -150,9 +152,9 @@ void loop() {
   //Serial.print("EncoderVal = ");Serial.print(encoderVal);Serial.print("\t");
   //Serial.print("lastEncoderVal = ");Serial.print(lastEncoderVal);Serial.print("\t");
   //Serial.print("Count = ");Serial.println(count);
-  //Serial.println(motorVelCmd);
+  //Serial.println(wheelVel);
 
-  if (motorVelCmd = FREE_ROLL_FLAG) {
+  if (motorVelCmd == FREE_ROLL_FLAG) {
     Output = 0;
     MotorCmd = 0;
   }
@@ -201,10 +203,11 @@ void loop() {
       PID_lastTime = now;
     }
   }
+  //Serial.print("MotorCmd = ");Serial.println(MotorCmd);
   digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
   analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   
-  encoderVal = -encoderVal;  //Send updated encoder value
+  //encoderVal = -encoderVal;  //Send updated encoder value
   if (sendEncoder == 1) {
     Serial.write(byte(encoderVal & 0x00FF)); 
     Serial.write(byte((encoderVal >> 8) & 0x00FF));
