@@ -30,13 +30,16 @@ first block of code with the Serial.available check. How can we make it so this 
 #define FREE_ROLL_FLAG 2.0
 
 /*  Constants */
+
+const double MOTOR_VEL_CMD = -0.2;
+
 //K_P = 395, 
 //K_I = 100,
 //K_D = 20,
 //PID Constants
-const double K_P = 150, 
-             K_I = 75,
-             K_D = 100,
+const double K_P = 300, 
+             K_I = 30,
+             K_D = 0,
              OUT_MIN = -255,  
              OUT_MAX = 255;
 const int SAMPLE_TIME = 10;
@@ -91,7 +94,7 @@ void setup() {
 void loop() {  
   // Receive new motor command or stop/start
   //sendFlag = 0;
-  /*if (Serial.available()){
+  if (Serial.available()){
     //count = 0; 
     byteRead = Serial.read();
     switch (byteRead){
@@ -104,7 +107,7 @@ void loop() {
         * Arduino think it is a positive number. We must set these bits to 1
         * (sign extension) to get it to recognize byteRead as negative.
         */
-        /*if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
+        if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
    
@@ -114,7 +117,7 @@ void loop() {
         }
         break;
     }
-  }*/
+  }
   /*if (count > 500){
       motorVelCmd = 0.2;
   }
@@ -122,7 +125,7 @@ void loop() {
       motorVelCmd = -0.2;
   }*/
   //.println(motorVelCmd);
-  motorVelCmd = -0.1;
+  //motorVelCmd = MOTOR_VEL_CMD;
   
   //motorVelCmd = -0.2;
   
@@ -200,7 +203,7 @@ void loop() {
       lastInput = wheelVel;
       PID_lastTime = now;
     }
-  //}
+  }
   digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
   analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   
