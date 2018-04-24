@@ -12,7 +12,6 @@ first block of code with the Serial.available check. How can we make it so this 
 */
 
 #include <Arduino.h>
-#include <PID_v1.h>    //Library details: https://playground.arduino.cc/Code/PIDLibrary
 #include <Encoder.h>
 #define ENCODER_OPTIMIZE_INTERRUPTS
 
@@ -108,6 +107,7 @@ void loop() {
         /*if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
+   
         motorVelCmd = -float(byteRead)/100; //Converts cm/s value to m/s
         if ((motorVelCmd == -1) || (motorVelCmd == 1)){
           motorVelCmd = 0;
@@ -117,12 +117,14 @@ void loop() {
   }*/
   /*if (count > 500){
       motorVelCmd = 0.2;
-    }
-    else {
+  }
+  else {
       motorVelCmd = -0.2;
   }*/
   //.println(motorVelCmd);
   motorVelCmd = -0.1;
+  
+  //motorVelCmd = -0.2;
   
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
@@ -198,7 +200,7 @@ void loop() {
       lastInput = wheelVel;
       PID_lastTime = now;
     }
-  }
+  //}
   digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
   analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
   

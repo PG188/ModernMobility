@@ -33,14 +33,13 @@ tcp_client::tcp_client()
 {
     sock = -1;
     port = 8080;
-    address = "172.17.50.37";
+    address = "127.0.0.1";
 }
  
 /**
     Connect to a host on a certain port number
 */
-bool tcp_client::conn(string address , int port
-)
+bool tcp_client::conn(string address , int port)
 {
     //create socket if it is not already created
     if(sock == -1)
@@ -149,7 +148,7 @@ int main(int argc , char *argv[])
     //cin>>host;
      
     //connect to host
-    c.conn("172.17.50.37" , 8080);
+    c.conn("127.0.0.1" , 8080);
      
     //send some data
     c.send_data("GET / HTTP/1.1\r\n\r\n");

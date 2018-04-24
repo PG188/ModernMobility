@@ -44,14 +44,13 @@ tcp_client::tcp_client()
 {
     sock = -1;
     port = 8080;
-    address = "172.17.50.37";
+    address = "127.0.0.1";
 }
- 
+
 /**
     Connect to a host on a certain port number
 */
-bool tcp_client::conn(string address , int port
-)
+bool tcp_client::conn(string address , int port)
 {
     //create socket if it is not already created
     if(sock == -1)
@@ -245,10 +244,10 @@ int main(int argc, char **argv){
     //cin>>host;
      
     //connect to host
-    c.conn("172.17.50.37" , 8080);
+    //c.conn("127.0.0.1" , 8080);
      
     //send some data
-    c.send_data("C++ client for phone data connected!");
+    //c.send_data("C++ client for phone data connected!");
      
     //receive and echo reply
     cout<<"----------------------------\n\n";
@@ -268,7 +267,8 @@ int main(int argc, char **argv){
 
 	struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
 	char buf[1024] = { 0 };
-	int b, client, bytes_read;
+	int b = -1;
+	int client, bytes_read;
 	socklen_t opt = sizeof(rem_addr);
 
 	// allocate socket
@@ -284,7 +284,7 @@ int main(int argc, char **argv){
 	// put socket into listening mode
 	listen(b, 1);
 	printf("\nBT:listening...\n");
-	close(b);
+	//close(b);
 
 	// accept one connection
 	client = accept(b, (struct sockaddr *)&rem_addr, &opt);
