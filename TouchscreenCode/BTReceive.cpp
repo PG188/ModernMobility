@@ -221,6 +221,7 @@ int interpretCmd(char *buf, tcp_client &c){
 		case (char)9:
 			printf("BTReceive: Disconnecting...");
 			c.send_data("-1");
+			usleep(1000000);
 			return 1;
 	}
 }
