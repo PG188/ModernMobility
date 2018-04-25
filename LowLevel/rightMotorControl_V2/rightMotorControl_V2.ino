@@ -91,13 +91,14 @@ void setup() {
     digitalWrite(DIR1, HIGH); //direcitons  
     digitalWrite(PWM1, 0);   //speed scale speed here with input from pi
     myEncoder.write(0);
+    
     digitalWrite(13,HIGH);
     pinMode(magPin, INPUT);
 }
 
 void loop() {
-  int magSen=analogRead(magPin);
-  Serial.println(magSen);
+  int magSen = analogRead(magPin);
+  //Serial.println(magSen);
   if (magSen > 445){
     // Receive new motor command or stop/start
     //sendFlag = 0;

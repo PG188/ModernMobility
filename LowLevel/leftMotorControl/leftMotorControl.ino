@@ -97,7 +97,7 @@ void setup() {
 
 void loop() {  
   int magSen=analogRead(magPin);
-  Serial.println(magSen);
+  //Serial.println(magSen);
   if (magSen > 500){
       // Receive new motor command or stop/start
       //sendFlag = 0;
