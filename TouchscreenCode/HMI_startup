@@ -1,4 +1,7 @@
 #!/bin/bash
+cd
+cd ~/ModernMobility/TouchscreenCode
+
 echo "==========================================================="
 echo "HMI code compiling..."
 g++ -o BTReceive BTReceive.cpp -lbluetooth
@@ -11,13 +14,9 @@ echo "Python TCP server on RPi started!"
 echo ""
 sleep 2
 
-python Client.py &
-echo "Python TCP client on walker started!"
-echo "Touchscreen Ready! Awaiting commands..."
-echo ""
-sleep 2
-
 ./BTReceive &
 echo "C++ TCP client/Bluetooth server on RPi started!"
 echo "Awaiting Bluetooth connection and commands..."
 echo ""
+
+$SHELL

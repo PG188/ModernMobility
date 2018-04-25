@@ -1,3 +1,5 @@
+#!/../../usr/bin/env python3
+
 import sys
  
 # gets the Qt stuff
@@ -13,8 +15,8 @@ import mainwindow_auto
 import threading
 
 #set up connecion
-#TCP_IP = '10.0.0.3'  
-TCP_IP = '127.0.0.1' 
+TCP_IP = '10.0.0.3'  
+#TCP_IP = '127.0.0.1' 
 TCP_PORT = 8080
 BUFFER_SIZE = 1024
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,7 +36,10 @@ class Tmanager:
 m = Tmanager()
 
 def sendbyte(msg):
-        m.connW.send((msg).encode())  # echo
+    if m.connW is None:
+        print('Main_Server.py: Please connect Walker before sending commands')
+    else:
+        m.connW.send((msg).encode())
     
  # create class for our Raspberry Pi GUI
 class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
@@ -63,7 +68,9 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
 
     def Disconnect(self):
         if m.connW is None:
-            print('MainServer.py: ERROR:  Client not connected, please ensure Client.py is running and has made a connection')
+            print('MainServer.py: Client not connected, please ensure Client.py is running and has made a connection')
+            self.close()
+            print('Closing Touchscreen window')
         else:
             sendbyte('-2')
             try:
@@ -71,7 +78,9 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
                     m.connP.close()
                 m.connW.close()
                 s.close()
+                s.close()
                 self.close()
+                print('Closing Touchscreen window')        
                 
             except:
                 print('Main_Server.py: ERROR with disconnect')
@@ -91,7 +100,6 @@ def walkerConn(conn, addr):
         m.firstIsConnected = True
     m.connW = conn
     print('Main_Server.py: Walker TCP client connection address: ' + str(addr))
-    #sendbyte('-3')
 
 def phoneConn(conn, addr):
     if not m.firstIsConnected:
@@ -99,7 +107,10 @@ def phoneConn(conn, addr):
     m.connP = conn
     print ('Main_Server.py: Phone TCP client connection address: ' + str(addr))
     while 1:
-        data = m.connP.recv(BUFFER_SIZE).decode()
+        try:
+            data = m.connP.recv(BUFFER_SIZE).decode()
+        except:
+            print('data' + str(data))
         print('Main_Server.py: data received')
         if not data or (data == -1):
             print('Main_server.py: Phone disconnected!')
@@ -140,7 +151,7 @@ def newConnection(s, m, t):
         else:
             print('Main_Server.py: Unexpected data in second thread')
     else:
-        print('This should be impossible to see')
+        print('Main_Server.py: This should be impossible to see')
 
 def main():
     # a new app instance
