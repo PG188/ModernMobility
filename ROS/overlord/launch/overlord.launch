@@ -1,7 +1,7 @@
 <launch>
 
-	<rosparam param="ticks_meter_left">1350.8</rosparam>
-	<rosparam param="ticks_meter_right">1350.8</rosparam>
+	<rosparam param="ticks_meter_left">1280.585</rosparam>
+	<rosparam param="ticks_meter_right">1268.646</rosparam>
 
 	<include file="$(find freenect_launch)/launch/freenect.launch" />
 
