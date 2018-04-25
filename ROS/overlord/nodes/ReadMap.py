@@ -291,7 +291,7 @@ def _writeMap(map_dict):
         
 """
 def getPose(ID):
-    if ((type(ID) is int) and (ID >= 0)):
+    if numpy.issubdtype(int, numpy.int32) and (ID >= 0)):
         #Returns the x, y position of the marker given its ID number
         const_map, config_map = _readMap()
         x = config_map["Data"][str(ID)]["x"]
@@ -333,11 +333,3 @@ def getConstPose(name):
     except Exception as e:
         print("[ReadMap.py]:getConstPose():  Error occured, name given = '\%s'\\nError:\n%s" % (name, str(e)))
         return NAN, NAN, NAN
-        
-if __name__ == "__main__":
-    #Generates map and writes it to config file
-    _writeMap(_generateMap())
-
-    #Reads map config file and visualizes it on a plot
-    const_map, config_map = _readMap()
-    _drawMap(config_map)
