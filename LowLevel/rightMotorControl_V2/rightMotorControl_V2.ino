@@ -94,7 +94,7 @@ void setup() {
 void loop() {
   // Receive new motor command or stop/start
   //sendFlag = 0;
-  /*if (Serial.available()){
+  if (Serial.available()){
     //count = 0; 
     byteRead = Serial.read();
     //byteString = Serial.readString();
@@ -108,23 +108,23 @@ void loop() {
         * Arduino think it is a positive number. We must set these bits to 1
         * (sign extension) to get it to recognize byteRead as negative.
         */
-        /*if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
+        if (byteRead & 0x0080) { //Is byteRead supposed to be negative?
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
-        motorVelCmd = -float(byteRead)/100; //Converts cm/s value to m/s
-        if ((motorVelCmd == -1) || (motorVelCmd == 1)){
+        motorVelCmd = -float(byteRead)/50; //Converts cm/s value to m/s
+        if ((motorVelCmd == -2) || (motorVelCmd == 2)){
           motorVelCmd = 0;
         }
         break;
     }
-  }*/
+  }
   /*if (count > 500){
     motorVelCmd = 0.2;
   }
   else {
     motorVelCmd = -0.2;
   }*/
-  motorVelCmd = 0.1;
+  //motorVelCmd = 0.1;
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
   

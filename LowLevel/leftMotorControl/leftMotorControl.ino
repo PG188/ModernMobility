@@ -111,8 +111,8 @@ void loop() {
             byteRead = byteRead | 0xFF00; //Sign extends byteRead to 16 bits
         }
    
-        motorVelCmd = -float(byteRead)/100; //Converts cm/s value to m/s
-        if ((motorVelCmd == -1) || (motorVelCmd == 1)){
+        motorVelCmd = -float(byteRead)/50; //Converts cm/s value to m/s
+        if ((motorVelCmd == -2) || (motorVelCmd == 2)){
           motorVelCmd = 0;
         }
         break;
@@ -126,8 +126,6 @@ void loop() {
   }*/
   //.println(motorVelCmd);
   //motorVelCmd = MOTOR_VEL_CMD;
-  
-  //motorVelCmd = -0.2;
   
   //UPDATE ENCODER
   encoderVal = myEncoder.read();
