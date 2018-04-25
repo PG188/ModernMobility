@@ -1,18 +1,16 @@
-#!/usr/bin/env python
-
 import socket
 import sys
 import time
 
-##import rospy
-##from std_msgs.msg import Int8
-##
-###py_ver = sys.version_info[0]
-##
-##
-##pubScreen = rospy.Publisher('screen_cmd', Int8, queue_size=10)
-##pubPhone = rospy.Publisher('phone_cmd', Int8, queue_size=10)
-##rospy.init_node('hmi_cmds', anonymous=True)
+import rospy
+from std_msgs.msg import Int8
+
+#py_ver = sys.version_info[0]
+
+
+pubScreen = rospy.Publisher('screen_cmd', Int8, queue_size=10)
+pubPhone = rospy.Publisher('phone_cmd', Int8, queue_size=10)
+rospy.init_node('hmi_cmds', anonymous=True)
 
 def interpretCmd(data):
         if data == '0' or data == b'0':
@@ -52,8 +50,8 @@ def interpretCmd(data):
         else:
                 print('Client.py: Invalid data Received\n' + str(data))
 
-#TCP_IP = '10.0.0.3'
-TCP_IP = '127.0.0.1'
+TCP_IP = '10.0.0.3'
+#TCP_IP = '127.0.0.1'
 TCP_PORT = 8080
 BUFFER_SIZE = 1024
 
@@ -83,8 +81,8 @@ while 1:
                 if not data:
                         print('Client.py: ERROR: Disconnected from TCP server!\n')
                         break
-                #if not rospy.is_shutdown():
-                interpretCmd(data)
+                if not rospy.is_shutdown():
+                        interpretCmd(data)
 
         except Exception as e:
                 print(e)

@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     double TestO4 = 0;
      */
 
+    /**
     TextView tvX;
     TextView tvY;
     TextView tvO;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     EditText etY;
     EditText etO;
     Button btnSendPose;
+     */
 
     float floatValue;
     byte [] x;
@@ -130,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
 
          */
 
+        /**
+
         tvX = findViewById(R.id.tvX);
         tvY = findViewById(R.id.tvY);
         tvO = findViewById(R.id.tvθ);
@@ -137,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         etY = findViewById(R.id.etY);
         etO = findViewById(R.id.etθ);
         btnSendPose = findViewById(R.id.btnSendPose);
+
+         */
 
         //============================================================================
 
@@ -155,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        BTConnectTxt.sendEmptyMessage(0);
+                        //BTConnectTxt.sendEmptyMessage(0);
                     }
                 };
 
@@ -373,6 +379,8 @@ public class MainActivity extends AppCompatActivity {
 
         /**VARIABLE TESTS*/
 
+        /**
+
         //btnSendPose clicked!
         btnSendPose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -409,6 +417,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+         */
     }
 
     //=================================================================================
@@ -443,6 +453,8 @@ public class MainActivity extends AppCompatActivity {
 
     //=================================================================================
 
+    /**
+
     Handler BTConnectTxt = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -451,6 +463,8 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+     */
 
     //=================================================================================
 
