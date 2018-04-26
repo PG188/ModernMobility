@@ -26,17 +26,17 @@ import os
 import cv2
 from cv2 import aruco
 import numpy as np
-import Mag3D
+import custom_math
 import ReadMap
 from TransformMatrix import *
-import math
 
 #User configurable inputs
+TEST_MODE = True
+SHOW_CAPTURED_FRAME = TEST_MODE
 FRAME_CAP_ATTEMPTS = 5
-SHOW_CAPTURED_FRAME = False
-VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
-WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
 
+#Constants
+NAN = float('NaN')
 MARKER_LENGTH = 0.165   #meters
 
 #Camera to Walker frame differences
@@ -44,6 +44,14 @@ W2C_X = 0.486664    #In meters
 W2C_Y = 0           #In meters
 W2C_Z = 0.854964    #In meters
 W2C_YAW = 0         #In radians
+
+#Setting changed in test mode
+if TEST_MODE:
+    VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
+    WEBCAM_CALS_PATH = 'webcam_cals.npz'
+else:
+    VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
+    WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
 
 #====================Private Functions====================#
 def _locWalker(arucoID, dx, dy):
@@ -63,8 +71,24 @@ def _camBase2walkerBase(cam_x, cam_y, cam_yaw):
     walker_x, walker_y, _ = tm.transformVector(cam_x, cam_y)
     return walker_x, walker_y, (cam_yaw + W2C_YAW)
 
-def _weirdYawCalc(i, rvec):
-    return 2*math.atan2(rvec[i][0][1],rvec[i][0][0])
+def _rvec2YPR(i, rvec):
+    #converts rvec into rodrigues rotation matrix
+    rod_mat = cv2.Rodrigues(rvec[i][0])[0]
+
+    #construct a 3X4 projection matrix using the rodrigues matrix
+    proj_mat = [[rod_mat[0][0], rod_mat[0][1], rod_mat[0][2], 0],
+                [rod_mat[1][0], rod_mat[1][1], rod_mat[1][2], 0],
+                [rod_mat[2][0], rod_mat[2][1], rod_mat[2][2], 0]]
+
+    #get array of euler angles in degrees
+    euler_angles = cv2.decomposeProjectionMatrix(np.array(proj_mat))[6]
+
+    #return in reverse order to get Yaw, Pitch, Roll
+    return euler_angles[2][0], euler_angles[1][0], euler_angles[0][0]
+
+def _getYaw(i, rvec):
+    #return yaw value in rads
+    return custom_math.deg2rad(_rvec2YPR[0])
 
 def _marker_detect(failed_detections = 0):
     
@@ -76,7 +100,6 @@ def _marker_detect(failed_detections = 0):
     camera_matrix = webcam_cals['camera']
     dist_coeffs = webcam_cals['dist']
 
-    NAN = float('NaN')
     xWalker = NAN   #Walker's x position in the map
     yWalker = NAN   #Walker's y position in the map
     i = 0
@@ -103,22 +126,22 @@ def _marker_detect(failed_detections = 0):
         while i < len(ids):  #This loop determines which marker is the closest
             
             if i == 0:
-                mm = Mag3D.Mag3D(tvec[i][0][0], tvec[i][0][1], tvec[i][0][2])
+                mm = custom_math.mag3D(tvec[i][0][0], tvec[i][0][1], tvec[i][0][2])
                 tmp = mm
                 arucoID = ids[i][0]
                 dx = tvec[i][0][0]
                 dy = tvec[i][0][1]
-                yaw = _weirdYawCalc(i, rvec)
+                yaw = _getYaw(i, rvec)
                 
             else:
-                tmp = Mag3D.Mag3D(tvec[i][0][0], tvec[i][0][1],tvec[i][0][2])
+                tmp = custom_math.mag3D(tvec[i][0][0], tvec[i][0][1],tvec[i][0][2])
                 
                 if tmp < mm:
                     mm = tmp
                     arucoID = ids[i][0]
                     dx = tvec[i][0][0]
                     dy = tvec[i][0][1]
-                    yaw = _weirdYawCalc(i, rvec)
+                    yaw = _getYaw(i, rvec)
                 
             print ('\n[pose_estimation.py]:marker_detect():\n    i = %d\n    Magnitude = %f\n    arucoID = %d\n    rvec[%d] = %s\n    tvec[%d] = %s' %(i, tmp, ids[i][0], i, rvec[i], i, tvec[i]))
             aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvec[i], tvec[i], marker_length)
@@ -182,6 +205,7 @@ def get_pose(location):
 
 
 
-#TEST
-##print('\n')
-##print(get_pose('walker'))
+##TEST
+if TEST_MODE:
+    print('\n')
+    print(get_pose('walker'))
