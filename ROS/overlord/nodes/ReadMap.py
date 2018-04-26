@@ -291,15 +291,15 @@ def _writeMap(map_dict):
         
 """
 def getPose(ID):
-    if numpy.issubdtype(int, numpy.int32) and (ID >= 0)):
+    try:
         #Returns the x, y position of the marker given its ID number
         const_map, config_map = _readMap()
         x = config_map["Data"][str(ID)]["x"]
         y = config_map["Data"][str(ID)]["y"]
         theta = config_map["Data"][str(ID)]["theta"]
         return x, y, theta
-    else:
-        print ("[ReadMap.py]:getPose(): Received an invalid ID = %s" % ID)
+    except Exception as e:
+        print ("[ReadMap.py]:getPose(): Error Occured:\n" + str(e))
         return NAN, NAN, NAN
 
 """

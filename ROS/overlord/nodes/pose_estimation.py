@@ -29,12 +29,13 @@ import numpy as np
 import Mag3D
 import ReadMap
 from TransformMatrix import *
+import math
 
 #User configurable inputs
 FRAME_CAP_ATTEMPTS = 5
 SHOW_CAPTURED_FRAME = True
-VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
-WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
+VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
+WEBCAM_CALS_PATH = 'webcam_cals.npz' #'/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
 
 MARKER_LENGTH = 0.165   #meters
 
@@ -61,6 +62,9 @@ def _camBase2walkerBase(cam_x, cam_y, cam_yaw):
     #Translate vector to walker frame
     walker_x, walker_y, _ = tm.transformVector(cam_x, cam_y)
     return walker_x, walker_y, (cam_yaw + W2C_YAW)
+
+def _weirdYawCalc(i, rvec):
+    return 2*math.atan2(rvec[i][0][1],rvec[i][0][0])
 
 def _marker_detect(failed_detections = 0):
     
@@ -104,7 +108,7 @@ def _marker_detect(failed_detections = 0):
                 arucoID = ids[i][0]
                 dx = tvec[i][0][0]
                 dy = tvec[i][0][1]
-                yaw = rvec[i][0][0]
+                yaw = _weirdYawCalc(i, rvec)
                 
             else:
                 tmp = Mag3D.Mag3D(tvec[i][0][0], tvec[i][0][1],tvec[i][0][2])
@@ -114,9 +118,9 @@ def _marker_detect(failed_detections = 0):
                     arucoID = ids[i][0]
                     dx = tvec[i][0][0]
                     dy = tvec[i][0][1]
-                    yaw = rvec[i][0][0]
+                    yaw = _weirdYawCalc(i, rvec)
                 
-            print ('\n[pose_estimation.py]:marker_detect():\ti = %d, Magnitude = %f, arucoID = %d, rvec[%d] = %s\ttvec[%d] = %s' %(i, tmp, ids[i][0], i, rvec[i], i, tvec[i]))
+            print ('\n[pose_estimation.py]:marker_detect():\n    i = %d\n    Magnitude = %f\n    arucoID = %d\n    rvec[%d] = %s\n    tvec[%d] = %s' %(i, tmp, ids[i][0], i, rvec[i], i, tvec[i]))
             aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvec[i], tvec[i], marker_length)
             i += 1
 
@@ -179,4 +183,5 @@ def get_pose(location):
 
 
 #TEST
-#print(get_pose('walker'))
+print('\n')
+print(get_pose('walker'))
