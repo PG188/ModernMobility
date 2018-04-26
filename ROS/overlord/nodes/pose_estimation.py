@@ -88,7 +88,7 @@ def _rvec2YPR(i, rvec):
 
 def _getYaw(i, rvec):
     #return yaw value in rads
-    return custom_math.deg2rad(_rvec2YPR[0])
+    return custom_math.deg2rad(_rvec2YPR(i, rvec)[0])
 
 def _marker_detect(failed_detections = 0):
     

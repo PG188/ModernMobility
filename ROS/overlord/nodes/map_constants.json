@@ -14,8 +14,8 @@
 
 	"Data":
 	{
-		"0": {"name":"dock","x": 0, "y": 2, "theta":1.570796325},
-		"1": {"name":"bedside","x": 4, "y": 4, "theta": 3.14159265}
+		"0": {"name":"dock","x": 7.2775, "y": 5.46, "theta": -1.570796325},
+		"1": {"name":"bedside","x": 5.375, "y": 1.21, "theta": 0.0}
 	}, 
 
 	"=====Recorded Data=====":
@@ -43,7 +43,6 @@
 				"max possible aruco marker spacing":"TBD",
 				"selected aruco marker spacing":"TBD"
 			}
-
 		},
 
 		"rooms":
