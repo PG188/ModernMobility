@@ -91,14 +91,14 @@ void setup() {
     digitalWrite(DIR1, HIGH); //direcitons  
     digitalWrite(PWM1, 0);   //speed scale speed here with input from pi
     myEncoder.write(0);
+    
     digitalWrite(13,HIGH);
     pinMode(magPin, INPUT);
 }
 
 void loop() {
-  int magSen=analogRead(magPin);
-  Serial.println(magSen);
-  if (magSen > 445){
+  int magSen = analogRead(magPin);
+  //Serial.println(magSen);
     // Receive new motor command or stop/start
     //sendFlag = 0;
     if (Serial.available()){
@@ -125,16 +125,11 @@ void loop() {
           break;
       }
     }
-    /*if (count > 500){
-      motorVelCmd = 0.2;
-    }
-    else {
-      motorVelCmd = -0.2;
-    }*/
-    //motorVelCmd = -0.2;
+    
     //UPDATE ENCODER
     encoderVal = myEncoder.read();
-    
+    //Serial.print("EncoderVal = ");Serial.println(encoderVal);//Serial.print("\t");
+
     //Reset count if walker hasn't moved in a while (~30s)
     if (encoderVal == lastEncoderVal){
       if (count > 1000){
@@ -156,7 +151,6 @@ void loop() {
     lastEncoderVal = encoderVal;
     //DO PID
     /* Graphing wheel velcoity */
-    //Serial.print("EncoderVal = ");Serial.print(encoderVal);Serial.print("\t");
     //Serial.print("lastEncoderVal = ");Serial.print(lastEncoderVal);Serial.print("\t");
     //Serial.print("Count = ");Serial.println(count);
     //Serial.println(wheelVel);
@@ -210,24 +204,23 @@ void loop() {
         PID_lastTime = now;
       }
     }
-    //Serial.print("MotorCmd = ");Serial.println(MotorCmd);
-    digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
-    analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
-    
-    //encoderVal = -encoderVal;  //Send updated encoder value
+    if (magSen <= 445){
+      digitalWrite(DIR1, LOW);
+      analogWrite(PWM1,0); 
+    }
+    else {
+      //Serial.print("MotorCmd = ");Serial.println(MotorCmd);
+      digitalWrite(DIR1, signPos(MotorCmd) ? HIGH : LOW);   //Assigning appropriate motor direction
+      analogWrite(PWM1,abs(MotorCmd));                      //Actuate motor command
+    }
+
     if (sendEncoder == 1) {
       Serial.write(byte(encoderVal & 0x00FF)); 
       Serial.write(byte((encoderVal >> 8) & 0x00FF));
     }
     count++;
     delay(30);
-  }
-  else{
-    digitalWrite(DIR1, LOW);
-    analogWrite(PWM1,0); 
-    //delay(200);
-  }
-}
+ }
 
 /*******************************************************************************************************/
 
