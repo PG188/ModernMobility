@@ -33,9 +33,9 @@ import math
 
 #User configurable inputs
 FRAME_CAP_ATTEMPTS = 5
-SHOW_CAPTURED_FRAME = True
+SHOW_CAPTURED_FRAME = False
 VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
-WEBCAM_CALS_PATH = 'webcam_cals.npz' #'/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
+WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
 
 MARKER_LENGTH = 0.165   #meters
 
@@ -144,7 +144,7 @@ def _marker_detect(failed_detections = 0):
             cv2.destroyAllWindows()
 
             print('[pose_estimation.py]:_marker_detect():\tRetrying _marker_detect()...')
-            _marker_detect(failed_detections)
+            return _marker_detect(failed_detections)
             
         else:
             print('[pose_estimation.py]:_marker_detect():\tReached max number of retries (%s)' % failed_detections)
@@ -183,5 +183,5 @@ def get_pose(location):
 
 
 #TEST
-print('\n')
-print(get_pose('walker'))
+##print('\n')
+##print(get_pose('walker'))
