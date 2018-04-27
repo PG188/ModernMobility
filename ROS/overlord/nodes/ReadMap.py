@@ -110,7 +110,10 @@ def _drawMap(map_dict, invertX = False, invertY = False):
         print("\n[ReadMap.py]:_drawMap():\nMust be using python version 2 or 3\n")
     
     plt.scatter(x_coords, y_coords)
-    plt.show()
+    plt.draw()
+    print("\nPress any key to close the map")
+    plt.waitforbuttonpress()
+    plt.close(fig)
 
     
 """

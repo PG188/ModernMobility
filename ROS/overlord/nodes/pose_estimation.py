@@ -29,9 +29,11 @@ import numpy as np
 import custom_math
 import ReadMap
 from TransformMatrix import *
+from getpass import getuser
 
 #User configurable inputs
 TEST_MODE = True
+COMPUTER = getuser()
 SHOW_CAPTURED_FRAME = TEST_MODE
 FRAME_CAP_ATTEMPTS = 5
 
@@ -45,14 +47,16 @@ W2C_Y = 0           #In meters
 W2C_Z = 0.854964    #In meters
 W2C_YAW = 0         #In radians
 
-#Setting changed in test mode
-if TEST_MODE:
-    VIDEO_CAP_CHANNEL = 0   #For raspberry pi use 0, laptop use 1
-    WEBCAM_CALS_PATH = 'webcam_cals.npz'
-else:
-    VIDEO_CAP_CHANNEL = 1   #For raspberry pi use 0, laptop use 1
+#variable settings
+if TEST_MODE: VIDEO_CAP_CHANNEL = 0 #For raspberry pi use 0, laptop use 1
+else: VIDEO_CAP_CHANNEL = 1       
+    
+if COMPUTER == 'fauziakhanum':
     WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
-
+elif COMPUTER == 'josh':
+    WEBCAM_CALS_PATH = '/home/josh/catkin_ws/src/overlord/nodes/webcam_cals.npz'
+else:
+    WEBCAM_CALS_PATH = 'webcam_cals.npz'
 #====================Private Functions====================#
 def _locWalker(arucoID, dx, dy):
     xid, yid, _ = ReadMap.getPose(arucoID)
@@ -69,7 +73,7 @@ def _camBase2walkerBase(cam_x, cam_y, cam_yaw):
     
     #Translate vector to walker frame
     walker_x, walker_y, _ = tm.transformVector(cam_x, cam_y)
-    return walker_x, walker_y, (cam_yaw + W2C_YAW)
+    return walker_x, walker_y, (custom_math.reverseRotDir(cam_yaw) + W2C_YAW)
 
 def _rvec2YPR(i, rvec):
     #converts rvec into rodrigues rotation matrix
@@ -110,8 +114,6 @@ def _marker_detect(failed_detections = 0):
     arucoID = -1
         
     cap = cv2.VideoCapture(VIDEO_CAP_CHANNEL)
-
-    #while (cv2.waitKey(1) & 0xFF != ord('q')):
     _, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
@@ -202,8 +204,6 @@ def get_pose(location):
     #Specified in the map_constants.json file
     else:
         return ReadMap.getConstPose(location)
-
-
 
 ##TEST
 if TEST_MODE:

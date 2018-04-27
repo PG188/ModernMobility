@@ -72,3 +72,7 @@ def deg2rad(deg_val):
 
 def rad2deg(rad_val):
     return 180.0*rad_val/math.pi
+
+def reverseRotDir(theta):
+    if(theta < 0): return -1*theta - math.pi
+    else: return -1*theta + math.pi
