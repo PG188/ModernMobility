@@ -30,10 +30,11 @@ import custom_math
 import ReadMap
 from TransformMatrix import *
 from getpass import getuser
+import sys
 
 #User configurable inputs
 TEST_MODE = True
-COMPUTER = getuser()
+VIDEO_CAP_CHANNEL = 1  #For raspberry pi use 0, laptop use 1
 SHOW_CAPTURED_FRAME = TEST_MODE
 FRAME_CAP_ATTEMPTS = 5
 
@@ -47,10 +48,8 @@ W2C_Y = 0           #In meters
 W2C_Z = -0.854964    #In meters
 W2C_YAW = 0         #In radians
 
-#variable settings
-if TEST_MODE: VIDEO_CAP_CHANNEL = 0 #For raspberry pi use 0, laptop use 1
-else: VIDEO_CAP_CHANNEL = 1       
-    
+#variable settings    
+COMPUTER = getuser()
 if COMPUTER == 'fauziakhanum':
     WEBCAM_CALS_PATH = '/home/fauziakhanum/catkin_ws/src/src/overlord/nodes/webcam_cals.npz'
 elif COMPUTER == 'josh':
@@ -123,7 +122,11 @@ def _marker_detect(failed_detections = 0):
 
     if not(ids is None): #Markers were detected
         print('\n[pose_estimation.py]:marker_detect():\tMarkers detected')
-        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
+
+        py_ver = sys.version_info[0]
+        if (py_ver == 2): rvec, tvec = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
+        elif (py_ver == 3): rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, camera_matrix, dist_coeffs)
+        else: print("\n[pose_estimation.py]:_marker_detect():\nMust be using python version 2 or 3\n")
 
         while i < len(ids):  #This loop determines which marker is the closest
             
