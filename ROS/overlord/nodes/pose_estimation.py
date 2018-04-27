@@ -42,9 +42,9 @@ NAN = float('NaN')
 MARKER_LENGTH = 0.165   #meters
 
 #Camera to Walker frame differences
-W2C_X = 0.486664    #In meters
+W2C_X = -0.486664    #In meters
 W2C_Y = 0           #In meters
-W2C_Z = 0.854964    #In meters
+W2C_Z = -0.854964    #In meters
 W2C_YAW = 0         #In radians
 
 #variable settings
